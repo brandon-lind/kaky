@@ -1,0 +1,20 @@
+{
+  "name": "kaky",
+  "version": "1.0.0",
+  "description": "A super simple chore invoicing app for (Ka)yla and (Ky)le.",
+  "main": "index.js",
+  "scripts": {
+    "build": "(mkdir -p ./public) && (cp ./Mocks/*.* ./public) && (mkdir -p ./public/assets) && (cp ./Mocks/assets/*.* ./public/assets)",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brandon-lind/kaky.git"
+  },
+  "author": "Brandon Lind <brandon@lindsoftware.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/brandon-lind/kaky/issues"
+  },
+  "homepage": "https://github.com/brandon-lind/kaky#readme"
+}
