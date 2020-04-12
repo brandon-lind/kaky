@@ -4,7 +4,7 @@
   "description": "A super simple chore invoicing app for (Ka)yla and (Ky)le.",
   "main": "index.js",
   "scripts": {
-    "build": "(mkdir -p ./public) && (cp ./Mocks/*.* ./public) && (mkdir -p ./public/assets) && (cp ./Mocks/assets/*.* ./public/assets)",
+    "build": "(rm -rf ./public) && (mkdir -p ./public) && (cp ./Mocks/*.* ./public) && (mkdir -p ./public/assets) && (cp ./Mocks/assets/*.* ./public/assets)",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
