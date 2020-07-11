@@ -2,7 +2,7 @@
   {
     "id": "1",
     "name": "Garbage",
-    "price": "2",
+    "price": "3",
     "imageUrl": "./assets/img/trash.jpeg",
     "tasks": [
       "Collect all the garbage",
