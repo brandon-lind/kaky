@@ -1,8 +1,8 @@
 class WorkItems {
   constructor(itemLimitPerRow) {
     this.itemLimit = itemLimitPerRow || 3;
-    this.workItemsUrl = '/Mocks/assets/data/workitems.json';
-    this.assignWorkUrl = '/Mocks/assign.html'
+    this.workItemsUrl = '/src/assets/data/workitems.json';
+    this.assignWorkUrl = '/src/assign.html'
     this.template = `
     <div class="card mb-4 shadow-sm">
       <img class="img-fluid card-img-top" />

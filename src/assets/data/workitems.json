@@ -3,7 +3,7 @@
     "id": "1",
     "name": "Garbage",
     "price": "2",
-    "imageUrl": "/Mocks/assets/trash_bin.jpeg",
+    "imageUrl": "./assets/img/trash.jpeg",
     "tasks": [
       "Collect all the garbage",
       "Take the garbage to the curb",
@@ -14,7 +14,7 @@
     "id": "2",
     "name": "Garbage + Recycling",
     "price": "4",
-    "imageUrl": "/Mocks/assets/trash_recycle_bins.jpeg",
+    "imageUrl": "./assets/img/trash-recycle.jpeg",
     "tasks": [
       "All tasks in the Garbage Work Item",
       "Collect all the recyling",
@@ -25,7 +25,7 @@
     "id": "3",
     "name": "Mow Front Yard",
     "price": "5",
-    "imageUrl": "/Mocks/assets/garden-grass-meadow-green-589.jpg",
+    "imageUrl": "./assets/img/mow-front.jpg",
     "tasks": [
       "Mow the front yard",
       "Incuding the strips next to the street and the driveway"
@@ -35,7 +35,7 @@
     "id": "4",
     "name": "Mow Back Yard",
     "price": "5",
-    "imageUrl": "/Mocks/assets/garden-grass-meadow-green-589.jpg",
+    "imageUrl": "./assets/img/mow-back.jpg",
     "tasks": [
       "Mow the back yard"
     ]
@@ -44,7 +44,7 @@
     "id": "5",
     "name": "Mow Front + Back Yards",
     "price": "10",
-    "imageUrl": "/Mocks/assets/garden-grass-meadow-green-589.jpg",
+    "imageUrl": "./assets/img/mow-all.jpg",
     "tasks": [
       "Items in the mow front yard",
       "Items in the mow back yard"
@@ -54,7 +54,7 @@
     "id": "6",
     "name": "Whatever",
     "price": "??",
-    "imageUrl": "/Mocks/assets/ask-blackboard-chalk-board-chalkboard-356079.jpg",
+    "imageUrl": "./assets/img/special.jpg",
     "tasks": [
       "A suprise work item full of fun"
     ]
