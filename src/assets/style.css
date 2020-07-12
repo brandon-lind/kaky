@@ -1,21 +1,3 @@
-#netlify-identity-menu {
-  display: inline-block;
-}
-
-.netlify-identity-menu {
-  display: inline-block;
-}
-
-li.netlify-identity-item {
-  display: inline;
-  list-style-type: none;
-  padding: .5rem!important;
-}
-
-li.netlify-identity-item a {
-  color: #343a40!important;
-}
-
 .bd-placeholder-img {
   font-size: 1.125rem;
   text-anchor: middle;
