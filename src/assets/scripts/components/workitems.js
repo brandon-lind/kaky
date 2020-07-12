@@ -45,7 +45,7 @@ class WorkItems {
     return workItems.find(x => x.id === id);
   }
 
-  async renderAll(targetEl) {
+  async renderList(targetEl) {
     if (!targetEl || !targetEl.innerHTML) throw new Error('There is no target element to add work items into.');
 
     let workItems = await this.fetchWorkItems();

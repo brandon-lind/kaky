@@ -47,25 +47,8 @@
             <div class="card-body">
               <h5 class="card-title">Choose a Worker</h5>
               <p class="card-text">Select the poor infortunate soul who will do the work.</p>
-              <ul class="list-group">
-                <li class="list-group-item list-group-item-action">
-                  <div class="media">
-                    <svg class="bd-placeholder-img mr-3 rounded-circle" width="64" height="64" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: 64x64"><title>Placeholder</title><rect width="100%" height="100%" fill="#868e96"></rect><text x="50%" y="50%" fill="#dee2e6" dy=".3em">KA</text></svg>
-                    <div class="media-body">
-                      <h5 class="mt-0">Kayla</h5>
-                      I am very skilled at mowing lawns, but can also do the garbage and recycling when I need money.
-                    </div>
-                  </div>
-                </li>
-                <li class="list-group-item list-group-item-action">
-                  <div class="media">
-                    <svg class="bd-placeholder-img mr-3 rounded-circle" width="64" height="64" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: 64x64"><title>Placeholder</title><rect width="100%" height="100%" fill="#868e96"></rect><text x="50%" y="50%" fill="#dee2e6" dy=".3em">KY</text></svg>
-                    <div class="media-body">
-                      <h5 class="mt-0">Kyle</h5>
-                      I hate all chores and you really don't want to pick me.
-                    </div>
-                  </div>
-                </li>
+              <ul class="list-group" id="workers">
+                <!-- this is where the workers will render -->
               </ul>
             </div>
           </div>
@@ -158,14 +141,17 @@
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-    <script src="./assets/scripts/assign.js"></script>
     <script src="./assets/scripts/components/workitems.js"></script>
+    <script src="./assets/scripts/components/workers.js"></script>
     <script>
       const parsedUrl = new URL(window.location.href);
       const workItemId = parsedUrl.searchParams.get('id') || 0;
       const workItems = new WorkItems();
       workItems.renderWorkItem(document.getElementById('workitem'), workItemId);
       workItems.renderPriceEditor(document.getElementById('workitem-price-editor'), workItemId);
+
+      const workers = new Workers();
+      workers.renderList(document.getElementById('workers'));
     </script>
   </body>
 </html>
