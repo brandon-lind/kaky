@@ -55,16 +55,12 @@
 
           <div class="mt-3 mb-3">&nbsp;</div>
 
-          <div class="card">
+          <div class="card" id="workitem-price-editor">
             <div class="card-header">
               Let Them Eat Cake
             </div>
             <div class="card-body">
-              <h5 class="card-title">Set a price</h5>
-              <p class="card-text">Use the defult price or negotiate.</p>
-              <div id="workitem-price-editor">
-                <!-- this is where the price editor will render -->
-              </div>
+              <!-- this is where the price editor will render -->
             </div>
           </div>
 
@@ -147,8 +143,8 @@
       const parsedUrl = new URL(window.location.href);
       const workItemId = parsedUrl.searchParams.get('id') || 0;
       const workItems = new WorkItems();
-      workItems.renderWorkItem(document.getElementById('workitem'), workItemId);
-      workItems.renderPriceEditor(document.getElementById('workitem-price-editor'), workItemId);
+      workItems.renderWorkItem(document.getElementById('workitem'), workItemId, false);
+      workItems.renderPriceEditor(document.querySelector('#workitem-price-editor .card-body'), workItemId);
 
       const workers = new Workers();
       workers.renderList(document.getElementById('workers'));
