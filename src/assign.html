@@ -20,14 +20,12 @@
         }
       }
     </style>
-
-
   </head>
   <body>
     <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
       <h5 class="my-0 mr-md-auto font-weight-normal">KAKY</h5>
       <nav class="my-2 my-md-0 mr-md-3">
-        <a class="p-2 text-dark" href="#">Work Items</a>
+        <a class="p-2 text-dark" href="index.html">Work Items</a>
         <a class="p-2 text-dark" href="#">Invoices</a>
         <a class="p-2 text-dark" href="#">Statistcs</a>
       </nav>
@@ -81,14 +79,8 @@
             <div class="card-body">
               <h5 class="card-title">Set a price</h5>
               <p class="card-text">Use the defult price or negotiate.</p>
-              <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                  <span class="input-group-text">$</span>
-                </div>
-                <input type="text" class="form-control" aria-label="Negotiated Amount (to the nearest dollar)">
-                <div class="input-group-append">
-                  <span class="input-group-text">.00</span>
-                </div>
+              <div id="workitem-price-editor">
+                <!-- this is where the price editor will render -->
               </div>
             </div>
           </div>
@@ -116,16 +108,8 @@
         </div>
 
         <div class="col-lg-4 d-none d-lg-block">
-          <div class="card mb-4 shadow-sm">
-            <img src="assets/garden-grass-meadow-green-589.jpg" class="img-fluid card-img-top" alt="Lawn mowing" />
-            <div class="card-body d-flex flex-column">
-              <h1 class="card-title pricing-card-title">Mow Front + Back Yards</h1>
-              <h2 class="mb-1 text-muted">$10</h2>
-              <ul class="text-left mt-3 mb-4">
-                <li>Items in the mow front yard</li>
-                <li>Items in the mow back yard</li>
-              </ul>
-            </div>
+          <div id="workitem">
+            <!-- work item rendered here -->
           </div>
         </div>
       </div>
@@ -174,6 +158,14 @@
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-    <script src="assets/scripts/assign.js"></script>
+    <script src="./assets/scripts/assign.js"></script>
+    <script src="./assets/scripts/components/workitems.js"></script>
+    <script>
+      const parsedUrl = new URL(window.location.href);
+      const workItemId = parsedUrl.searchParams.get('id') || 0;
+      const workItems = new WorkItems();
+      workItems.renderWorkItem(document.getElementById('workitem'), workItemId);
+      workItems.renderPriceEditor(document.getElementById('workitem-price-editor'), workItemId);
+    </script>
   </body>
 </html>
