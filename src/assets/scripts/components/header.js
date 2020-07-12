@@ -10,7 +10,7 @@ class KakyHeader extends HTMLElement {
         <a class="p-2 text-dark" href="#">Invoices</a>
         <a class="p-2 text-dark" href="#">Statistcs</a>
       </nav>
-      <a class="btn btn-outline-primary" href="#">Sign up</a>
+      <div data-netlify-identity-menu id="netlify-identity-menu"></div>
     </div>
     `;
   }
