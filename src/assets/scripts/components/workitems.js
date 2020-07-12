@@ -27,7 +27,7 @@ class WorkItems {
   }
 
   async fetchWorkItems(overrideCache = false) {
-    if (this.workItems && this.workItems.length && !overrideCache) return;
+    if (this.workItems && this.workItems.length && !overrideCache) return this.workItems;
 
     let response = await fetch(this.workItemsUrl);
 
@@ -35,21 +35,22 @@ class WorkItems {
       throw new Error(`HTTP error fetching work items! status: ${response.status}`);
     } else {
       this.workItems = await response.json();
+      return this.workItems;
     }
   }
 
   async findWorkItem(id) {
-    await this.fetchWorkItems();
+    let workItems = await this.fetchWorkItems();
 
-    return this.workItems.find(x => x.id === id);
+    return workItems.find(x => x.id === id);
   }
 
   async renderAll(targetEl) {
     if (!targetEl || !targetEl.innerHTML) throw new Error('There is no target element to add work items into.');
 
-    await this.fetchWorkItems();
+    let workItems = await this.fetchWorkItems();
 
-    this.renderWorkItems(targetEl, data);
+    this.renderWorkItems(targetEl, workItems);
   }
 
   async renderPriceEditor(targetEl, id) {
