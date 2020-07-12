@@ -24,6 +24,8 @@ class KakyHeader extends HTMLElement {
             <i class="far fa-user-circle"></i>
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+              <span class="dropdown-item disabled fullname"></span>
+              <div class="dropdown-divider"></div>
               <a class="dropdown-item logout" href="#">Log Out</a>
             </div>
           </li>
@@ -40,11 +42,11 @@ class KakyHeader extends HTMLElement {
     this.loginEl.addEventListener('click', this.handleLoginRequest);
     this.logoutEl.addEventListener('click', this.handleLogoutRequest);
 
-    netlifyIdentity.on('login', () => this.displayLoggedIn());
+    netlifyIdentity.on('login', (user) => this.displayLoggedIn(user));
     netlifyIdentity.on('logout', () => { window.location.href = 'index.html'; });
     netlifyIdentity.on('init', user => {
       if (user) {
-        this.displayLoggedIn();
+        this.displayLoggedIn(user);
       }
     });
   }
@@ -59,9 +61,13 @@ class KakyHeader extends HTMLElement {
     netlifyIdentity.logout();
   }
 
-  displayLoggedIn() {
+  displayLoggedIn(user) {
     this.loginContainerEl.classList.add('d-none');
     this.loggedinContainerEl.classList.remove('d-none');
+
+    if (user.user_metadata && user.user_metadata.full_name) {
+      this.loggedinContainerEl.querySelector('span.fullname').innerHTML = user.user_metadata.full_name;
+    }
   }
 }
 
