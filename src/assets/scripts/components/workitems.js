@@ -3,19 +3,24 @@ class WorkItems {
     this.itemLimit = itemLimitPerRow || 3;
     this.workItems = [];
     this.workItemsUrl = './assets/data/workitems.json';
-    this.assignWorkUrl = './assign.html'
+    this.assignWorkUrl = './assign.html';
     this.workItemTemplate = `
-    <div class="card mb-4 shadow-sm">
-      <img class="img-fluid card-img-top" />
-      <div class="card-body d-flex flex-column">
-        <h1 class="card-title pricing-card-title"></h1>
-        <h2 class="mb-1 text-muted"></h2>
-        <ul class="text-left mt-3 mb-4"></ul>
+    <li class="list-group-item list-group-item-action">
+      <div class="media position-relative">
+        <div class="img-parent mr-3">
+          <img class="img-fluid img-thumbnail" />
+        </div>
+        <div class="media-body">
+          <div class="d-flex justify-content-between">
+            <h1 class="mb-1"></h1>
+            <h3><a href="#" class="stretched-link"></a></h3>
+          </div>
+          <ul class="mb-1"></ul>
+        </div>
       </div>
-      <div class="card-footer">
-        <a class="btn btn-lg btn-block btn-primary mt-auto">Assign</a>
-      </div>
-    </div>`;
+
+    </li>
+    `;
     this.workItemPriceEditorTemplate = `
     <h5 class="card-title">Set a price for <i></i></h5>
     <p class="card-text">Use the defult price or negotiate a new one.</p>
@@ -23,7 +28,7 @@ class WorkItems {
       <div class="input-group-prepend">
         <span class="input-group-text">$</span>
       </div>
-      <input type="text" class="form-control" aria-label="Negotiated Amount" />
+      <input type="number" min="0" class="form-control" aria-label="Negotiated Amount" />
     </div>
     `;
   }
@@ -31,35 +36,30 @@ class WorkItems {
   createWorkItemNode(item, template, allowAssignment = true) {
     const listItem = template.content.cloneNode(true);
 
-    const img = listItem.querySelector('img');
-    img.src = item.imageUrl;
+    const imgEl = listItem.querySelector('img');
+    imgEl.src = item.imageUrl;
+
+    const titleEl = listItem.querySelector('h1');
+    titleEl.innerHTML = item.name;
+
+    let priceEl;
 
     if (allowAssignment) {
-      img.onclick = () => { window.location = `${this.assignWorkUrl}?id=${item.id}`;};
-      img.style.cursor = 'pointer';
+      priceEl = listItem.querySelector('h3 a');
+      priceEl.href = `${this.assignWorkUrl}?id=${item.id}`;
+    } else {
+      priceEl = priceEl = listItem.querySelector('h3');
     }
 
-    const title = listItem.querySelector('h1');
-    title.innerHTML = item.name;
+    priceEl.innerHTML = `&#36;${item.price}`;
 
-    const price = listItem.querySelector('h2');
-    price.innerHTML = `&#36;${item.price}`;
-
-    const tasks = listItem.querySelector('ul');
+    const tasksEl = listItem.querySelector('ul');
 
     item.tasks.forEach(task => {
       const li = document.createElement('li');
-      li.innerHTML = task;
-      tasks.appendChild(li);
+      li.innerHTML = `${task}`;
+      tasksEl.appendChild(li);
     });
-
-    const assignButton = listItem.querySelector('a.btn');
-
-    if (allowAssignment) {
-      assignButton.href = `${this.assignWorkUrl}?id=${item.id}`;
-    } else {
-      assignButton.remove();
-    }
 
     return listItem;
   }
@@ -88,25 +88,11 @@ class WorkItems {
 
     const template = document.createElement('template');
     template.innerHTML = this.workItemTemplate;
-    let counter = 0;
-    let cardDeck;
     let workItems = await this.fetchWorkItems();
 
     workItems.forEach(item => {
-      if (counter === 0) {
-        cardDeck = document.createElement('div');
-        cardDeck.classList.add('card-deck', 'mb-3', 'text-center');
-        targetEl.appendChild(cardDeck);
-      }
-
-      if (counter === (this.itemLimit - 1)) {
-        counter = 0;
-      } else {
-        counter++;
-      }
-
       let card = this.createWorkItemNode(item, template);
-      cardDeck.appendChild(card);
+      targetEl.appendChild(card);
     });
   }
 

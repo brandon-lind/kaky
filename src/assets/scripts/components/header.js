@@ -13,9 +13,6 @@ class KakyHeader extends HTMLElement {
           <li class="nav-item">
             <a class="nav-link" href="index.html">Work Items</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Pricing</a>
-          </li>
           <li class="nav-item login">
             <a class="nav-link" href="#">Log In</a>
           </li>
