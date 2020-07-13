@@ -7,8 +7,18 @@
   user-select: none;
 }
 
+.img-parent {
+  max-width:300px;
+}
+
 @media (min-width: 768px) {
   .bd-placeholder-img-lg {
     font-size: 3.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .img-parent {
+    display:none;
   }
 }
