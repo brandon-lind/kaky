@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "workItemId": 1,
+    "workerId": 2,
+    "requesterId": "",
+    "price": 7,
+    "instructions": "don't forget to bring it back in!",
+    "status": "open"
+  },
+  {
+    "id": 2,
+    "workItemId": 4,
+    "workerId": 2,
+    "requesterId": "",
+    "price": 15,
+    "instructions": "blow off the mower when you're done",
+    "status": "open"
+  }
+]

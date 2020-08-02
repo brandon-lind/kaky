@@ -5,30 +5,17 @@ class WorkItems {
     this.workItemsUrl = './assets/data/workitems.json';
     this.assignWorkUrl = './assign.html';
     this.workItemTemplate = `
-    <li class="list-group-item list-group-item-action">
-      <div class="media position-relative">
-        <div class="img-parent mr-3">
-          <img class="img-fluid img-thumbnail" />
-        </div>
-        <div class="media-body">
-          <div class="d-flex justify-content-between">
-            <h1 class="mb-1"></h1>
-            <h3><a href="#" class="stretched-link"></a></h3>
-          </div>
-          <ul class="mb-1"></ul>
-        </div>
+    <div class="media position-relative">
+      <div class="img-parent mr-3">
+        <img class="img-fluid img-thumbnail" />
       </div>
-
-    </li>
-    `;
-    this.workItemPriceEditorTemplate = `
-    <h5 class="card-title">Set a price for <i></i></h5>
-    <p class="card-text">Use the defult price or negotiate a new one.</p>
-    <div class="input-group mb-3">
-      <div class="input-group-prepend">
-        <span class="input-group-text">$</span>
+      <div class="media-body">
+        <div class="d-flex justify-content-between">
+          <h1 class="mb-1"></h1>
+          <h3><a href="#" class="stretched-link"></a></h3>
+        </div>
+        <ul class="mb-1"></ul>
       </div>
-      <input type="number" min="0" class="form-control" aria-label="Negotiated Amount" />
     </div>
     `;
   }
@@ -77,10 +64,10 @@ class WorkItems {
     }
   }
 
-  async findWorkItem(id) {
+  async findWorkItemById(id) {
     let workItems = await this.fetchWorkItems();
 
-    return workItems.find(x => x.id === id);
+    return workItems.find(x => x.id == id); // let it be a loose match
   }
 
   async renderList(targetEl) {
@@ -88,47 +75,35 @@ class WorkItems {
 
     const template = document.createElement('template');
     template.innerHTML = this.workItemTemplate;
-    let workItems = await this.fetchWorkItems();
+    const workItems = await this.fetchWorkItems();
 
-    workItems.forEach(item => {
-      let card = this.createWorkItemNode(item, template);
-      targetEl.appendChild(card);
+    workItems.forEach(workItem => {
+      let li = document.createElement('li');
+      li.classList.add('list-group-item', 'list-group-item-action');
+      const workItemEl = this.createWorkItemNode(workItem, template);
+      li.appendChild(workItemEl);
+      targetEl.appendChild(li);
     });
   }
 
-  async renderPriceEditor(targetEl, id) {
-    if (!targetEl || !targetEl.innerHTML) throw new Error('There is no target element to the add work item price editor into.');
-
-    let workItem = await this.findWorkItem(id);
-
-    if (!workItem) throw new Error('The work item does not exist. Cannot render price editor.');
-
-    const template = document.createElement('template');
-    template.innerHTML = this.workItemPriceEditorTemplate;
-
-    const editor = template.content.cloneNode(true);
-
-    const inputBox = editor.querySelector('input');
-    inputBox.value = `${isNaN(workItem.price) ? 1 : workItem.price}`;
-
-    const itemDesc = editor.querySelector('i');
-    itemDesc.innerHTML = `${workItem.name}`;
-
-    targetEl.appendChild(editor);
-  }
-
-  async renderWorkItem(targetEl, id, allowAssignment = true) {
-    if (!targetEl || !targetEl.innerHTML) throw new Error('There is no target element to the add work item to.');
+  async renderWorkItem(targetEl, workItem, allowAssignment = true) {
+    if (!targetEl || !targetEl.innerHTML) throw new Error('There is no target element to render the work item into.');
+    if (!workItem) throw new Error('The work item does not exist.');
 
     const template = document.createElement('template');
     template.innerHTML = this.workItemTemplate;
 
-    let workItem = await this.findWorkItem(id);
-
-    if (!workItem) throw new Error('The work item does not exist.');
-
-    let workItemNode = this.createWorkItemNode(workItem, template, allowAssignment);
+    const workItemNode = this.createWorkItemNode(workItem, template, allowAssignment);
 
     targetEl.appendChild(workItemNode);
+  }
+
+  async renderWorkItemById(targetEl, id, allowAssignment = true) {
+    if (!targetEl || !targetEl.innerHTML) throw new Error('There is no target element to render the work item into.');
+    if (!id) throw new Error('No work item ID.');
+
+    const workItem = await this.findWorkItemById(id);
+
+    this.renderWorkItem(targetEl, workItem, allowAssignment);
   }
 }
