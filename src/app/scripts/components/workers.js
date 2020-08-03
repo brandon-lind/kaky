@@ -1,7 +1,7 @@
 class Workers {
   constructor() {
     this.workers = [];
-    this.workersUrl = './assets/data/workers.json';
+    this.workersUrl = '/.netlify/functions/workers-read-all';
     this.workerItemTemplate = `
     <div class="media">
       <svg class="bd-placeholder-img mr-3 rounded-circle" width="64" height="64" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: 64x64">
@@ -43,7 +43,8 @@ class Workers {
     if (!response.ok) {
       throw new Error(`HTTP error fetching workers! status: ${response.status}`);
     } else {
-      this.workers = await response.json();
+      const items = await response.json();
+      this.workers = items.default;
       return this.workers;
     }
   }
@@ -92,3 +93,5 @@ class Workers {
     targetEl.appendChild(workerNode);
   }
 }
+
+export { Workers };

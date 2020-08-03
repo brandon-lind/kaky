@@ -2,7 +2,7 @@ class WorkItems {
   constructor(itemLimitPerRow) {
     this.itemLimit = itemLimitPerRow || 3;
     this.workItems = [];
-    this.workItemsUrl = './assets/data/workitems.json';
+    this.workItemsUrl = '/.netlify/functions/workitems-read-all';
     this.assignWorkUrl = './assign.html';
     this.workItemTemplate = `
     <div class="media position-relative">
@@ -59,7 +59,8 @@ class WorkItems {
     if (!response.ok) {
       throw new Error(`HTTP error fetching work items! status: ${response.status}`);
     } else {
-      this.workItems = await response.json();
+      const items = await response.json();
+      this.workItems = items.default;
       return this.workItems;
     }
   }
@@ -107,3 +108,5 @@ class WorkItems {
     this.renderWorkItem(targetEl, workItem, allowAssignment);
   }
 }
+
+export { WorkItems };

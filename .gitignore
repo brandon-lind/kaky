@@ -109,3 +109,4 @@ dist
 
 # Netlify
 .netlify/
+dist-functions/

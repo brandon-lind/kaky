@@ -15,4 +15,4 @@ class KakyFooter extends HTMLElement {
 
 }
 
-window.customElements.define('kaky-footer', KakyFooter);
+export { KakyFooter };
