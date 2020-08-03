@@ -25,6 +25,7 @@
   "homepage": "https://github.com/brandon-lind/kaky#readme",
   "devDependencies": {
     "clean-webpack-plugin": "^3.0.0",
+    "copy-webpack-plugin": "^6.0.3",
     "css-loader": "^4.2.0",
     "dotenv-webpack": "^2.0.0",
     "file-loader": "^6.0.0",
