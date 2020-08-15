@@ -2,7 +2,7 @@ class WorkItems {
   constructor(itemLimitPerRow) {
     this.itemLimit = itemLimitPerRow || 3;
     this.workItems = [];
-    this.workItemsUrl = '/.netlify/functions/workitems-read-all';
+    this.workItemsUrl = '/.netlify/functions/workitems';
     this.assignWorkUrl = './assign.html';
     this.workItemTemplate = `
     <div class="media position-relative">

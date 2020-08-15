@@ -1,5 +1,5 @@
 import { WorkRequests } from '../components/work-requests';
-import { WorkItems } from '../components/workitems';
+import { WorkItems } from '../components/work-items';
 
 export async function workOpenPage() {
   const parsedUrl = new URL(window.location.href);
