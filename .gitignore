@@ -1,5 +1,6 @@
 # Custom
 public/
+public-functions/
 
 # Logs
 logs
@@ -109,4 +110,6 @@ dist
 
 # Netlify
 .netlify/
-dist-functions/
+
+# Local Netlify folder
+.netlify
