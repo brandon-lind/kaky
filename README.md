@@ -8,35 +8,46 @@ Make sure you have the following installed before starting:
 
 - nodejs v14.8.x
 - npm v6.14.x
-- A Netlify account/site with "[Functions](https://docs.netlify.com/functions/overview/)" enabled
+- docker desktop
+- aws-cli
 
-## Installing
+## Install
 
-Install the dependencies
+Install the application dependencies using the normal npm install routine
 
 ```
 npm install
 ```
 
-Hook up the Netlify site to your project by running this utility and following the prompts
+### Create the local S3 bucket
 
-```
-npx netlify init
-```
+- Start the local AWS S3 instance using docker compose
+  ```
+  npm run infrastructure
+  ```
+- Once started, create the local bucket
+  ```
+  aws --endpoint-url=http://localhost:4572 s3 mb s3://kaky
+  ```
 
 ## Running the App
 
-To start the app ...
+Just tell it to start. It'll build and spool up the app (webpack), the services (serverless lambda), and the infrastructure (localstack)
+
 ```
 npm start
 ```
 
 When you're done, ctrl-c
 
+### Stopping the local AWS S3 service
+
+You'll probably only do this to save resources or when you're done working with the app
+
+```
+(cd ./infrastructure && docker-compose down)
+```
+
 ## Testing
 
 Yeah, about that ...
-
-## Deploying
-
-Use the Netlify repo hooks and push your changes or use `npx netlify deploy`.
