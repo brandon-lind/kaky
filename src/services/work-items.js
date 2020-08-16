@@ -3,13 +3,13 @@ import awsServerlessExpress from 'aws-serverless-express';
 import awsServerlessExpressMiddleware from 'aws-serverless-express/middleware';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import * as items from './data/workrequests.json';
+import * as items from './data/work-items.json';
 
 const app = express();
 const router = express.Router();
 
 /* We need to set our base path for express to match on our function route */
-const functionName = 'workrequests';
+const functionName = 'work-items';
 const basePath = `/.netlify/functions/${functionName}/`;
 
 
@@ -39,7 +39,7 @@ const server = awsServerlessExpress.createServer(app);
 // Export lambda handler
 export function handler(event, context, callback) {
   try {
-    return awsServerlessExpress.proxy(server, event, context, 'CALLBACK', callback);
+    awsServerlessExpress.proxy(server, event, context, 'CALLBACK', callback);
   } catch (e) {
     callback(null, failure({ status: false }, e));
   }

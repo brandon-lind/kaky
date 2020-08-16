@@ -17,7 +17,6 @@ const basePath = `/.netlify/functions/${functionName}/`;
 
 
 router.get('/', (req, res) => {
-  throw new Error('this is just a test');
   res.json(items);
 });
 
@@ -40,7 +39,7 @@ const server = awsServerlessExpress.createServer(app);
 // Export lambda handler
 export function handler(event, context, callback) {
   try {
-    return awsServerlessExpress.proxy(server, event, context, 'CALLBACK', callback);
+    awsServerlessExpress.proxy(server, event, context, 'CALLBACK', callback);
   } catch (e) {
     callback(null, failure({ status: false }, e));
   }
