@@ -2,7 +2,7 @@ class WorkRequests {
   constructor() {
     this.items = [];
     this.defaultPrice = 1;
-    this.url = '/.netlify/functions/workrequests';
+    this.url = '/.netlify/functions/work-requests';
     this.emptyInstructionsMessage = 'You got lucky ... no special instructions this time.';
     this.workRequestInstructionsTemplate = `
     <textarea class="form-control" aria-label="Special instructions" maxlength="200"></textarea>

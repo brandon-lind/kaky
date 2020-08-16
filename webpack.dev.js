@@ -5,7 +5,7 @@ module.exports = merge(common, {
   mode: 'development',
   devtool: 'inline-source-map',
   devServer: {
-    contentBase: './public',
+    contentBase: './dist-app',
     writeToDisk: true,
     proxy: {
       '/.netlify/functions': {

@@ -1,6 +1,6 @@
 [build]
   command = "npm run build"
-  functions = "public-functions"
-  publish = "public"
+  functions = "dist-services"
+  publish = "dist-app"
 [dev]
   port = 9000

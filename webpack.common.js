@@ -9,13 +9,13 @@ module.exports = {
   },
   output: {
     filename: '[name]-bundle.js',
-    path: path.resolve(__dirname, 'public'),
+    path: path.resolve(__dirname, 'dist-app'),
   },
   plugins: [
     new CleanWebpackPlugin(),
     new CopyPlugin({
       patterns: [
-        { from: path.resolve(__dirname, 'src/app/assets/img'), to: path.resolve(__dirname, 'public/assets/img') }
+        { from: path.resolve(__dirname, 'src/app/assets/img'), to: path.resolve(__dirname, 'dist-app/assets/img') }
       ]
     }),
     new HtmlWebpackPlugin({
