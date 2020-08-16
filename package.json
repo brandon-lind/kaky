@@ -3,14 +3,14 @@
   "version": "1.0.0",
   "description": "A super simple chore invoicing app for (Ka)yla and (Ky)le.",
   "scripts": {
-    "bootstrap": "node ./src/infrastructure/bootstrap-fauna-database.js",
-    "prebuild": "echo 'setup faunaDB' && npm run bootstrap",
+    "bootstrap": "echo 'nothing to bootstrap yet'",
+    "prebuild": "echo 'bootstrapping the app' && npm run bootstrap",
     "build": "npm-run-all --parallel build:**",
     "build:app": "webpack --config webpack.prod.js",
-    "build:functions": "netlify-lambda build ./src/functions -c ./webpack.functions.js",
+    "build:functions": "netlify-lambda build ./src/services -c ./webpack.services.js",
     "start": "npm-run-all --parallel start:**",
     "start:app": "webpack-dev-server --open --config webpack.dev.js",
-    "start:functions": "netlify-lambda serve ./src/functions -c ./webpack.functions.js"
+    "start:functions": "netlify-lambda serve ./src/services -c ./webpack.services.js"
   },
   "repository": {
     "type": "git",
