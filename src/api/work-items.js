@@ -1,22 +1,27 @@
 import express from 'express';
 import awsServerlessExpress from 'aws-serverless-express';
 import awsServerlessExpressMiddleware from 'aws-serverless-express/middleware';
-import bodyParser from 'body-parser';
 import cors from 'cors';
 import * as items from './data/work-items.json';
 
+// Create the app
 const app = express();
-const router = express.Router();
 
-/* We need to set our base path for express to match on our function route */
+// We need to set our base path for express to match on our function route
 const functionName = 'work-items';
-const basePath = `/.netlify/functions/${functionName}/`;
+const basePath = `/.netlify/functions/${functionName}`;
+
+// Apply the express middlewares
+app.use(cors());
+app.use(express.json());
+app.use(awsServerlessExpressMiddleware.eventContext());
 
 
 
 
 
-router.get('/', (req, res) => {
+// Define the routes
+app.get(`${basePath}/`, (req, res) => {
   res.json(items);
 });
 
@@ -24,23 +29,14 @@ router.get('/', (req, res) => {
 
 
 
-// Set the routes
-app.use(basePath, router);
-
-// Apply the express middlewares
-router.use(cors());
-router.use(bodyParser.json());
-router.use(bodyParser.urlencoded({ extended: true }));
-router.use(awsServerlessExpressMiddleware.eventContext());
-
-// Initialize awsServerlessExpress
+// Initialize the server
 const server = awsServerlessExpress.createServer(app);
 
-// Export lambda handler
+// Export the lambda handler
 export function handler(event, context, callback) {
   try {
     awsServerlessExpress.proxy(server, event, context, 'CALLBACK', callback);
   } catch (e) {
-    callback(null, failure({ status: false }, e));
+    callback(null, failure({ message: 'There was an error.' }, e));
   }
 }

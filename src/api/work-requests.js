@@ -1,46 +1,75 @@
 import express from 'express';
 import awsServerlessExpress from 'aws-serverless-express';
 import awsServerlessExpressMiddleware from 'aws-serverless-express/middleware';
-import bodyParser from 'body-parser';
 import cors from 'cors';
 import * as items from './data/work-requests.json';
 
+// Create the app
 const app = express();
-const router = express.Router();
 
-/* We need to set our base path for express to match on our function route */
+// We need to set our base path for express to match on our function route
 const functionName = 'work-requests';
-const basePath = `/.netlify/functions/${functionName}/`;
+const basePath = `/.netlify/functions/${functionName}`;
+
+// Apply the express middlewares
+app.use(cors());
+app.use(express.json());
+app.use(awsServerlessExpressMiddleware.eventContext());
 
 
 
 
 
-router.get('/', (req, res) => {
+// Define the routes
+app.get(`${basePath}/`, (req, res) => {
   res.json(items);
+});
+
+app.get(`${basePath}/:id`, (req, res) => {
+  const item = items.find(() => { return this.id == req.params.id; });
+
+  if (!item) {
+    res.status(404).json({ message: 'The work request was not found.' });
+    return;
+  }
+
+  res.json(item);
+});
+
+app.get(`${basePath}/worker/:workerId`, (req, res) => {
+  const item = items.find(() => { return this.workerId == req.params.workerId; });
+
+  res.json(item);
+});
+
+app.get(`${basePath}/requester/:requesterId`, (req, res) => {
+  const item = items.find(() => { return this.requesterId == req.params.requesterId; });
+
+  res.json(item);
+});
+
+app.post(`${basePath}/`, (req, res) => {
+  const { body } = req;
+
+  body.id = items.length + 1;
+
+  items.push(body);
+
+  res.json({ message: 'The work request created.', data: body });
 });
 
 
 
 
 
-// Set the routes
-app.use(basePath, router);
-
-// Apply the express middlewares
-router.use(cors());
-router.use(bodyParser.json());
-router.use(bodyParser.urlencoded({ extended: true }));
-router.use(awsServerlessExpressMiddleware.eventContext());
-
-// Initialize awsServerlessExpress
+// Initialize the server
 const server = awsServerlessExpress.createServer(app);
 
-// Export lambda handler
+// Export the lambda handler
 export function handler(event, context, callback) {
   try {
     awsServerlessExpress.proxy(server, event, context, 'CALLBACK', callback);
   } catch (e) {
-    callback(null, failure({ status: false }, e));
+    callback(null, failure({ message: 'There was an error.' }, e));
   }
 }

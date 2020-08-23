@@ -4,13 +4,13 @@
   "description": "A super simple chore invoicing app for (Ka)yla and (Ky)le.",
   "scripts": {
     "build": "npm-run-all --parallel build:**",
-    "build:app": "webpack --config webpack.prod.js",
-    "build:services": "netlify-lambda build ./src/api -c ./webpack.api.prod.js",
+    "build:api": "netlify-lambda build ./src/api -c ./webpack.api.prod.js",
+    "build:ui": "webpack --config webpack.prod.js",
     "infrastructure": "(cd ./infrastructure && docker-compose up --detach --remove-orphans)",
     "start": "npm-run-all --parallel start:**",
-    "start:app": "webpack-dev-server --open --config webpack.dev.js",
+    "start:api": "netlify-lambda serve ./src/api -c ./webpack.api.dev.js",
     "start:infrastructure": "npm run infrastructure",
-    "start:services": "netlify-lambda serve ./src/api -c ./webpack.api.dev.js"
+    "start:ui": "webpack-dev-server --open --config webpack.dev.js"
   },
   "repository": {
     "type": "git",
@@ -25,7 +25,6 @@
   "homepage": "https://github.com/brandon-lind/kaky#readme",
   "devDependencies": {
     "aws-serverless-express": "^3.3.8",
-    "body-parser": "^1.19.0",
     "clean-webpack-plugin": "^3.0.0",
     "copy-webpack-plugin": "^6.0.3",
     "cors": "^2.8.5",
@@ -43,9 +42,5 @@
     "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.11.0",
     "webpack-merge": "^5.0.9"
-  },
-  "dependencies": {
-    "chalk": "^4.1.0",
-    "faunadb": "^2.14.2"
   }
 }
