@@ -2,7 +2,10 @@ import express from 'express';
 import awsServerlessExpress from 'aws-serverless-express';
 import awsServerlessExpressMiddleware from 'aws-serverless-express/middleware';
 import cors from 'cors';
-import * as items from './data/work-items.json';
+import * as rawItems from './data/work-items.json';
+
+// Standardize items
+const items = rawItems.default;
 
 // Create the app
 const app = express();
@@ -22,7 +25,7 @@ app.use(awsServerlessExpressMiddleware.eventContext());
 
 // Define the routes
 app.get(`${basePath}/`, (req, res) => {
-  res.json(items);
+  res.json({ message: '', data: items });
 });
 
 
