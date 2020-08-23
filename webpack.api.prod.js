@@ -1,9 +1,9 @@
 const { merge } = require('webpack-merge');
-const common = require('./webpack.services.common.js');
+const common = require('./webpack.api.common.js');
 
 module.exports = merge(common, {
-  mode: 'development',
+  mode: 'production',
   optimization: {
-    minimize: false
+    minimize: true
   }
 });

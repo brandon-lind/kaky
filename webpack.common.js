@@ -5,30 +5,30 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   entry: {
-    app: './src/app/scripts/app.js'
+    app: './src/ui/scripts/app.js'
   },
   output: {
     filename: '[name]-bundle.js',
-    path: path.resolve(__dirname, 'dist-app'),
+    path: path.resolve(__dirname, 'dist-ui'),
   },
   plugins: [
     new CleanWebpackPlugin(),
     new CopyPlugin({
       patterns: [
-        { from: path.resolve(__dirname, 'src/app/assets/img'), to: path.resolve(__dirname, 'dist-app/assets/img') }
+        { from: path.resolve(__dirname, 'src/ui/assets/img'), to: path.resolve(__dirname, 'dist-ui/assets/img') }
       ]
     }),
     new HtmlWebpackPlugin({
       filename: 'index.html',
-      template: './src/app/index.html'
+      template: './src/ui/index.html'
     }),
     new HtmlWebpackPlugin({
       filename: 'assign.html',
-      template: './src/app/assign.html'
+      template: './src/ui/assign.html'
     }),
     new HtmlWebpackPlugin({
       filename: 'work-open.html',
-      template: './src/app/work-open.html'
+      template: './src/ui/work-open.html'
     })
   ],
   module: {

@@ -1,6 +1,6 @@
 # Custom
-dist-app/
-dist-services/
+dist-api/
+dist-ui/
 
 # Logs
 logs

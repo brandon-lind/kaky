@@ -1,6 +1,6 @@
 # KAKY
 
-A super simple chore invoicing app for (Ka)yla &amp; (Ky)le. This app is a way to teach my kids how to code and to keep track of chores and payment.
+A super simple chore invoicing app for (Ka)yla &amp; (Ky)le. This app is a way to teach my kids how to code and to keep track of chores and payments.
 
 ## Prerequisites
 
@@ -32,7 +32,7 @@ npm install
 
 ## Running the App
 
-Just tell it to start. It'll build and spool up the app (webpack), the services (serverless lambda), and the infrastructure (localstack)
+Just tell it to start. It'll build, spool up the UI (webpack), the API (serverless lambda), and the infrastructure (docker based localstack)
 
 ```
 npm start

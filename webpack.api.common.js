@@ -4,7 +4,7 @@ const path = require('path');
 
 module.exports = {
   output: {
-    path: path.resolve(__dirname, 'dist-services'),
+    path: path.resolve(__dirname, 'dist-api'),
   },
   plugins: [
     new CleanWebpackPlugin(),

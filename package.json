@@ -5,12 +5,12 @@
   "scripts": {
     "build": "npm-run-all --parallel build:**",
     "build:app": "webpack --config webpack.prod.js",
-    "build:services": "netlify-lambda build ./src/services -c ./webpack.services.prod.js",
+    "build:services": "netlify-lambda build ./src/api -c ./webpack.api.prod.js",
     "infrastructure": "(cd ./infrastructure && docker-compose up --detach --remove-orphans)",
     "start": "npm-run-all --parallel start:**",
     "start:app": "webpack-dev-server --open --config webpack.dev.js",
     "start:infrastructure": "npm run infrastructure",
-    "start:services": "netlify-lambda serve ./src/services -c ./webpack.services.dev.js"
+    "start:services": "netlify-lambda serve ./src/api -c ./webpack.api.dev.js"
   },
   "repository": {
     "type": "git",
