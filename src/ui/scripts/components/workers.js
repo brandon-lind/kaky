@@ -44,7 +44,7 @@ class Workers {
       throw new Error(`HTTP error fetching workers! status: ${response.status}`);
     } else {
       const items = await response.json();
-      this.workers = items.default;
+      this.workers = items.data;
       return this.workers;
     }
   }

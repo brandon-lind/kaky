@@ -60,7 +60,7 @@ class WorkItems {
       throw new Error(`HTTP error fetching work items! status: ${response.status}`);
     } else {
       const items = await response.json();
-      this.workItems = items.default;
+      this.workItems = items.data;
       return this.workItems;
     }
   }

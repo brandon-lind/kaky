@@ -27,7 +27,7 @@ class WorkRequests {
       throw new Error(`HTTP error fetching work requests! status: ${response.status}`);
     } else {
       const items = await response.json();
-      this.items = items.default;
+      this.items = items.data;
       return this.items;
     }
   }
