@@ -2,7 +2,10 @@ import express from 'express';
 import awsServerlessExpress from 'aws-serverless-express';
 import awsServerlessExpressMiddleware from 'aws-serverless-express/middleware';
 import cors from 'cors';
-import * as items from './data/work-requests.json';
+import * as rawItems from './data/work-requests.json';
+
+// Standardize items
+const items = rawItems.default;
 
 // Create the app
 const app = express();
@@ -22,14 +25,15 @@ app.use(awsServerlessExpressMiddleware.eventContext());
 
 // Define the routes
 app.get(`${basePath}/`, (req, res) => {
-  res.json(items);
+  res.json({ message: '', data: items });
 });
 
 app.get(`${basePath}/:id`, (req, res) => {
-  const item = items.find(() => { return this.id == req.params.id; });
+  const { params } = req;
+  const item = items.find(x => x.id == params.id);
 
   if (!item) {
-    res.status(404).json({ message: 'The work request was not found.' });
+    res.status(404).json({ message: 'The work request was not found.', data: null });
     return;
   }
 
@@ -37,15 +41,17 @@ app.get(`${basePath}/:id`, (req, res) => {
 });
 
 app.get(`${basePath}/worker/:workerId`, (req, res) => {
-  const item = items.find(() => { return this.workerId == req.params.workerId; });
+  const { params } = req;
+  const item = items.find(x => x.workerId == params.workerId);
 
-  res.json(item);
+  res.json({ message: '', data: item });
 });
 
 app.get(`${basePath}/requester/:requesterId`, (req, res) => {
-  const item = items.find(() => { return this.requesterId == req.params.requesterId; });
+  const { params } = req;
+  const item = items.find(x => x.requesterId == params.requesterId);
 
-  res.json(item);
+  res.json({ message: '', data: item });
 });
 
 app.post(`${basePath}/`, (req, res) => {
@@ -56,6 +62,20 @@ app.post(`${basePath}/`, (req, res) => {
   items.push(body);
 
   res.json({ message: 'The work request created.', data: body });
+});
+
+app.patch(`${basePath}/:id`, (req, res) => {
+  const { body, params } = req;
+  const item = items.find(x => x.id == params.id);
+
+  if (!item) {
+    res.status(404).json({ message: 'The work request was not found.', data: null });
+    return;
+  }
+
+  item.status = body.status;
+
+  res.json({ message: 'The work request was updated.', data: item });
 });
 
 
