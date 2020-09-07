@@ -1,0 +1,13 @@
+version: '3.7'
+services:
+  db:
+    image: mongo:4.4
+    container_name: mongodb_service
+    ports:
+      - 27017:27017
+    environment:
+      - MONGO_INITDB_DATABASE=Kaky
+      - MONGO_INITDB_ROOT_USERNAME=kaky_admin
+      - MONGO_INITDB_ROOT_PASSWORD=localHOST_99
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d

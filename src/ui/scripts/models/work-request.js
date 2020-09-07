@@ -17,3 +17,5 @@ class WorkRequest {
     this.price = workItem.price || 1;
   }
 }
+
+export { WorkRequest };

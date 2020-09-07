@@ -68,4 +68,4 @@ class KakyHeader extends HTMLElement {
   }
 }
 
-window.customElements.define('kaky-header', KakyHeader);
+export { KakyHeader };

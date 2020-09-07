@@ -2,7 +2,7 @@ class WorkRequests {
   constructor() {
     this.items = [];
     this.defaultPrice = 1;
-    this.url = './assets/data/workrequests.json';
+    this.url = '/.netlify/functions/work-requests';
     this.emptyInstructionsMessage = 'You got lucky ... no special instructions this time.';
     this.workRequestInstructionsTemplate = `
     <textarea class="form-control" aria-label="Special instructions" maxlength="200"></textarea>
@@ -20,13 +20,14 @@ class WorkRequests {
   async fetchWorkRequests(overrideCache = false) {
     if (this.item && this.items.length && !overrideCache) return this.items;
 
-    let response = await fetch(this.url);
+    const response = await fetch(this.url);
 
     if (!response.ok) {
       this.items = [];
       throw new Error(`HTTP error fetching work requests! status: ${response.status}`);
     } else {
-      this.items = await response.json();
+      const items = await response.json();
+      this.items = items.data;
       return this.items;
     }
   }
@@ -73,3 +74,5 @@ class WorkRequests {
     targetEl.appendChild(el);
   }
 }
+
+export { WorkRequests };

@@ -1,5 +1,6 @@
 # Custom
-public/
+dist-api/
+dist-ui/
 
 # Logs
 logs
@@ -107,5 +108,8 @@ dist
 .tern-port
 .DS_Store
 
-# Netlify
-.netlify/
+# Local Netlify folder
+.netlify
+
+# Localstack temp folder
+infrastructure/tmp/
