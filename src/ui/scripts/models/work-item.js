@@ -7,3 +7,5 @@ class WorkItem {
     this.tasks = [];
   }
 }
+
+export { WorkItem };
