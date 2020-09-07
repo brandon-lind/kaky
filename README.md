@@ -19,34 +19,28 @@ Install the application dependencies using the normal npm install routine
 npm install
 ```
 
-### Create the local S3 bucket
-
-- Start the local AWS S3 instance using docker compose
-  ```
-  npm run infrastructure
-  ```
-- Once started, create the local bucket
-  ```
-  aws --endpoint-url=http://localhost:4572 s3 mb s3://kaky
-  ```
-
 ## Running the App
 
-Just tell it to start. It'll build, spool up the UI (webpack), the API (serverless lambda), and the infrastructure (docker based localstack)
+Just tell it to start. It'll build, spool up the UI (webpack), the API (serverless lambda), and the infrastructure (docker based MongoDB).
 
 ```
 npm start
 ```
+>NOTE: The UI might come up before the infrastructure and API ... just wait for things to settle, then refresh the page.
 
 When you're done, ctrl-c
 
-### Stopping the local AWS S3 service
+---
 
-You'll probably only do this to save resources or when you're done working with the app
+### Stopping the local infrastructure
+
+You'll probably only do this to save resources when you're done working with the app, or to reset the database.
 
 ```
-(cd ./infrastructure && docker-compose down)
+(cd ./infrastructure && docker-compose down --remove-orphans -v)
 ```
+
+---
 
 ## Testing
 
