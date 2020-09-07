@@ -1,11 +1,13 @@
+import 'dotenv/config';
 import express from 'express';
 import awsServerlessExpress from 'aws-serverless-express';
 import awsServerlessExpressMiddleware from 'aws-serverless-express/middleware';
 import cors from 'cors';
-import * as rawItems from './data/work-requests.json';
+import mongoose from 'mongoose';
+import { WorkRequest } from './models/work-requests';
 
-// Standardize items
-const items = rawItems.default;
+// Cached database connection
+let dbConn = null;
 
 // Create the app
 const app = express();
@@ -24,58 +26,123 @@ app.use(awsServerlessExpressMiddleware.eventContext());
 
 
 // Define the routes
-app.get(`${basePath}/`, (req, res) => {
-  res.json({ message: '', data: items });
-});
+app.get(`${basePath}/`, async (req, res) => {
+  try {
+    const items = await WorkRequest.find();
 
-app.get(`${basePath}/:id`, (req, res) => {
-  const { params } = req;
-  const item = items.find(x => x.id == params.id);
+    res.json({ message: ``, data: items });
+  } catch(e) {
+    console.log(e);
 
-  if (!item) {
-    res.status(404).json({ message: 'The work request was not found.', data: null });
-    return;
+    res.status(500).json({ message: `Hm, that broke something.`, data: null });
   }
-
-  res.json(item);
 });
 
-app.get(`${basePath}/worker/:workerId`, (req, res) => {
-  const { params } = req;
-  const item = items.find(x => x.workerId == params.workerId);
+app.get(`${basePath}/:id`, async (req, res) => {
+  try {
+    const { params } = req;
+    const item = await WorkRequest.findOne({ _id: params.id });
 
-  res.json({ message: '', data: item });
+    if (!item) {
+      res.status(404).json({ message: `The work request was not found.`, data: null });
+      return;
+    }
+
+    res.json({message: ``, data: item });
+  } catch(e) {
+    console.log(e);
+
+    res.status(500).json({ message: `Hm, that broke something.`, data: null });
+  }
 });
 
-app.get(`${basePath}/requester/:requesterId`, (req, res) => {
-  const { params } = req;
-  const item = items.find(x => x.requesterId == params.requesterId);
+app.get(`${basePath}/worker/:workerId`, async (req, res) => {
+  try {
+    const { params } = req;
+    const item = await WorkRequest.findOne({ workerId: params.workerId });
 
-  res.json({ message: '', data: item });
+    if (!item) {
+      res.status(404).json({ message: `There aren't any work request associated with that worker.`, data: null });
+      return;
+    }
+
+    res.json({message: ``, data: item });
+  } catch(e) {
+    console.log(e);
+
+    res.status(500).json({ message: `Hm, that broke something.`, data: null });
+  }
 });
 
-app.post(`${basePath}/`, (req, res) => {
+app.get(`${basePath}/requester/:requesterId`, async (req, res) => {
+  try {
+    const { params } = req;
+    const item = await WorkRequest.findOne({ requesterId: params.requesterId });
+
+    if (!item) {
+      res.status(404).json({ message: `There aren't any work request associated with that requester.`, data: null });
+      return;
+    }
+
+    res.json({message: ``, data: item });
+  } catch(e) {
+    console.log(e);
+
+    res.status(500).json({ message: `Hm, that broke something.`, data: null });
+  }
+});
+
+app.post(`${basePath}/`, async (req, res) => {
   const { body } = req;
 
-  body.id = items.length + 1;
+  try {
+    let item = new WorkRequest({
+      workItemId: body.workItemId,
+      workerId: body.workerId,
+      requesterId: body.requesterId,
+      price: body.price,
+      instructions: body.instructions,
+      status: body.status
+    });
 
-  items.push(body);
+    await item.save({ isNew: true });
 
-  res.json({ message: 'The work request created.', data: body });
+    res.status(201).json({ message: `The work request was created.`, data: item });
+  } catch(e) {
+    console.log(e);
+
+    if (e.message.indexOf('WorkRequest validation failed:') !== -1) {
+      res.status(400).json({ message: e.message, data: null });
+    } else {
+      res.status(500).json({ message: `Hm, that broke something.`, data: null });
+    }
+  }
 });
 
-app.patch(`${basePath}/:id`, (req, res) => {
-  const { body, params } = req;
-  const item = items.find(x => x.id == params.id);
+app.patch(`${basePath}/:id`, async (req, res) => {
+  try {
+    const { body, params } = req;
+    const item = await WorkRequest.findOne({ _id: params.id });
 
-  if (!item) {
-    res.status(404).json({ message: 'The work request was not found.', data: null });
-    return;
+    if (!item) {
+      res.status(404).json({ message: `The work request was not found.`, data: null });
+      return;
+    }
+
+    item.status = body.status;
+
+    await item.save();
+
+    res.json({ message: `The work request was updated.`, data: item });
+  } catch(e) {
+    console.log(e);
+
+    if (e.message.indexOf('WorkRequest validation failed:') !== -1) {
+      res.status(400).json({ message: e.message, data: null });
+    } else {
+      res.status(500).json({ message: `Hm, that broke something.`, data: null });
+    }
   }
-
-  item.status = body.status;
-
-  res.json({ message: 'The work request was updated.', data: item });
 });
 
 
@@ -86,10 +153,22 @@ app.patch(`${basePath}/:id`, (req, res) => {
 const server = awsServerlessExpress.createServer(app);
 
 // Export the lambda handler
-export function handler(event, context, callback) {
-  try {
-    awsServerlessExpress.proxy(server, event, context, 'CALLBACK', callback);
-  } catch (e) {
-    callback(null, failure({ message: 'There was an error.' }, e));
+exports.handler = async (event, context, callback) => {
+  // See https://www.mongodb.com/blog/post/serverless-development-with-nodejs-aws-lambda-mongodb-atlas
+  context.callbackWaitsForEmptyEventLoop = false;
+
+  if (!dbConn) {
+    dbConn = await mongoose.connect(process.env.MONGODB_URI, {
+      // Buffering means mongoose will queue up operations if it gets
+      // disconnected from MongoDB and send them when it reconnects.
+      // With serverless, better to fail fast if not connected.
+      bufferCommands: false, // Disable mongoose buffering
+      bufferMaxEntries: 0, // and MongoDB driver buffering
+      dbName: process.env.MONGODB_DBNAME,
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    });
   }
+
+  return awsServerlessExpress.proxy(server, event, context, 'PROMISE').promise;
 }

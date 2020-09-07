@@ -1,17 +1,13 @@
 version: '3.7'
 services:
-  localstack:
-    image: localstack/localstack
-    container_name: localstack_service
+  db:
+    image: mongo:4.4
+    container_name: mongodb_service
     ports:
-      - "4567-4584:4567-4584"
+      - 27017:27017
     environment:
-      - SERVICES=s3
-      - DEBUG=1
-      - DATA_DIR=/tmp/localstack/data
+      - MONGO_INITDB_DATABASE=Kaky
+      - MONGO_INITDB_ROOT_USERNAME=kaky_admin
+      - MONGO_INITDB_ROOT_PASSWORD=localHOST_99
     volumes:
-      - ./tmp/localstack:/tmp/localstack
-      - /var/run/docker.sock:/var/run/docker.sock
-networks:
-  default:
-    name: localstack
+      - ./db:/docker-entrypoint-initdb.d
