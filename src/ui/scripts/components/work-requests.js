@@ -39,7 +39,7 @@ class WorkRequests {
   }
 
   renderInstructions(targetEl, workRequest, editable = false, showEmptyInstructionsMessage = true) {
-    if (!targetEl || !targetEl.innerHTML) throw new Error('There is no target element to render the work request instructions into.');
+    if (!targetEl || targetEl.innerHTML === undefined) throw new Error('There is no target element to render the work request instructions into.');
     if (!workRequest) throw new Error('There is no work request!');
 
     const template = document.createElement('template');
@@ -60,7 +60,7 @@ class WorkRequests {
   }
 
   renderPrice(targetEl, workRequest, editable = false) {
-    if (!targetEl || !targetEl.innerHTML) throw new Error('There is no target element to render the work request price into.');
+    if (!targetEl || targetEl.innerHTML === undefined) throw new Error('There is no target element to render the work request price into.');
     if (!workRequest) throw new Error('There is no work request!');
 
     const template = document.createElement('template');

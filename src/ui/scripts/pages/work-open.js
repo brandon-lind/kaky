@@ -9,7 +9,11 @@ export async function workOpenPage() {
 
   const workRequest = await workRequests.findWorkRequestById(workRequestId);
 
-  workItems.renderWorkItemById(document.getElementById('workitem'), workRequest.workItemId, false);
-  workRequests.renderPrice(document.getElementById('price'), workRequest);
-  workRequests.renderInstructions(document.getElementById('instructions'), workRequest);
+  const workItemTargetEl = document.querySelector('#workitem');
+  const priceTargetEl = document.querySelector('#price');
+  const instructionsTargetEl = document.querySelector('#instructions');
+
+  workItems.renderWorkItemById(workItemTargetEl, workRequest.workItemId, false);
+  workRequests.renderPrice(priceTargetEl, workRequest);
+  workRequests.renderInstructions(instructionsTargetEl, workRequest);
 };

@@ -72,7 +72,7 @@ class WorkItems {
   }
 
   async renderList(targetEl) {
-    if (!targetEl || !targetEl.innerHTML) throw new Error('There is no target element to add work items into.');
+    if (!targetEl || targetEl.innerHTML === undefined) throw new Error('There is no target element to add work items into.');
 
     const template = document.createElement('template');
     template.innerHTML = this.workItemTemplate;
@@ -88,7 +88,7 @@ class WorkItems {
   }
 
   async renderWorkItem(targetEl, workItem, allowAssignment = true) {
-    if (!targetEl || !targetEl.innerHTML) throw new Error('There is no target element to render the work item into.');
+    if (!targetEl || targetEl.innerHTML === undefined) throw new Error('There is no target element to render the work item into.');
     if (!workItem) throw new Error('The work item does not exist.');
 
     const template = document.createElement('template');
@@ -100,7 +100,7 @@ class WorkItems {
   }
 
   async renderWorkItemById(targetEl, id, allowAssignment = true) {
-    if (!targetEl || !targetEl.innerHTML) throw new Error('There is no target element to render the work item into.');
+    if (!targetEl || targetEl.innerHTML === undefined) throw new Error('There is no target element to render the work item into.');
     if (!id) throw new Error('No work item ID.');
 
     const workItem = await this.findWorkItemById(id);

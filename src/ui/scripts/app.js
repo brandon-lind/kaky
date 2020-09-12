@@ -5,7 +5,7 @@ import { indexPage } from './pages/index';
 import { workOpenPage } from './pages/work-open';
 import '../assets/style.css';
 
-(() => {
+window.addEventListener('DOMContentLoaded', () => {
   window.customElements.define('kaky-footer', KakyFooter);
   window.customElements.define('kaky-header', KakyHeader);
 
@@ -22,5 +22,4 @@ import '../assets/style.css';
       indexPage();
       break;
   }
-})();
-
+});

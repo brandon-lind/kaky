@@ -56,7 +56,7 @@ class Workers {
   }
 
   async renderList(targetEl) {
-    if (!targetEl || !targetEl.innerHTML) throw new Error('There is no target element for rendering out the workers.');
+    if (!targetEl || targetEl.innerHTML === undefined) throw new Error('There is no target element for rendering out the workers.');
 
     const template = document.createElement('template');
     template.innerHTML = this.workerItemTemplate;
@@ -81,7 +81,7 @@ class Workers {
   }
 
   async renderWorkerById(targetEl, id) {
-    if (!targetEl || !targetEl.innerHTML) throw new Error('There is no target element for rendering the worker.');
+    if (!targetEl || targetEl.innerHTML === undefined) throw new Error('There is no target element for rendering the worker.');
 
     const worker = await findWorkerById(id);
 

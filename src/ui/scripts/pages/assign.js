@@ -10,12 +10,17 @@ export async function assignPage() {
   const workers = new Workers();
   const workRequests = new WorkRequests();
 
-  workers.renderList(document.getElementById('workers'));
+  const workersTargetEl = document.querySelector('#workers');
+  const workItemTargetEl = document.querySelector('#workitem');
+  const priceEditorTargetEl = document.querySelector('#price-editor');
+  const instructionsEditorTargetEl = document.querySelector('#instructions-editor');
+
+  workers.renderList(workersTargetEl);
 
   const workItem = await workItems.findWorkItemById(workItemId);
   const workRequest = new WorkRequest(workItem);
 
-  workItems.renderWorkItem(document.getElementById('workitem'), workItem);
-  workRequests.renderPrice(document.getElementById('price-editor'), workRequest, true);
-  workRequests.renderInstructions(document.getElementById('instructions-editor'), workRequest, true, false);
+  workItems.renderWorkItem(workItemTargetEl, workItem);
+  workRequests.renderPrice(priceEditorTargetEl, workRequest, true);
+  workRequests.renderInstructions(instructionsEditorTargetEl, workRequest, true, false);
 };
