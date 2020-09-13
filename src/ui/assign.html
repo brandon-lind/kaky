@@ -3,7 +3,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>KAKY</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="./assets/styles/bootstrap.min.css">
+    <link rel="stylesheet" href="./assets/styles/style.css">
   </head>
   <body>
     <kaky-header></kaky-header>
@@ -14,67 +15,62 @@
     </div>
 
     <div class="container">
-      <form action="work-open.html" method="GET">
-        <ul class="list-group mb-5">
-          <li class="list-group-item list-group-item-action" id="workitem">
-            <!-- This is where work item will render -->
-          </li>
-        </ul>
+      <form action="work-open.html?id={}" novalidate>
+        <fieldset>
+          <ul class="list-group mb-5">
+            <li class="list-group-item list-group-item-action" id="workitem">
+              <!-- This is where work item will render -->
+            </li>
+          </ul>
 
-        <div class="card mb-5">
-          <div class="card-header">
-            <h3><i class="fas fa-pray"></i> Poor Unforunate Soul</h3>
-          </div>
-          <div class="card-body">
-            <h5 class="card-title">Choose a Worker</h5>
-            <p class="card-text">Select the poor infortunate soul who will do the work.</p>
-            <ul class="list-group" id="workers">
-              <!-- this is where the workers will render -->
-            </ul>
-          </div>
-        </div>
-
-        <div class="card mb-5">
-          <div class="card-header">
-            <h3><i class="fas fa-hand-holding-usd"></i> Let Them Eat Cake</h3>
-          </div>
-          <div class="card-body">
-            <h5 class="card-title">Set a price</h5>
-            <p class="card-text">Use the defult price or negotiate a new one.</p>
-            <div id="price-editor">
-              <!-- this is where the price editor will render -->
+          <div class="card mb-5">
+            <div class="card-header">
+              <h3><i class="fas fa-pray"></i> Poor Unforunate Soul</h3>
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">Choose a Worker</h5>
+              <p class="card-text">Select the poor infortunate soul who will do the work.</p>
+              <ul class="list-group form-group " id="workers">
+                <!-- this is where the workers will render -->
+              </ul>
             </div>
           </div>
-        </div>
 
-        <div class="card mb-5">
-          <div class="card-header">
-            <h3><i class="fas fa-deaf"></i> ...but you said...</h3>
-          </div>
-          <div class="card-body">
-            <h5 class="card-title">Give Instruction</h5>
-            <p class="card-text">You know they won't listen so document any special instructions here.</p>
-            <div class="input-group mb-3" id="instructions-editor">
-              <!-- this is where the instructions editor will render -->
+          <div class="card mb-5">
+            <div class="card-header">
+              <h3><i class="fas fa-hand-holding-usd"></i> Let Them Eat Cake</h3>
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">Set a price</h5>
+              <p class="card-text">Use the defult price or negotiate a new one. Only whole dollars, no coins.</p>
+              <div id="price-editor">
+                <!-- this is where the price editor will render -->
+              </div>
             </div>
           </div>
-        </div>
 
-        <div class="mb-3 text-right">
-          <a class="link pr-4" href="index.html">Cancel</a>
-          <button class="btn btn-primary" href="work-open.html">Crack Whip</button>
-        </div>
+          <div class="card mb-5">
+            <div class="card-header">
+              <h3><i class="fas fa-deaf"></i> ...but you said...</h3>
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">Give Instruction</h5>
+              <p class="card-text">You know they won't listen so document any special instructions here.</p>
+              <div class="input-group mb-3" id="instructions-editor">
+                <!-- this is where the instructions editor will render -->
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3 text-right">
+            <div id="error-messages" class="invalid-feedback"></div>
+            <a class="link pr-4" href="index.html">Cancel</a>
+            <button class="btn btn-primary" href="work-open.html">Crack Whip</button>
+          </div>
+        </fieldset>
       </form>
 
       <kaky-footer></kaky-footer>
     </div>
-
-
-
-    <script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-    <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-    <script type="text/javascript" src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-    <script type="text/javascript" src="https://kit.fontawesome.com/f1efeefbf5.js" crossorigin="anonymous"></script>
   </body>
 </html>

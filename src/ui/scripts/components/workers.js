@@ -55,35 +55,53 @@ class Workers {
     return workers.find(x => x.id === id);
   }
 
-  async renderList(targetEl) {
-    if (!targetEl || !targetEl.innerHTML) throw new Error('There is no target element for rendering out the workers.');
-
-    const template = document.createElement('template');
-    template.innerHTML = this.workerItemTemplate;
+  async renderList(targetEl, workRequest, isSelectable = false) {
+    if (!targetEl || targetEl.innerHTML === undefined) throw new Error('There is no target element for rendering out the workers.');
 
     const workers = await this.fetchWorkers();
+    const template = document.createElement('template');
+    template.innerHTML = this.workerItemTemplate;
 
     workers.forEach(worker => {
       const li = document.createElement('li');
       li.classList.add('list-group-item', 'list-group-item-action');
+      li.dataset.workerId = worker.id;
+
+      if (isSelectable) {
+        li.addEventListener('click', (evt) => {
+          evt.preventDefault();
+
+          // Bootstrap listgroup fixup
+          targetEl.querySelectorAll('li.active')
+                  .forEach(activeLi => {
+                    activeLi.classList.remove('active');
+                  });
+
+          this.setSelectedItem(li, workRequest);
+        });
+      }
+
+      if (workRequest && workRequest.workerId === worker.id) {
+        li.classList.add('active');
+      }
+
       const workerNode = this.createWorkerNode(worker, template);
       li.appendChild(workerNode);
       targetEl.appendChild(li);
     });
 
-    // jQuery toggle shortcut to fix bootstrap
-    $('li', targetEl).click(function(e) {
-      e.preventDefault();
-      let $that = $(this);
-      $that.parent().find('li').removeClass('active');
-      $that.addClass('active');
-    });
+    // Select the first worker if selection is enabled and nothing is currently selected
+    if (isSelectable) {
+      if (!targetEl.querySelector('li.active')) {
+        this.setSelectedItem(targetEl.querySelector('li:first-child'), workRequest);
+      }
+    }
   }
 
   async renderWorkerById(targetEl, id) {
-    if (!targetEl || !targetEl.innerHTML) throw new Error('There is no target element for rendering the worker.');
+    if (!targetEl || targetEl.innerHTML === undefined) throw new Error('There is no target element for rendering the worker.');
 
-    const worker = await findWorkerById(id);
+    const worker = await this.findWorkerById(id);
 
     if (!worker) throw new Error('Invalid worker. Cannot render the profile.');
 
@@ -91,6 +109,17 @@ class Workers {
     template.innerHTML = this.workerItemTemplate;
     const workerNode = this.createWorkerNode(worker, template);
     targetEl.appendChild(workerNode);
+  }
+
+  setSelectedItem(item, workRequest) {
+    if (item && item.dataset !== undefined) {
+      item.classList.add('active');
+
+      // Update the object with the selected worker
+      if (workRequest) {
+        workRequest.workerId = item.dataset.workerId;
+      }
+    }
   }
 }
 

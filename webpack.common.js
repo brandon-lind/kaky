@@ -15,7 +15,8 @@ module.exports = {
     new CleanWebpackPlugin(),
     new CopyPlugin({
       patterns: [
-        { from: path.resolve(__dirname, 'src/ui/assets/img'), to: path.resolve(__dirname, 'dist-ui/assets/img') }
+        { from: path.resolve(__dirname, 'src/ui/assets/img'), to: path.resolve(__dirname, 'dist-ui/assets/img') },
+        { from: path.resolve(__dirname, 'src/ui/assets/styles'), to: path.resolve(__dirname, 'dist-ui/assets/styles') }
       ]
     }),
     new HtmlWebpackPlugin({
