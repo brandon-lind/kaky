@@ -66,17 +66,20 @@ class Workers {
     workers.forEach(worker => {
       const li = document.createElement('li');
       li.classList.add('list-group-item', 'list-group-item-action');
+
+      // Bootstrap fixup
+      li.addEventListener('click', (evt) => {
+        evt.preventDefault();
+        targetEl.querySelectorAll('li.active')
+                .forEach(activeLi => {
+                  activeLi.classList.remove('active');
+                });
+        li.classList.add('active');
+      });
+
       const workerNode = this.createWorkerNode(worker, template);
       li.appendChild(workerNode);
       targetEl.appendChild(li);
-    });
-
-    // jQuery toggle shortcut to fix bootstrap
-    $('li', targetEl).click(function(e) {
-      e.preventDefault();
-      let $that = $(this);
-      $that.parent().find('li').removeClass('active');
-      $that.addClass('active');
     });
   }
 

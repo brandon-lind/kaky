@@ -38,6 +38,13 @@ class WorkRequests {
     return workRequests.find(x => x.id == id); // let it be a loose match
   }
 
+  async handleSubmit(event) {
+    // TODO: Basic validation
+
+    console.log('FORM SUBMITTED');
+    event.preventDefault();
+  }
+
   renderInstructions(targetEl, workRequest, editable = false, showEmptyInstructionsMessage = true) {
     if (!targetEl || targetEl.innerHTML === undefined) throw new Error('There is no target element to render the work request instructions into.');
     if (!workRequest) throw new Error('There is no work request!');

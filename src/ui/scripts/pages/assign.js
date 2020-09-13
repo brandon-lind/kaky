@@ -14,6 +14,7 @@ export async function assignPage() {
   const workItemTargetEl = document.querySelector('#workitem');
   const priceEditorTargetEl = document.querySelector('#price-editor');
   const instructionsEditorTargetEl = document.querySelector('#instructions-editor');
+  const formTargetEl = document.querySelector('form');
 
   workers.renderList(workersTargetEl);
 
@@ -23,4 +24,6 @@ export async function assignPage() {
   workItems.renderWorkItem(workItemTargetEl, workItem);
   workRequests.renderPrice(priceEditorTargetEl, workRequest, true);
   workRequests.renderInstructions(instructionsEditorTargetEl, workRequest, true, false);
+
+  formTargetEl.addEventListener('submit', workRequests.handleSubmit);
 };
