@@ -54,7 +54,7 @@ class WorkItems {
   async fetchWorkItems(overrideCache = false) {
     if (this.workItems && this.workItems.length && !overrideCache) return this.workItems;
 
-    let response = await fetch(this.workItemsUrl);
+    const response = await fetch(this.workItemsUrl);
 
     if (!response.ok) {
       throw new Error(`HTTP error fetching work items! status: ${response.status}`);
@@ -66,7 +66,7 @@ class WorkItems {
   }
 
   async findWorkItemById(id) {
-    let workItems = await this.fetchWorkItems();
+    const workItems = await this.fetchWorkItems();
 
     return workItems.find(x => x.id == id); // let it be a loose match
   }

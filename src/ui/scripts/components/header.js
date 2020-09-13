@@ -40,6 +40,7 @@ class KakyHeader extends HTMLElement {
     this.loginEl.addEventListener('click', this.handleLoginRequest);
     this.logoutEl.addEventListener('click', this.handleLogoutRequest);
 
+    netlifyIdentity.init();
     netlifyIdentity.on('login', (user) => this.displayLoggedIn(user));
     netlifyIdentity.on('logout', () => { window.location.href = 'index.html'; });
     netlifyIdentity.on('init', user => {

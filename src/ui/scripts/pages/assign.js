@@ -15,15 +15,15 @@ export async function assignPage() {
   const priceEditorTargetEl = document.querySelector('#price-editor');
   const instructionsEditorTargetEl = document.querySelector('#instructions-editor');
   const formTargetEl = document.querySelector('form');
-
-  workers.renderList(workersTargetEl);
+  const errorMessagesTargetEl = document.querySelector('#error-messages');
 
   const workItem = await workItems.findWorkItemById(workItemId);
   const workRequest = new WorkRequest(workItem);
 
+  workers.renderList(workersTargetEl, workRequest, true);
   workItems.renderWorkItem(workItemTargetEl, workItem);
   workRequests.renderPrice(priceEditorTargetEl, workRequest, true);
   workRequests.renderInstructions(instructionsEditorTargetEl, workRequest, true, false);
 
-  formTargetEl.addEventListener('submit', workRequests.handleSubmit);
+  formTargetEl.addEventListener('submit', (e) => { workRequests.handleSubmit(e, errorMessagesTargetEl, workRequest); });
 };

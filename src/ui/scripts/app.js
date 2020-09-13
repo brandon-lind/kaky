@@ -3,13 +3,10 @@ import { KakyFooter } from './components/footer';
 import { assignPage } from './pages/assign';
 import { indexPage } from './pages/index';
 import { workOpenPage } from './pages/work-open';
-import 'bootstrap';
 import '@fortawesome/fontawesome-free/js/fontawesome';
 import '@fortawesome/fontawesome-free/js/solid';
 import '@fortawesome/fontawesome-free/js/regular';
 import '@fortawesome/fontawesome-free/js/brands';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import '../assets/style.css';
 
 window.addEventListener('DOMContentLoaded', () => {
   window.customElements.define('kaky-footer', KakyFooter);
