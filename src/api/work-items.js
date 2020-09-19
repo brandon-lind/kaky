@@ -2,10 +2,10 @@ import express from 'express';
 import awsServerlessExpress from 'aws-serverless-express';
 import awsServerlessExpressMiddleware from 'aws-serverless-express/middleware';
 import cors from 'cors';
-import * as rawItems from './data/work-items.json';
+import mongoose from 'mongoose';
 
-// Standardize items
-const items = rawItems.default;
+// Cached database connection
+let dbConn = null;
 
 // Create the app
 const app = express();
@@ -24,8 +24,16 @@ app.use(awsServerlessExpressMiddleware.eventContext());
 
 
 // Define the routes
-app.get(`${basePath}/`, (req, res) => {
-  res.json({ message: '', data: items });
+app.get(`${basePath}/`, async (req, res) => {
+  try {
+    const items = [];
+
+    res.json({ message: ``, data: items });
+  } catch(e) {
+    console.log(e);
+
+    res.status(500).json({ message: `Hm, that broke something.`, data: null });
+  }
 });
 
 
@@ -36,10 +44,22 @@ app.get(`${basePath}/`, (req, res) => {
 const server = awsServerlessExpress.createServer(app);
 
 // Export the lambda handler
-export function handler(event, context, callback) {
-  try {
-    awsServerlessExpress.proxy(server, event, context, 'CALLBACK', callback);
-  } catch (e) {
-    callback(null, failure({ message: 'There was an error.' }, e));
+exports.handler = async (event, context, callback) => {
+  // See https://www.mongodb.com/blog/post/serverless-development-with-nodejs-aws-lambda-mongodb-atlas
+  context.callbackWaitsForEmptyEventLoop = false;
+
+  if (!dbConn) {
+    dbConn = await mongoose.connect(process.env.MONGODB_URI, {
+      // Buffering means mongoose will queue up operations if it gets
+      // disconnected from MongoDB and send them when it reconnects.
+      // With serverless, better to fail fast if not connected.
+      bufferCommands: false, // Disable mongoose buffering
+      bufferMaxEntries: 0, // and MongoDB driver buffering
+      dbName: process.env.MONGODB_DBNAME,
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    });
   }
+
+  return awsServerlessExpress.proxy(server, event, context, 'PROMISE').promise;
 }
