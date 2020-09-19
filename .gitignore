@@ -113,3 +113,6 @@ dist
 
 # Localstack temp folder
 infrastructure/tmp/
+
+# webpack stats
+stats.json
