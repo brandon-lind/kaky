@@ -153,7 +153,7 @@ app.patch(`${basePath}/:id`, async (req, res) => {
 const server = awsServerlessExpress.createServer(app);
 
 // Export the lambda handler
-exports.handler = async (event, context, callback) => {
+exports.handler = async (event, context) => {
   // See https://www.mongodb.com/blog/post/serverless-development-with-nodejs-aws-lambda-mongodb-atlas
   context.callbackWaitsForEmptyEventLoop = false;
 

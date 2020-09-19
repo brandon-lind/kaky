@@ -5,7 +5,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   entry: {
-    app: './src/ui/scripts/app.js'
+    app: path.resolve(__dirname, 'src/ui/scripts/app.js')
   },
   output: {
     filename: '[name]-bundle.js',
@@ -21,15 +21,15 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       filename: 'index.html',
-      template: './src/ui/index.html'
+      template: path.resolve(__dirname, 'src/ui/index.html')
     }),
     new HtmlWebpackPlugin({
       filename: 'assign.html',
-      template: './src/ui/assign.html'
+      template: path.resolve(__dirname, 'src/ui/assign.html')
     }),
     new HtmlWebpackPlugin({
       filename: 'work-open.html',
-      template: './src/ui/work-open.html'
+      template: path.resolve(__dirname, 'src/ui/work-open.html')
     })
   ],
   module: {

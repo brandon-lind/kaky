@@ -46,7 +46,8 @@
     "webpack-merge": "^5.0.9"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-free": "^5.14.0",
+    "@fortawesome/fontawesome-svg-core": "^1.2.30",
+    "@fortawesome/free-solid-svg-icons": "^5.14.0",
     "netlify-identity-widget": "^1.9.1"
   }
 }

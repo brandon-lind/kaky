@@ -4,9 +4,6 @@ import awsServerlessExpressMiddleware from 'aws-serverless-express/middleware';
 import cors from 'cors';
 import * as rawItems from './data/workers.json';
 
-// Standardize items
-const items = rawItems.default;
-
 // Create the app
 const app = express();
 
@@ -24,8 +21,16 @@ app.use(awsServerlessExpressMiddleware.eventContext());
 
 
 // Define the routes
-app.get(`${basePath}/`, (req, res) => {
-  res.json({ message: '', data: items });
+app.get(`${basePath}/`, async (req, res) => {
+  try {
+    const items = rawItems.default;
+
+    res.json({ message: ``, data: items });
+  } catch(e) {
+    console.log(e);
+
+    res.status(500).json({ message: `Hm, that broke something.`, data: null });
+  }
 });
 
 
@@ -36,10 +41,9 @@ app.get(`${basePath}/`, (req, res) => {
 const server = awsServerlessExpress.createServer(app);
 
 // Export the lambda handler
-export function handler(event, context, callback) {
-  try {
-    awsServerlessExpress.proxy(server, event, context, 'CALLBACK', callback);
-  } catch (e) {
-    callback(null, failure({ message: 'There was an error.' }, e));
-  }
+exports.handler = async (event, context) => {
+  // See https://www.mongodb.com/blog/post/serverless-development-with-nodejs-aws-lambda-mongodb-atlas
+  context.callbackWaitsForEmptyEventLoop = false;
+
+  return awsServerlessExpress.proxy(server, event, context, 'PROMISE').promise;
 }
