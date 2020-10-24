@@ -8,7 +8,7 @@ const schema = new mongoose.Schema({
 
   workerId: {
     type: String,
-    required: [true, 'You seem to have forgotten who you want to do the work.']
+    required: [true, 'You seem to have forgotten to add the poor soul who you want to do the work.']
   },
 
   requesterId: {
@@ -18,21 +18,21 @@ const schema = new mongoose.Schema({
 
   price: {
     type: Number,
-    min: [0, 'The price must be greater than 0.']
+    min: [0, 'The price must be greater than 0. No freebies!']
   },
 
   instructions: {
     type: String,
-    maxlength: [500, 'Whoa, that is too much for them to process. Try less words.']
+    maxlength: [500, 'Whoa, that is too much for them to process with their short attention span. Try less words.']
   },
 
   status: {
     type: String,
     enum: {
-      values: ['open', 'closed', 'cancelled', 'rejected', 'working', 'waiting for payment', 'paid'],
+      values: ['open', 'closed', 'cancelled', 'rejected', 'working', 'waiting_for_payment', 'paid'],
       message: 'That status does not make any sense.'
     },
-    required: [true, 'A valid status is required.']
+    required: [true, 'A status is required unless you plan to do the work yourself.']
   }
 
 }, {

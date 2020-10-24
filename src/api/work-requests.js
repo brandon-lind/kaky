@@ -5,6 +5,8 @@ import awsServerlessExpressMiddleware from 'aws-serverless-express/middleware';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import { WorkRequest } from './models/work-requests';
+import { userRoles, validateUser } from './utils/authWrapper';
+import { appErrorFormatter } from './utils/appErrorFormatter';
 
 // Cached database connection
 let dbConn = null;
@@ -16,7 +18,7 @@ const app = express();
 const functionName = 'work-requests';
 const basePath = `/.netlify/functions/${functionName}`;
 
-// Apply the express middlewares
+// Apply middlewares
 app.use(cors());
 app.use(express.json());
 app.use(awsServerlessExpressMiddleware.eventContext());
@@ -24,21 +26,20 @@ app.use(awsServerlessExpressMiddleware.eventContext());
 
 
 
-
 // Define the routes
-app.get(`${basePath}/`, async (req, res) => {
+app.get(`${basePath}/`, validateUser, async (req, res) => {
   try {
     const items = await WorkRequest.find();
 
     res.json({ message: ``, data: items });
   } catch(e) {
-    console.log(e);
+    console.error(e);
 
     res.status(500).json({ message: `Hm, that broke something.`, data: null });
   }
 });
 
-app.get(`${basePath}/:id`, async (req, res) => {
+app.get(`${basePath}/:id`, validateUser, async (req, res) => {
   try {
     const { params } = req;
     const item = await WorkRequest.findOne({ _id: params.id });
@@ -50,13 +51,13 @@ app.get(`${basePath}/:id`, async (req, res) => {
 
     res.json({message: ``, data: item });
   } catch(e) {
-    console.log(e);
+    console.error(e);
 
     res.status(500).json({ message: `Hm, that broke something.`, data: null });
   }
 });
 
-app.get(`${basePath}/worker/:workerId`, async (req, res) => {
+app.get(`${basePath}/worker/:workerId`, validateUser, async (req, res) => {
   try {
     const { params } = req;
     const item = await WorkRequest.findOne({ workerId: params.workerId });
@@ -68,13 +69,13 @@ app.get(`${basePath}/worker/:workerId`, async (req, res) => {
 
     res.json({message: ``, data: item });
   } catch(e) {
-    console.log(e);
+    console.error(e);
 
     res.status(500).json({ message: `Hm, that broke something.`, data: null });
   }
 });
 
-app.get(`${basePath}/requester/:requesterId`, async (req, res) => {
+app.get(`${basePath}/requester/:requesterId`, validateUser, async (req, res) => {
   try {
     const { params } = req;
     const item = await WorkRequest.findOne({ requesterId: params.requesterId });
@@ -86,30 +87,38 @@ app.get(`${basePath}/requester/:requesterId`, async (req, res) => {
 
     res.json({message: ``, data: item });
   } catch(e) {
-    console.log(e);
+    console.error(e);
 
     res.status(500).json({ message: `Hm, that broke something.`, data: null });
   }
 });
 
-app.post(`${basePath}/`, async (req, res) => {
-  const { body } = req;
-
+app.post(`${basePath}/`, validateUser, async (req, res) => {
   try {
+    const { body } = req;
+    const { user } = req.apiGateway.context.clientContext;
+
     let item = new WorkRequest({
       workItemId: body.workItemId,
       workerId: body.workerId,
       requesterId: body.requesterId,
       price: body.price,
       instructions: body.instructions,
-      status: body.status
+      status: 'open' // The only valid status is 'open'
     });
 
+    // The user must have the 'AssignWork' role
+    if (userRoles(user).indexOf('AssignWork') === -1) {
+      res.status(403).json( { message: `Nice try. You are not allowed to assign work.`, data: null } );
+      return;
+    }
+
+    // Save the work request
     await item.save({ isNew: true });
 
     res.status(201).json({ message: `The work request was created.`, data: item });
   } catch(e) {
-    console.log(e);
+    console.error(e);
 
     if (e.message.indexOf('WorkRequest validation failed:') !== -1) {
       res.status(400).json({ message: e.message, data: null });
@@ -119,9 +128,34 @@ app.post(`${basePath}/`, async (req, res) => {
   }
 });
 
-app.patch(`${basePath}/:id`, async (req, res) => {
+app.patch(`${basePath}/:id`, validateUser, async (req, res) => {
   try {
     const { body, params } = req;
+    const { user } = req.apiGateway.context.clientContext;
+
+    // NoOp if they are trying to set a status not in this list
+    if (/^cancelled|closed|paid|rejected|working|waiting_for_payment$/gi.test(body.status) === false) {
+      res.status(400).json({ message: `You cannot update a work request with that status.`, data: null });
+      return;
+    }
+
+    // If the user has the AssignWork role...
+    if (/^cancelled|paid$/gi.test(body.status)) {
+      if (userRoles(user).indexOf('AssignWork') === -1) {
+        res.status(403).json({ message: `Your profile does not allow you to set that status on a work request.`, data: null });
+        return;
+      }
+    }
+
+    // If the user has the AssignWork role...
+    if (/^closed|rejected|working|waiting_for_payment$/gi.test(body.status)) {
+      if (userRoles(user).indexOf('AcceptWork') === -1) {
+        res.status(403).json({ message: `Your profile does not allow you to set that status on a work request.`, data: null });
+        return;
+      }
+    }
+
+    // Find the work request
     const item = await WorkRequest.findOne({ _id: params.id });
 
     if (!item) {
@@ -129,13 +163,20 @@ app.patch(`${basePath}/:id`, async (req, res) => {
       return;
     }
 
+    // NoOp if the status is already cancelled or closed
+    if (/^cancelled|closed$/gi.test(item.status)) {
+      res.status(400).json({ message: `You cannot update a work request which is already cancelled or closed.`, data: null });
+      return;
+    }
+
+    // Update the status
     item.status = body.status;
 
     await item.save();
 
     res.json({ message: `The work request was updated.`, data: item });
   } catch(e) {
-    console.log(e);
+    console.error(e);
 
     if (e.message.indexOf('WorkRequest validation failed:') !== -1) {
       res.status(400).json({ message: e.message, data: null });
@@ -149,25 +190,32 @@ app.patch(`${basePath}/:id`, async (req, res) => {
 
 
 
+// Format any errors before responding
+app.use(appErrorFormatter);
+
 // Initialize the server
 const server = awsServerlessExpress.createServer(app);
 
 // Export the lambda handler
 exports.handler = async (event, context) => {
-  // See https://www.mongodb.com/blog/post/serverless-development-with-nodejs-aws-lambda-mongodb-atlas
-  context.callbackWaitsForEmptyEventLoop = false;
+  try {
+    // See https://www.mongodb.com/blog/post/serverless-development-with-nodejs-aws-lambda-mongodb-atlas
+    context.callbackWaitsForEmptyEventLoop = false;
 
-  if (!dbConn) {
-    dbConn = await mongoose.connect(process.env.MONGODB_URI, {
-      // Buffering means mongoose will queue up operations if it gets
-      // disconnected from MongoDB and send them when it reconnects.
-      // With serverless, better to fail fast if not connected.
-      bufferCommands: false, // Disable mongoose buffering
-      bufferMaxEntries: 0, // and MongoDB driver buffering
-      dbName: process.env.MONGODB_DBNAME,
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    });
+    if (!dbConn) {
+      dbConn = await mongoose.connect(process.env.MONGODB_URI, {
+        // Buffering means mongoose will queue up operations if it gets
+        // disconnected from MongoDB and send them when it reconnects.
+        // With serverless, better to fail fast if not connected.
+        bufferCommands: false, // Disable mongoose buffering
+        bufferMaxEntries: 0, // and MongoDB driver buffering
+        dbName: process.env.MONGODB_DBNAME,
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+      });
+    }
+  } catch(e) {
+    console.error(e);
   }
 
   return awsServerlessExpress.proxy(server, event, context, 'PROMISE').promise;
