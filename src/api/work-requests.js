@@ -5,7 +5,7 @@ import awsServerlessExpressMiddleware from 'aws-serverless-express/middleware';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import { WorkRequest } from './models/work-requests';
-import { netlifyAuth } from './utils/netlifyAuth';
+import { userRoles, validateUser } from './utils/authWrapper';
 import { appErrorFormatter } from './utils/appErrorFormatter';
 
 // Cached database connection
@@ -27,7 +27,7 @@ app.use(awsServerlessExpressMiddleware.eventContext());
 
 
 // Define the routes
-app.get(`${basePath}/`, netlifyAuth, async (req, res) => {
+app.get(`${basePath}/`, validateUser, async (req, res) => {
   try {
     const items = await WorkRequest.find();
 
@@ -39,7 +39,7 @@ app.get(`${basePath}/`, netlifyAuth, async (req, res) => {
   }
 });
 
-app.get(`${basePath}/:id`, netlifyAuth, async (req, res) => {
+app.get(`${basePath}/:id`, validateUser, async (req, res) => {
   try {
     const { params } = req;
     const item = await WorkRequest.findOne({ _id: params.id });
@@ -57,7 +57,7 @@ app.get(`${basePath}/:id`, netlifyAuth, async (req, res) => {
   }
 });
 
-app.get(`${basePath}/worker/:workerId`, netlifyAuth, async (req, res) => {
+app.get(`${basePath}/worker/:workerId`, validateUser, async (req, res) => {
   try {
     const { params } = req;
     const item = await WorkRequest.findOne({ workerId: params.workerId });
@@ -75,7 +75,7 @@ app.get(`${basePath}/worker/:workerId`, netlifyAuth, async (req, res) => {
   }
 });
 
-app.get(`${basePath}/requester/:requesterId`, netlifyAuth, async (req, res) => {
+app.get(`${basePath}/requester/:requesterId`, validateUser, async (req, res) => {
   try {
     const { params } = req;
     const item = await WorkRequest.findOne({ requesterId: params.requesterId });
@@ -93,10 +93,11 @@ app.get(`${basePath}/requester/:requesterId`, netlifyAuth, async (req, res) => {
   }
 });
 
-app.post(`${basePath}/`, netlifyAuth, async (req, res) => {
-  const { body } = req;
-
+app.post(`${basePath}/`, validateUser, async (req, res) => {
   try {
+    const { body } = req;
+    const { user } = req.apiGateway.context.clientContext;
+
     let item = new WorkRequest({
       workItemId: body.workItemId,
       workerId: body.workerId,
@@ -106,6 +107,14 @@ app.post(`${basePath}/`, netlifyAuth, async (req, res) => {
       status: 'open' // The only valid status is 'open'
     });
 
+    // The submitter must have the 'AssignWork' entitlement [unless this is local development]
+    console.log(userRoles(user));
+    if (userRoles(user).indexOf('AssignWork') === -1) {
+      res.status(403).json( { message: `Nice try. You are not allowed to assign work.`, data: null } );
+      return;
+    }
+
+    // Save the work request
     await item.save({ isNew: true });
 
     res.status(201).json({ message: `The work request was created.`, data: item });
@@ -120,7 +129,7 @@ app.post(`${basePath}/`, netlifyAuth, async (req, res) => {
   }
 });
 
-app.patch(`${basePath}/:id`, netlifyAuth, async (req, res) => {
+app.patch(`${basePath}/:id`, validateUser, async (req, res) => {
   try {
     const { body, params } = req;
     const item = await WorkRequest.findOne({ _id: params.id });
