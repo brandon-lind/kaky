@@ -29,7 +29,7 @@ const schema = new mongoose.Schema({
   status: {
     type: String,
     enum: {
-      values: ['open', 'closed', 'cancelled', 'rejected', 'working', 'waiting for payment', 'paid'],
+      values: ['open', 'closed', 'cancelled', 'rejected', 'working', 'waiting_for_payment', 'paid'],
       message: 'That status does not make any sense.'
     },
     required: [true, 'A status is required unless you plan to do the work yourself.']

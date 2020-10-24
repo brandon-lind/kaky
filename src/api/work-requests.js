@@ -107,8 +107,7 @@ app.post(`${basePath}/`, validateUser, async (req, res) => {
       status: 'open' // The only valid status is 'open'
     });
 
-    // The submitter must have the 'AssignWork' entitlement [unless this is local development]
-    console.log(userRoles(user));
+    // The user must have the 'AssignWork' role
     if (userRoles(user).indexOf('AssignWork') === -1) {
       res.status(403).json( { message: `Nice try. You are not allowed to assign work.`, data: null } );
       return;
@@ -132,6 +131,31 @@ app.post(`${basePath}/`, validateUser, async (req, res) => {
 app.patch(`${basePath}/:id`, validateUser, async (req, res) => {
   try {
     const { body, params } = req;
+    const { user } = req.apiGateway.context.clientContext;
+
+    // NoOp if they are trying to set a status not in this list
+    if (/^cancelled|closed|paid|rejected|working|waiting_for_payment$/gi.test(body.status) === false) {
+      res.status(400).json({ message: `You cannot update a work request with that status.`, data: null });
+      return;
+    }
+
+    // If the user has the AssignWork role...
+    if (/^cancelled|paid$/gi.test(body.status)) {
+      if (userRoles(user).indexOf('AssignWork') === -1) {
+        res.status(403).json({ message: `Your profile does not allow you to set that status on a work request.`, data: null });
+        return;
+      }
+    }
+
+    // If the user has the AssignWork role...
+    if (/^closed|rejected|working|waiting_for_payment$/gi.test(body.status)) {
+      if (userRoles(user).indexOf('AcceptWork') === -1) {
+        res.status(403).json({ message: `Your profile does not allow you to set that status on a work request.`, data: null });
+        return;
+      }
+    }
+
+    // Find the work request
     const item = await WorkRequest.findOne({ _id: params.id });
 
     if (!item) {
