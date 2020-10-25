@@ -1,3 +1,5 @@
+import { KakyApiHeaders } from './api';
+
 class Workers {
   constructor() {
     this.workers = [];
@@ -38,7 +40,10 @@ class Workers {
   async fetchWorkers(overrideCache = false) {
     if (this.workers && this.workers.length && !overrideCache) return this.workers;
 
-    let response = await fetch(this.workersUrl);
+    const headers = await KakyApiHeaders.setAuthorizationHeader();
+    let response = await fetch(this.workersUrl, {
+      headers: headers
+    });
 
     if (!response.ok) {
       throw new Error(`HTTP error fetching workers! status: ${response.status}`);

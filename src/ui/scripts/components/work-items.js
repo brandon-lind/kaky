@@ -1,3 +1,5 @@
+import { KakyApiHeaders } from './api';
+
 class WorkItems {
   constructor(itemLimitPerRow) {
     this.itemLimit = itemLimitPerRow || 3;
@@ -54,7 +56,10 @@ class WorkItems {
   async fetchWorkItems(overrideCache = false) {
     if (this.workItems && this.workItems.length && !overrideCache) return this.workItems;
 
-    const response = await fetch(this.workItemsUrl);
+    const headers = await KakyApiHeaders.setAuthorizationHeader(new Headers());
+    const response = await fetch(this.workItemsUrl, {
+      headers: headers
+    });
 
     if (!response.ok) {
       throw new Error(`HTTP error fetching work items! status: ${response.status}`);
