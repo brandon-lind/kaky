@@ -1,3 +1,4 @@
+import { KakyApiHeaders } from './api';
 import netlifyIdentity from 'netlify-identity-widget';
 
 class WorkRequests {
@@ -25,7 +26,11 @@ class WorkRequests {
   async fetchWorkRequests(overrideCache = false) {
     if (this.item && this.items.length && !overrideCache) return this.items;
 
-    const response = await fetch(this.url);
+    const headers = await KakyApiHeaders.setAuthorizationHeader();
+    const response = await fetch(this.url, {
+      method: 'GET',
+      headers: headers
+    });
 
     if (!response.ok) {
       this.items = [];
@@ -38,7 +43,10 @@ class WorkRequests {
   }
 
   async findWorkRequestById(id) {
-    const response = await fetch(this.url + '/' + id);
+    const headers = await KakyApiHeaders.setAuthorizationHeader();
+    const response = await fetch(`${this.url}/${id}`, {
+      headers: headers
+    });
 
     if (!response.ok) {
       throw new Error(`HTTP error fetching the work request! status: ${response.status}`);
@@ -79,16 +87,10 @@ class WorkRequests {
       this.validateWorkRequest(errorTargetEl, user, workRequest);
 
       try {
+        const headers = await KakyApiHeaders.setPOSTHeaders();
         const response = await fetch(this.url, {
           method: 'POST',
-          mode: 'cors',
-          cache: 'no-cache',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          redirect: 'follow',
-          referrerPolicy: 'no-referrer',
+          headers: headers,
           body: JSON.stringify(workRequest)
         });
 
@@ -97,7 +99,7 @@ class WorkRequests {
         const redirectUrl = formEl.action.replace('id={}', 'id='+ responseData.data._id);
         window.location = redirectUrl;
       } catch (e) {
-
+        console.error(`There was an error saving the work request. \n${e}`);
       }
     } finally {
       fieldsetEl.disabled = false;

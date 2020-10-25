@@ -2,6 +2,7 @@ import express from 'express';
 import awsServerlessExpress from 'aws-serverless-express';
 import awsServerlessExpressMiddleware from 'aws-serverless-express/middleware';
 import cors from 'cors';
+import { appErrorFormatter } from './utils/appErrorFormatter';
 import * as rawItems from './data/work-items.json';
 
 // Create the app
@@ -36,6 +37,9 @@ app.get(`${basePath}/`, async (req, res) => {
 
 
 
+
+// Format any errors before responding
+app.use(appErrorFormatter);
 
 // Initialize the server
 const server = awsServerlessExpress.createServer(app);
