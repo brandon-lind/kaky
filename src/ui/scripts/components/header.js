@@ -17,15 +17,8 @@ class KakyHeader extends HTMLElement {
           <li class="nav-item login">
             <a class="nav-link" href="#">Log In</a>
           </li>
-          <li class="nav-item dropdown loggedin d-none">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="far fa-user-circle"></i>
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-              <span class="dropdown-item disabled fullname"></span>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item logout" href="#">Log Out</a>
-            </div>
+          <li class="nav-item loggedin d-none">
+            <a class="nav-link logout" href="#">Log Out <small></small></a>
           </li>
         </ul>
       </div>
@@ -40,7 +33,6 @@ class KakyHeader extends HTMLElement {
     this.loginEl.addEventListener('click', this.handleLoginRequest);
     this.logoutEl.addEventListener('click', this.handleLogoutRequest);
 
-    netlifyIdentity.init();
     netlifyIdentity.on('login', (user) => this.displayLoggedIn(user));
     netlifyIdentity.on('logout', () => { window.location.href = 'index.html'; });
     netlifyIdentity.on('init', user => {
@@ -48,6 +40,8 @@ class KakyHeader extends HTMLElement {
         this.displayLoggedIn(user);
       }
     });
+
+    netlifyIdentity.init();
   }
 
   handleLoginRequest(e) {
@@ -65,7 +59,7 @@ class KakyHeader extends HTMLElement {
     this.loggedinContainerEl.classList.remove('d-none');
 
     if (user.user_metadata && user.user_metadata.full_name) {
-      this.loggedinContainerEl.querySelector('span.fullname').innerHTML = user.user_metadata.full_name;
+      this.loggedinContainerEl.querySelector('small').innerHTML = `(${user.user_metadata.full_name})`;
     }
   }
 }
