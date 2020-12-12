@@ -1,7 +1,7 @@
-import { WorkRequest } from '../models/work-request';
-import { WorkRequests } from '../components/work-requests';
-import { WorkItems } from '../components/work-items';
-import { Workers } from '../components/workers';
+import { WorkRequest } from '../../models/work-request';
+import { WorkRequests } from '../../components/work-requests';
+import { WorkItems } from '../../components/work-items';
+import { Workers } from '../../components/workers';
 
 export async function assignPage() {
   const parsedUrl = new URL(window.location.href);

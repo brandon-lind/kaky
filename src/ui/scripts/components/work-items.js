@@ -5,7 +5,7 @@ class WorkItems {
     this.itemLimit = itemLimitPerRow || 3;
     this.workItems = [];
     this.workItemsUrl = '/.netlify/functions/work-items';
-    this.assignWorkUrl = './assign.html';
+    this.assignWorkUrl = '/work-requests/assign.html';
     this.workItemTemplate = `
     <div class="media position-relative">
       <div class="img-parent mr-3">
