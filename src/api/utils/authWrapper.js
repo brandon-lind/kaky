@@ -31,11 +31,6 @@ const userRoles = function (user) {
     return user.app_metadata.roles;
   }
 
-  // Look to see if there is an environment variable (i.e. localhost)
-  if (process.env.AUTH_ROLES) {
-    return process.env.AUTH_ROLES.split(',');
-  }
-
   return [];
 };
 
