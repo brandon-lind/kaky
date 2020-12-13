@@ -109,11 +109,8 @@ app.post(`${basePath}/`, validateUser, async (req, res) => {
 
     // The user must have the 'AssignWork' role
     if (userRoles(user).indexOf('AssignWork') === -1) {
-      const dataErr = {
-        user,
-        evalRoles: userRoles(user).indexOf('AssignWork')
-      };
-      res.status(403).json( { message: `Nice try, but you do not have the entitlement to assign work.`, data: dataErr } );
+      console.log(`Auth Failure: User tried to assign work, but was blocked.\n${JSON.stringify(user)}`);
+      res.status(403).json( { message: `Nice try, but you do not have the entitlement to assign work.`, data: null } );
       return;
     }
 
