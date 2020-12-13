@@ -7,6 +7,10 @@
   port = 9000
 
 [[plugins]]
-package = 'netlify-plugin-contextual-env'
+package = "netlify-plugin-contextual-env"
   [plugins.inputs]
-  mode = 'prefix'
+  mode = "prefix"
+[[plugins]]
+package = "netlify-plugin-inline-functions-env"
+  [plugins.inputs]
+  verbose = "true"
