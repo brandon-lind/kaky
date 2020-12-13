@@ -14,3 +14,5 @@ package = "netlify-plugin-contextual-env"
 package = "netlify-plugin-inline-functions-env"
   [plugins.inputs]
   verbose = "true"
+  [plugins.inputs]
+  buildEvent = "onBuild"
