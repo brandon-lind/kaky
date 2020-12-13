@@ -122,9 +122,9 @@ app.post(`${basePath}/`, validateUser, async (req, res) => {
     console.error(e);
 
     if (e.message.indexOf('WorkRequest validation failed:') !== -1) {
-      res.status(400).json({ message: e.message, data: e });
+      res.status(400).json({ message: e.message, data: e.message });
     } else {
-      res.status(500).json({ message: `Hm, that broke something.`, data: e });
+      res.status(500).json({ message: `Hm, that broke something when submitting.`, data: e.message });
     }
   }
 });
