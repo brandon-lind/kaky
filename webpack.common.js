@@ -2,6 +2,8 @@ const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ImageMinimizerPlugin = require('image-minimizer-webpack-plugin');
+const Visualizer = require('webpack-visualizer-plugin');
 
 module.exports = {
   entry: {
@@ -11,13 +13,42 @@ module.exports = {
     filename: '[name]-bundle.js',
     path: path.resolve(__dirname, 'dist-ui'),
   },
+  resolve: {
+    alias: {
+        jquery: 'jquery-slim/dist/jquery.slim.js'
+    }
+  },
   plugins: [
     new CleanWebpackPlugin(),
+    new Visualizer(),
     new CopyPlugin({
       patterns: [
         { from: path.resolve(__dirname, 'src/ui/assets/img'), to: path.resolve(__dirname, 'dist-ui/assets/img') },
         { from: path.resolve(__dirname, 'src/ui/assets/styles'), to: path.resolve(__dirname, 'dist-ui/assets/styles') }
       ]
+    }),
+    new ImageMinimizerPlugin({
+      minimizerOptions: {
+        plugins: [
+          ['gifsicle', { interlaced: true }],
+          ['jpegtran', { progressive: true }],
+          ['optipng', { optimizationLevel: 5 }],
+          [
+            'svgo',
+            {
+              plugins: [
+                {
+                  removeViewBox: false,
+                },
+              ],
+            },
+          ],
+        ],
+      },
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'index.html',
+      template: path.resolve(__dirname, 'src/ui/index.html')
     }),
     new HtmlWebpackPlugin({
       filename: 'work-requests/index.html',
@@ -43,7 +74,7 @@ module.exports = {
         use: ['style-loader', 'css-loader'],
       },
       {
-        test: /\.(png|svg|jpg|gif)$/,
+        test: /\.(jpe?g|png|gif|svg)$/i,
         use: ['file-loader']
       }
     ],

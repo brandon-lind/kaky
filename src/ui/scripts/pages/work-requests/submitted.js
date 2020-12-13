@@ -1,4 +1,4 @@
-export async function submittedPage() {
+export async function workRequestSubmittedPage() {
   const parsedUrl = new URL(window.location.href);
   const workRequestId = parsedUrl.searchParams.get('id') || '';
 

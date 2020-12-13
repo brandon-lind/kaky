@@ -3,7 +3,7 @@ import { WorkRequests } from '../../components/work-requests';
 import { WorkItems } from '../../components/work-items';
 import { Workers } from '../../components/workers';
 
-export async function assignPage() {
+export async function workRequestAssignPage() {
   const parsedUrl = new URL(window.location.href);
   const workItemId = parsedUrl.searchParams.get('id') || 0;
   const workItems = new WorkItems();

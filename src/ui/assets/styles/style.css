@@ -7,6 +7,57 @@
   user-select: none;
 }
 
+.hero {
+  position: relative;
+  display: -webkit-box;
+  display: flex;
+  -webkit-box-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  justify-content: center;
+  padding: 1rem;
+  padding-top: 74px;
+  padding-bottom: 66px;
+  color: #fff;
+  background-color: #d3d3d3;
+  text-decoration: none;
+  height: auto;
+  max-height: 420px;
+  min-height: 380px;
+  z-index: 1;
+}
+
+.hero-background {
+  background-image: url('/assets/img/lawn-mower-hero.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+  overflow: hidden;
+  opacity: 80%;
+}
+
+.hero-content {
+  max-width: 40em;
+  width: 100%;
+  z-index: 3;
+}
+
+.hero-title {
+  display: block;
+  font-size: 8rem;
+  line-height: 8.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  text-shadow: 0 0 10px rgba(0,0,0,.6);
+}
+
+
 .img-parent {
   max-width:300px;
 }
@@ -15,13 +66,33 @@
   color: green;
 }
 
-@media (min-width: 768px) {
+@media (max-height: 940px) {
+  .hero {
+    min-height: 150px;
+    max-height: 250px;
+  }
+
+  .hero-title {
+    font-size: 4.0rem;
+    line-height: 4.5rem;
+  }
+
   .bd-placeholder-img-lg {
     font-size: 3.5rem;
   }
 }
 
-@media (max-width: 576px) {
+@media (max-height: 640px), (max-width: 300px) {
+  .hero {
+    min-height: 100px;
+    max-height: 160px;
+  }
+
+  .hero-title {
+    font-size: 3.0rem;
+    line-height: 3.5rem;
+  }
+
   .img-parent {
     display:none;
   }

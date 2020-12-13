@@ -1,9 +1,11 @@
+import 'bootstrap/js/dist/collapse';
 import { KakyHeader } from './components/header';
 import { KakyFooter } from './components/footer';
-import { assignPage } from './pages/work-requests/assign';
-import { indexPage } from './pages/work-requests/index';
-import { submittedPage } from './pages/work-requests/submitted';
-import { workOpenPage } from './pages/work-requests/work-open';
+import { indexPage } from './pages/index';
+import { workRequestAssignPage } from './pages/work-requests/assign';
+import { workRequestIndexPage } from './pages/work-requests/index';
+import { workRequestSubmittedPage } from './pages/work-requests/submitted';
+import { workRequestWorkOpenPage } from './pages/work-requests/work-open';
 import { library, dom } from '@fortawesome/fontawesome-svg-core';
 import { faDeaf, faHandHoldingUsd, faPray, faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 
@@ -22,16 +24,20 @@ window.addEventListener('DOMContentLoaded', () => {
 
   switch (currentUrl.pathname.toLowerCase()) {
     case '/work-requests/submitted.html':
-      submittedPage();
+      workRequestSubmittedPage();
       break;
     case '/work-requests/assign.html':
-      assignPage();
+      workRequestAssignPage();
       break;
     case '/work-requests/work-open.html':
-      workOpenPage();
+      workRequestWorkOpenPage();
+      break;
+    case '/work-requests':
+    case '/work-requests/':
+    case '/work-requests/index.html':
+      workRequestIndexPage();
       break;
     default:
       indexPage();
-      break;
   }
 });
