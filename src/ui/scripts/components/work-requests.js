@@ -96,6 +96,10 @@ class WorkRequests {
 
         const responseData = await response.json();
 
+        if (!responseData.data._id) {
+          throw new Error('The work request submission failed.');
+        }
+
         const redirectUrl = formEl.action.replace('id=#', 'id='+ responseData.data._id);
         window.location = redirectUrl;
       } catch (e) {
