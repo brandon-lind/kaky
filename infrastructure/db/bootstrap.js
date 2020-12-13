@@ -36,7 +36,7 @@ try {
     {
       "name": "Garbage",
       "price": "3",
-      "imageUrl": "./assets/img/trash.jpeg",
+      "imageUrl": "/assets/img/trash.jpeg",
       "tasks": [
         "Collect all the garbage",
         "Take the garbage to the curb",
@@ -46,7 +46,7 @@ try {
     {
       "name": "Garbage + Recycling",
       "price": "4",
-      "imageUrl": "./assets/img/trash-recycle.jpeg",
+      "imageUrl": "/assets/img/trash-recycle.jpeg",
       "tasks": [
         "All tasks in the Garbage Work Item",
         "Collect all the recyling",
@@ -56,7 +56,7 @@ try {
     {
       "name": "Mow Front Yard",
       "price": "5",
-      "imageUrl": "./assets/img/mow-front.jpg",
+      "imageUrl": "/assets/img/mow-front.jpg",
       "tasks": [
         "Mow the front yard",
         "Incuding the strips next to the street and the driveway"
@@ -65,7 +65,7 @@ try {
     {
       "name": "Mow Back Yard",
       "price": "5",
-      "imageUrl": "./assets/img/mow-back.jpg",
+      "imageUrl": "/assets/img/mow-back.jpg",
       "tasks": [
         "Mow the back yard"
       ]
@@ -73,7 +73,7 @@ try {
     {
       "name": "Mow Front + Back Yards",
       "price": "10",
-      "imageUrl": "./assets/img/mow-all.jpg",
+      "imageUrl": "/assets/img/mow-all.jpg",
       "tasks": [
         "Items in the mow front yard",
         "Items in the mow back yard"
@@ -82,7 +82,7 @@ try {
     {
       "name": "Whatever",
       "price": "??",
-      "imageUrl": "./assets/img/special.jpg",
+      "imageUrl": "/assets/img/special.jpg",
       "tasks": [
         "A suprise work item full of fun"
       ]

@@ -2,5 +2,11 @@
   command = "npm run build"
   functions = "dist-api"
   publish = "dist-ui"
+
 [dev]
   port = 9000
+
+[[plugins]]
+package = 'netlify-plugin-contextual-env'
+  [plugins.inputs]
+  mode = 'prefix'
