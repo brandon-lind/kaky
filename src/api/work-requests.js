@@ -109,7 +109,11 @@ app.post(`${basePath}/`, validateUser, async (req, res) => {
 
     // The user must have the 'AssignWork' role
     if (userRoles(user).indexOf('AssignWork') === -1) {
-      res.status(403).json( { message: `Nice try, but you do not have the entitlement to assign work.`, data: null } );
+      const dataErr = {
+        user,
+        evalRoles: userRoles(user).indexOf('AssignWork')
+      };
+      res.status(403).json( { message: `Nice try, but you do not have the entitlement to assign work.`, data: dataErr } );
       return;
     }
 
