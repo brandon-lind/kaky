@@ -96,7 +96,7 @@ class WorkRequests {
 
         const responseData = await response.json();
 
-        const redirectUrl = formEl.action.replace('id={}', 'id='+ responseData.data._id);
+        const redirectUrl = formEl.action.replace('id=#', 'id='+ responseData.data._id);
         window.location = redirectUrl;
       } catch (e) {
         console.error(`There was an error saving the work request. \n${e}`);
