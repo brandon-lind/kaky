@@ -45,3 +45,9 @@ You'll probably only do this to save resources when you're done working with the
 ## Testing
 
 Yeah, about that ...
+
+## Deployment
+
+Deploy a staging preview by submitting a PR to the 'staging' branch. Netlify will build and deploy a preview from the staging branch. The Netlify site uses netlify-plugin-contextual-env (see netlify.toml) to grab the correct environment variables.
+
+When everything looks good, PR the staging branch into master and Netlify will do its thing.
