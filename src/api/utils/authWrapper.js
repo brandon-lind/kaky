@@ -25,11 +25,10 @@ const userRoles = function (user) {
   // Attempt to fetch the roles from the Netlify JWT user data
   const userRoles = user &&
                     user.app_metadata &&
-                    user.app_metadata.authorization &&
-                    user.app_metadata.authorization.roles;
+                    user.app_metadata.roles;
 
   if (userRoles) {
-    return user.app_metadata.authorization.roles;
+    return user.app_metadata.roles;
   }
 
   // Look to see if there is an environment variable (i.e. localhost)
