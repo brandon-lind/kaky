@@ -5,7 +5,7 @@ import awsServerlessExpressMiddleware from 'aws-serverless-express/middleware';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import { WorkRequest } from './models/work-requests';
-import { userRoles, validateUser } from './utils/authWrapper';
+import { getRequestingUser, userRoles, validateUser } from './utils/authWrapper';
 import { appErrorFormatter } from './utils/appErrorFormatter';
 
 // Cached database connection
@@ -96,7 +96,7 @@ app.get(`${basePath}/requester/:requesterId`, validateUser, async (req, res) => 
 app.post(`${basePath}/`, validateUser, async (req, res) => {
   try {
     const { body } = req;
-    const { user } = req.apiGateway.context.clientContext;
+    const { user } = getRequestingUser(req);
 
     let item = new WorkRequest({
       workItemId: body.workItemId,
