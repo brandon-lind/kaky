@@ -59,6 +59,10 @@ module.exports = {
       template: path.resolve(__dirname, 'src/ui/work-requests/assign.html')
     }),
     new HtmlWebpackPlugin({
+      filename: 'work-requests/list.html',
+      template: path.resolve(__dirname, 'src/ui/work-requests/list.html')
+    }),
+    new HtmlWebpackPlugin({
       filename: 'work-requests/submitted.html',
       template: path.resolve(__dirname, 'src/ui/work-requests/submitted.html')
     }),

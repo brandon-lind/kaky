@@ -21,6 +21,29 @@ class WorkRequests {
       </div>
     </div>
     `;
+    this.workRequestStatusTemplate = `<dl><dt>Task</dt><dd data-workitem></dd><dt>Timestamp</dt><dd data-timestamp></dd></dl>`;
+  }
+
+  createStatusNode(workRequest) {
+    const template = document.createElement('template');
+    template.innerHTML = this.workRequestStatusTemplate;
+    let listItem = document.createElement('li');
+    listItem.classList.add('list-group-item', 'list-group-item-action');
+    const workItemEl = this.createWorkRequestNode(workRequest, template);
+    listItem.appendChild(workItemEl);
+    return listItem;
+  }
+
+  createWorkRequestNode(item, template) {
+    const listItem = template.content.cloneNode(true);
+
+    const workItemEl = listItem.querySelector('dd[data-workitem]');
+    workItemEl.innerHTML = item.workItemId;
+
+    const timestampEl = listItem.querySelector('dd[data-timestamp]');
+    timestampEl.innerHTML = item.updatedAt;
+
+    return listItem;
   }
 
   async fetchWorkRequests(overrideCache = false) {

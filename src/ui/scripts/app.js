@@ -4,6 +4,7 @@ import { KakyFooter } from './components/footer';
 import { indexPage } from './pages/index';
 import { workRequestAssignPage } from './pages/work-requests/assign';
 import { workRequestIndexPage } from './pages/work-requests/index';
+import { workRequestListPage } from './pages/work-requests/list';
 import { workRequestSubmittedPage } from './pages/work-requests/submitted';
 import { workRequestWorkOpenPage } from './pages/work-requests/work-open';
 import { library, dom } from '@fortawesome/fontawesome-svg-core';
@@ -31,6 +32,9 @@ window.addEventListener('DOMContentLoaded', () => {
       break;
     case '/work-requests/work-open.html':
       workRequestWorkOpenPage();
+      break;
+    case '/work-requests/list.html':
+      workRequestListPage();
       break;
     case '/work-requests':
     case '/work-requests/':
