@@ -22,7 +22,7 @@ class WorkRequests {
       </div>
     </div>
     `;
-    this.workRequestStatusTemplate = `<a href="#" class="workrequest-status list-group-item list-group-item-action flex-column align-items-start">
+    this.workRequestStatusTemplate = `<li class="workrequest-status list-group-item list-group-item-action flex-column align-items-start">
     <div class="d-flex w-100 mb-3">
       <div class="img-parent mr-3">
         <img class="img-fluid img-thumbnail" />
@@ -35,8 +35,8 @@ class WorkRequests {
       </div>
     </div>
     <p class="alert alert-info mb-1" role="alert"></p>
-
-  </a>`;
+    <a href="#" class="stretched-link">&nbsp;</a>
+  </li>`;
   }
 
   createStatusNode(workRequest, workItem) {
