@@ -1,0 +1,55 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>KAKY | Work Requests List</title>
+    <link rel="stylesheet" href="/assets/styles/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/styles/style.css">
+  </head>
+  <body>
+    <kaky-header></kaky-header>
+
+    <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto">
+      <h1 class="display-4">Your Work Requests</h1>
+      <p class="lead">Select a work request from the list below to view the details.</p>
+    </div>
+
+    <div class="container">
+      <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+        <li class="nav-item align-items-center">
+          <a class="nav-link active" id="list-open-workrequests" data-toggle="pill" href="#list-open" role="tab" aria-controls="list-open">Open <span class="badge badge-light"></span></a>
+        </li>
+        <li class="nav-item align-items-center">
+          <a class="nav-link" id="list-working-workrequests" data-toggle="list" href="#list-working" role="tab" aria-controls="list-working">Working <span class="badge badge-light"></span></a>
+        </li>
+        <li class="nav-item align-items-center">
+          <a class="nav-link" id="list-waiting-on-payment-workrequests" data-toggle="list" href="#list-waiting-on-payment" role="tab" aria-controls="list-waiting-on-payment">Waiting on Payment <span class="badge badge-light"></span></a>
+        </li>
+        <li class="nav-item align-items-center">
+          <a class="nav-link" id="list-paid-workrequests" data-toggle="list" href="#list-paid" role="tab" aria-controls="list-paid">Paid <span class="badge badge-light"></span></a>
+        </li>
+        <li class="nav-item align-items-center">
+          <a class="nav-link" id="list-closed-workrequests" data-toggle="list" href="#list-closed" role="tab" aria-controls="list-closed">Closed <span class="badge badge-light"></span></a>
+        </li>
+        <li class="nav-item align-items-center">
+          <a class="nav-link" id="list-cancelled-workrequests" data-toggle="list" href="#list-cancelled" role="tab" aria-controls="list-cancelled">Cancelled <span class="badge badge-light"></span></a>
+        </li>
+        <li class="nav-item align-items-center">
+          <a class="nav-link" id="list-rejected-workrequests" data-toggle="list" href="#list-rejected" role="tab" aria-controls="list-rejected">Rejected <span class="badge badge-light"></span></a>
+        </li>
+      </ul>
+
+      <div class="tab-content" id="pills-tabContent">
+        <div class="tab-pane fade show active" id="list-open" role="tabpanel" aria-labelledby="list-open-workrequests"><ul class="list-group"></ul></div>
+        <div class="tab-pane fade" id="list-working" role="tabpanel" aria-labelledby="list-working-workrequests"><ul class="list-group"></ul></div>
+        <div class="tab-pane fade" id="list-waiting-on-payment" role="tabpanel" aria-labelledby="list-waiting-on-payment-workrequests"><ul class="list-group"></ul></div>
+        <div class="tab-pane fade" id="list-paid" role="tabpanel" aria-labelledby="list-paid-workrequests"><ul class="list-group"></ul></div>
+        <div class="tab-pane fade" id="list-closed" role="tabpanel" aria-labelledby="list-closed-workrequests"><ul class="list-group"></ul></div>
+        <div class="tab-pane fade" id="list-cancelled" role="tabpanel" aria-labelledby="list-cancelled-workrequests"><ul class="list-group"></ul></div>
+        <div class="tab-pane fade" id="list-rejected" role="tabpanel" aria-labelledby="list-rejected-workrequests"><ul class="list-group"></ul></div>
+      </div>
+
+      <kaky-footer></kaky-footer>
+    </div>
+  </body>
+</html>

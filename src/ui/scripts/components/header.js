@@ -12,7 +12,10 @@ class KakyHeader extends HTMLElement {
       <div class="collapse navbar-collapse" id="navbarNavDropdown">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link" href="index.html">Work Items</a>
+            <a class="nav-link" href="/work-requests/index.html">New Work</a>
+          </li>
+          <li class="nav-item workrequests d-none">
+            <a class="nav-link" href="/work-requests/list.html">Work Requests</a>
           </li>
           <li class="nav-item login">
             <a class="nav-link" href="#">Log In</a>
@@ -29,12 +32,13 @@ class KakyHeader extends HTMLElement {
     this.loggedinContainerEl = this.querySelector('li.loggedin');
     this.loginEl = this.querySelector('li.login a');
     this.logoutEl = this.querySelector('a.logout');
+    this.workRequestsEl = this.querySelector('li.workrequests');
 
     this.loginEl.addEventListener('click', this.handleLoginRequest);
     this.logoutEl.addEventListener('click', this.handleLogoutRequest);
 
     netlifyIdentity.on('login', (user) => this.displayLoggedIn(user));
-    netlifyIdentity.on('logout', () => { window.location.href = 'index.html'; });
+    netlifyIdentity.on('logout', () => { window.location.href = '/index.html'; });
     netlifyIdentity.on('init', user => {
       if (user) {
         this.displayLoggedIn(user);
@@ -57,6 +61,7 @@ class KakyHeader extends HTMLElement {
   displayLoggedIn(user) {
     this.loginContainerEl.classList.add('d-none');
     this.loggedinContainerEl.classList.remove('d-none');
+    this.workRequestsEl.classList.remove('d-none');
 
     if (user.user_metadata && user.user_metadata.full_name) {
       this.loggedinContainerEl.querySelector('small').innerHTML = `(${user.user_metadata.full_name})`;
