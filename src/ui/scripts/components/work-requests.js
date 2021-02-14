@@ -6,6 +6,7 @@ class WorkRequests {
     this.items = [];
     this.defaultPrice = 1;
     this.url = '/.netlify/functions/work-requests';
+    this.workRequestDetailsUrl = '/work-requests/detail.html?id={}';
     this.emptyInstructionsMessage = 'You got lucky ... no special instructions this time.';
     this.workRequestInstructionsTemplate = `
     <textarea class="form-control" aria-label="Special instructions" maxlength="200"></textarea>
@@ -21,13 +22,71 @@ class WorkRequests {
       </div>
     </div>
     `;
+    this.workRequestStatusTemplate = `<a href="#" class="workrequest-status list-group-item list-group-item-action flex-column align-items-start">
+    <div class="d-flex w-100 mb-3">
+      <div class="img-parent mr-3">
+        <img class="img-fluid img-thumbnail" />
+      </div>
+      <div class="align-items-center">
+        <h5 class="mb-1"></h5>
+        <strong class="text-muted"></strong>
+        <br />
+        <small class="text-muted"></small>
+      </div>
+    </div>
+    <p class="alert alert-info mb-1" role="alert"></p>
+
+  </a>`;
+  }
+
+  createStatusNode(workRequest, workItem) {
+    const template = document.createElement('template');
+    template.innerHTML = this.workRequestStatusTemplate;
+    let statusNode = template.content.cloneNode(true);
+    let linkEl = statusNode.querySelector('a');
+    let imgEl = statusNode.querySelector('img');
+    let titleEl = statusNode.querySelector('h5');
+    let priceEl = statusNode.querySelector('strong');
+    let instructionsEl = statusNode.querySelector('p');
+    let timestampEl = statusNode.querySelector('small.text-muted');
+
+    // Calculate how many days ago the request was submitted
+    let today = new Date();
+    let createdAt = new Date(workRequest.createdAt);
+    let msPerDay = (1000*60*60*24);
+    let daysAgo = Math.floor(Math.abs((today.getTime() - createdAt.getTime()) / msPerDay));
+
+
+    linkEl.href = this.workRequestDetailsUrl.replace('{}', workRequest._id);
+    imgEl.src = workItem.imageUrl;
+    titleEl.innerHTML = workItem.name;
+    priceEl.innerHTML = `$${isNaN(workRequest.price) ? workItem.price.toLocaleString() : workRequest.price.toLocaleString()}`;
+    instructionsEl.innerHTML = workRequest.instructions ? workRequest.instructions : '<small class="text-muted"><i>No special instructions</i></small>';
+    timestampEl.innerHTML = daysAgo === 1 ? '1 day ago' : `${daysAgo} days ago`;
+
+    return statusNode;
   }
 
   async fetchWorkRequests(overrideCache = false) {
+    const user = netlifyIdentity.currentUser();
+
+    // Make sure there is a user
+    if (!user) return this.items;
+
+    // Check for cache
     if (this.item && this.items.length && !overrideCache) return this.items;
 
+    // Determine which "view" of work the user should see
+    let url = this.url;
+
+    if (user.app_metadata && user.app_metadata.roles.find(r => r === 'AssignWork')) {
+      url = `${url}/requester/${user.id}`;
+    } else {
+      url = `${url}/worker/${user.id}`;
+    }
+
     const headers = await KakyApiHeaders.setAuthorizationHeader();
-    const response = await fetch(this.url, {
+    const response = await fetch(url, {
       method: 'GET',
       headers: headers
     });

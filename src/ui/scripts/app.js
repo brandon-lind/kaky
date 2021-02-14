@@ -1,11 +1,14 @@
 import 'bootstrap/js/dist/collapse';
+import 'bootstrap/js/dist/tab';
 import { KakyHeader } from './components/header';
 import { KakyFooter } from './components/footer';
 import { indexPage } from './pages/index';
 import { workRequestAssignPage } from './pages/work-requests/assign';
+import { workRequestDetailPage } from './pages/work-requests/detail';
 import { workRequestIndexPage } from './pages/work-requests/index';
+import { workRequestListPage } from './pages/work-requests/list';
 import { workRequestSubmittedPage } from './pages/work-requests/submitted';
-import { workRequestWorkOpenPage } from './pages/work-requests/work-open';
+
 import { library, dom } from '@fortawesome/fontawesome-svg-core';
 import { faDeaf, faHandHoldingUsd, faPray, faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 
@@ -23,14 +26,17 @@ window.addEventListener('DOMContentLoaded', () => {
   const currentUrl = new URL(window.location.href);
 
   switch (currentUrl.pathname.toLowerCase()) {
-    case '/work-requests/submitted.html':
-      workRequestSubmittedPage();
-      break;
     case '/work-requests/assign.html':
       workRequestAssignPage();
       break;
-    case '/work-requests/work-open.html':
-      workRequestWorkOpenPage();
+    case '/work-requests/detail.html':
+      workRequestDetailPage();
+      break;
+    case '/work-requests/list.html':
+      workRequestListPage();
+      break;
+    case '/work-requests/submitted.html':
+      workRequestSubmittedPage();
       break;
     case '/work-requests':
     case '/work-requests/':

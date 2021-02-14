@@ -59,7 +59,11 @@
 
 
 .img-parent {
-  max-width:300px;
+  max-width: 300px;
+}
+
+.workrequest-status .img-parent {
+  max-width: 100px;
 }
 
 .kaky-success {
