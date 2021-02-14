@@ -22,13 +22,20 @@ class WorkRequests {
       </div>
     </div>
     `;
-    this.workRequestStatusTemplate = `<a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-    <div class="d-flex w-100 justify-content-between align-items-center">
-      <h5 class="mb-1"></h5>
-      <strong class="text-muted"></strong>
+    this.workRequestStatusTemplate = `<a href="#" class="workrequest-status list-group-item list-group-item-action flex-column align-items-start">
+    <div class="d-flex w-100 mb-3">
+      <div class="img-parent mr-3">
+        <img class="img-fluid img-thumbnail" />
+      </div>
+      <div class="align-items-center">
+        <h5 class="mb-1"></h5>
+        <strong class="text-muted"></strong>
+        <br />
+        <small class="text-muted"></small>
+      </div>
     </div>
-    <p class="mb-1"></p>
-    <small class="text-muted"></small>
+    <p class="alert alert-info mb-1" role="alert"></p>
+
   </a>`;
   }
 
@@ -37,6 +44,7 @@ class WorkRequests {
     template.innerHTML = this.workRequestStatusTemplate;
     let statusNode = template.content.cloneNode(true);
     let linkEl = statusNode.querySelector('a');
+    let imgEl = statusNode.querySelector('img');
     let titleEl = statusNode.querySelector('h5');
     let priceEl = statusNode.querySelector('strong');
     let instructionsEl = statusNode.querySelector('p');
@@ -50,9 +58,10 @@ class WorkRequests {
 
 
     linkEl.href = this.workRequestDetailsUrl.replace('{}', workRequest._id);
+    imgEl.src = workItem.imageUrl;
     titleEl.innerHTML = workItem.name;
-    priceEl.innerHTML = `$${isNaN(workRequest.price) ? workItem.price : workRequest.price}`;
-    instructionsEl.innerHTML = workRequest.instructions ? workRequest.instructions : '<i class="text-muted">No special instructions</i>';
+    priceEl.innerHTML = `$${isNaN(workRequest.price) ? workItem.price.toLocaleString() : workRequest.price.toLocaleString()}`;
+    instructionsEl.innerHTML = workRequest.instructions ? workRequest.instructions : '<small class="text-muted"><i>No special instructions</i></small>';
     timestampEl.innerHTML = daysAgo === 1 ? '1 day ago' : `${daysAgo} days ago`;
 
     return statusNode;
