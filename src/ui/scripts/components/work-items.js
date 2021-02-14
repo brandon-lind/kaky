@@ -7,18 +7,22 @@ class WorkItems {
     this.workItemsUrl = '/.netlify/functions/work-items';
     this.assignWorkUrl = '/work-requests/assign.html';
     this.workItemTemplate = `
-    <div class="media position-relative">
-      <div class="img-parent mr-3">
-        <img class="img-fluid img-thumbnail" />
-      </div>
-      <div class="media-body">
-        <div class="d-flex justify-content-between">
-          <h1 class="mb-1"></h1>
-          <h3><a href="#" class="stretched-link"></a></h3>
+      <div class="row">
+        <div class="col-sm-4">
+          <div class="img-parent">
+            <img class="img-fluid img-thumbnail" />
+          </div>
         </div>
-        <ul class="mb-1"></ul>
+        <div class="col-sm-8">
+          <div class="flex-column align-items-start mb-1">
+            <div class="d-flex w-100 justify-content-between">
+              <h1 class="mb-1"></h5>
+              <h3><a href="#" class="stretched-link"></a></h3>
+            </div>
+          </div>
+          <ul class="mb-1"></ul>
+        </div>
       </div>
-    </div>
     `;
   }
 
