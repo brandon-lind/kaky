@@ -51,13 +51,18 @@ module.exports = {
       template: path.resolve(__dirname, 'src/ui/index.html')
     }),
     new HtmlWebpackPlugin({
-      filename: 'work-requests/index.html',
-      template: path.resolve(__dirname, 'src/ui/work-requests/index.html')
-    }),
-    new HtmlWebpackPlugin({
       filename: 'work-requests/assign.html',
       template: path.resolve(__dirname, 'src/ui/work-requests/assign.html')
     }),
+    new HtmlWebpackPlugin({
+      filename: 'work-requests/detail.html',
+      template: path.resolve(__dirname, 'src/ui/work-requests/detail.html')
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'work-requests/index.html',
+      template: path.resolve(__dirname, 'src/ui/work-requests/index.html')
+    }),
+
     new HtmlWebpackPlugin({
       filename: 'work-requests/list.html',
       template: path.resolve(__dirname, 'src/ui/work-requests/list.html')
@@ -65,10 +70,6 @@ module.exports = {
     new HtmlWebpackPlugin({
       filename: 'work-requests/submitted.html',
       template: path.resolve(__dirname, 'src/ui/work-requests/submitted.html')
-    }),
-    new HtmlWebpackPlugin({
-      filename: 'work-requests/work-open.html',
-      template: path.resolve(__dirname, 'src/ui/work-requests/work-open.html')
     })
   ],
   module: {
