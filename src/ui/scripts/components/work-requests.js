@@ -6,7 +6,7 @@ class WorkRequests {
     this.items = [];
     this.defaultPrice = 1;
     this.url = '/.netlify/functions/work-requests';
-    this.workRequestDetailsUrl = '/work-requests/detail.html?id={}';
+    this.workRequestDetailsUrl = '/work-requests/detail.html?id=#';
     this.emptyInstructionsMessage = 'You got lucky ... no special instructions this time.';
     this.workRequestInstructionsTemplate = `
     <textarea class="form-control" aria-label="Special instructions" maxlength="200"></textarea>
@@ -57,7 +57,7 @@ class WorkRequests {
     let daysAgo = Math.floor(Math.abs((today.getTime() - createdAt.getTime()) / msPerDay));
 
 
-    linkEl.href = this.workRequestDetailsUrl.replace('{}', workRequest._id);
+    linkEl.href = this.workRequestDetailsUrl.replace('#', workRequest._id);
     imgEl.src = workItem.imageUrl;
     titleEl.innerHTML = workItem.name;
     priceEl.innerHTML = `$${isNaN(workRequest.price) ? workItem.price.toLocaleString() : workRequest.price.toLocaleString()}`;
@@ -81,9 +81,14 @@ class WorkRequests {
 
     if (user.app_metadata && user.app_metadata.roles.find(r => r === 'AssignWork')) {
       url = `${url}/requester/${user.id}`;
-    } else {
+    }
+
+    if (user.app_metadata && user.app_metadata.roles.find(r => r === 'AcceptWork')) {
       url = `${url}/worker/${user.id}`;
     }
+
+    // Don't let them get anything if they don't have either of the roles
+    if (url === this.url) return this.items;
 
     const headers = await KakyApiHeaders.setAuthorizationHeader();
     const response = await fetch(url, {
