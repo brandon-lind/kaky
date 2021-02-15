@@ -148,7 +148,7 @@ app.patch(`${basePath}/:id`, validateUser, async (req, res) => {
       }
     }
 
-    // If the user has the AssignWork role...
+    // If the user has the AcceptWork role...
     if (/^closed|rejected|working|waiting_for_payment$/gi.test(body.status)) {
       if (userRoles(user).indexOf('AcceptWork') === -1) {
         res.status(403).json({ message: `Your profile does not allow you to set that status on a work request.`, data: null });
