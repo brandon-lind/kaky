@@ -2,8 +2,10 @@ import mongoose from 'mongoose';
 
 const schema = new mongoose.Schema({
   workItemId: {
-    type: String,
-    required: [true, 'All play no work might be good for Jack, but not for this work request.']
+    type: Number,
+    required: [true, 'All play no work might be good for Jack, but not for this work request.'],
+    min: [1, 'Hmm, I think you are trying to spoof something since that is not a valid work item Id.'],
+    max: [6, 'Hmm, I think you are trying to spoof something since that is way bigger than a valid work item Id.']
   },
 
   workerId: {
@@ -18,12 +20,13 @@ const schema = new mongoose.Schema({
 
   price: {
     type: Number,
-    min: [0, 'The price must be greater than 0. No freebies!']
+    min: [0, 'The price must be greater than $0. No freebies!'],
+    max: [100, 'Whoa, that is way too much. Try something less than $100']
   },
 
   instructions: {
     type: String,
-    maxlength: [500, 'Whoa, that is too much for them to process with their short attention span. Try less words.']
+    maxlength: [200, 'Whoa, that is too much for them to process with their short attention span. Try less words.']
   },
 
   status: {

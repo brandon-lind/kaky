@@ -1,8 +1,8 @@
 [
   {
-    "id": "1",
+    "id": 1,
     "name": "Garbage",
-    "price": "3",
+    "price": 3,
     "imageUrl": "/assets/img/trash.jpeg",
     "tasks": [
       "Collect all the garbage",
@@ -11,9 +11,9 @@
     ]
   },
   {
-    "id": "2",
+    "id": 2,
     "name": "Garbage + Recycling",
-    "price": "4",
+    "price": 4,
     "imageUrl": "/assets/img/trash-recycle.jpeg",
     "tasks": [
       "All tasks in the Garbage Work Item",
@@ -22,9 +22,9 @@
     ]
   },
   {
-    "id": "3",
+    "id": 3,
     "name": "Mow Front Yard",
-    "price": "5",
+    "price": 5,
     "imageUrl": "/assets/img/mow-front.jpg",
     "tasks": [
       "Mow the front yard",
@@ -32,18 +32,18 @@
     ]
   },
   {
-    "id": "4",
+    "id": 4,
     "name": "Mow Back Yard",
-    "price": "5",
+    "price": 5,
     "imageUrl": "/assets/img/mow-back.jpg",
     "tasks": [
       "Mow the back yard"
     ]
   },
   {
-    "id": "5",
+    "id": 5,
     "name": "Mow Front + Back Yards",
-    "price": "10",
+    "price": 10,
     "imageUrl": "/assets/img/mow-all.jpg",
     "tasks": [
       "Items in the mow front yard",
@@ -51,9 +51,9 @@
     ]
   },
   {
-    "id": "6",
-    "name": "Whatever",
-    "price": "??",
+    "id": 6,
+    "name": "Surprise",
+    "price": 1,
     "imageUrl": "/assets/img/special.jpg",
     "tasks": [
       "A suprise work item full of fun"
