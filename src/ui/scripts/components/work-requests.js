@@ -10,6 +10,9 @@ class WorkRequests {
     this.emptyInstructionsMessage = 'You got lucky ... no special instructions this time.';
     this.workRequestInstructionsTemplate = `
     <textarea class="form-control" aria-label="Special instructions" maxlength="200"></textarea>
+    <div class="invalid-feedback">
+      Whoa, that is too much for them to process with their short attention span. Try less words.
+    </div>
     `;
     this.workRequestPriceTemplate = `
     <div class="input-group mb-3">
@@ -18,7 +21,7 @@ class WorkRequests {
       </div>
       <input type="number" required min="1" max="100" class="form-control" aria-label="Negotiated Amount" />
       <div class="invalid-feedback">
-        Yeah, that's not going to work. Something between 1 and 100 will do.
+        Whoa, that won't work. You can use something between $1 and $100.
       </div>
     </div>
     `;
@@ -353,7 +356,13 @@ class WorkRequests {
     }
 
     inputBox.addEventListener('change', (e) => {
-      workRequest.instructions = e.target.value;
+      if (e.target.value && e.target.value.length > 200) {
+        inputBox.classList.remove('is-valid');
+        inputBox.classList.add('is-invalid');
+      } else {
+        inputBox.classList.remove('is-invalid');
+        workRequest.instructions = e.target.value;
+      }
     });
 
     targetEl.appendChild(el);
@@ -372,7 +381,14 @@ class WorkRequests {
     inputBox.disabled = !editable;
 
     inputBox.addEventListener('change', (e) => {
-      workRequest.price = e.target.value;
+      if (isNaN(e.target.value) || Math.floor(e.target.value) < 1 || Math.floor(e.target.value) > 100) {
+        inputBox.classList.remove('is-valid');
+        inputBox.classList.add('is-invalid');
+      } else {
+        inputBox.classList.remove('is-invalid');
+        e.target.value = Math.floor(e.target.value);
+        workRequest.price = e.target.value;
+      }
     });
 
     targetEl.appendChild(el);
@@ -401,7 +417,7 @@ class WorkRequests {
       }
     }
 
-    // Check the work request
+    // Check the work request object
     if (!workRequest.isValid()) {
       showError(`This isn't going to work. Things are missing from the work request.`);
       return;
