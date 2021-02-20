@@ -93,6 +93,7 @@ app.get(`${basePath}/`, validateUser, async (req, res) => {
   }
 });
 
+/*
 app.patch(`${basePath}/:id`, validateUser, async (req, res) => {
   try {
     const { body, params } = req;
@@ -120,7 +121,7 @@ app.patch(`${basePath}/:id`, validateUser, async (req, res) => {
     // Map the properties
     worker.mapFromBody(body);
 
-    /* Get the user */
+
 
     // Check if this is the development environment
     if (identity.url === 'NETLIFY_LAMBDA_LOCALLY_EMULATED_IDENTITY_URL') {
@@ -149,7 +150,7 @@ app.patch(`${basePath}/:id`, validateUser, async (req, res) => {
       worker.mapToUserProfile(workerUserProfile);
     }
 
-    /* Update the user */
+
 
     // Check if this is the development environment
     if (identity.url !== 'NETLIFY_LAMBDA_LOCALLY_EMULATED_IDENTITY_URL') {
@@ -173,7 +174,7 @@ app.patch(`${basePath}/:id`, validateUser, async (req, res) => {
     res.status(500).json({ message: `Hm, that broke something.`, data: null });
   }
 });
-
+*/
 
 
 
