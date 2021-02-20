@@ -1,0 +1,45 @@
+{
+  "aud": "",
+  "users": [
+    {
+      "id": "kayla-id-01",
+      "aud": "",
+      "role": "",
+      "email": "example-email-01@kaky.us",
+      "app_metadata": {
+        "provider": "email",
+        "roles": [
+          "AcceptWork"
+        ]
+      },
+      "user_metadata": {
+        "name": "Kayla",
+        "monogram": "KA",
+        "avatarUrl": "https://storage.live.com/users/0x44870C41E4BDC210/myprofile/expressionprofile/profilephoto:Win8Static,UserTileMedium,UserTileStatic/MeControlXXLUserTile?ck=1&ex=24",
+        "tagline": "I am very skilled at mowing lawns, but can also do the garbage and recycling when I need money."
+      },
+      "created_at": "2021-02-20T10:02:51Z",
+      "updated_at": "2021-02-20T10:02:51Z"
+    },
+    {
+      "id": "kyle-id-01",
+      "aud": "",
+      "role": "",
+      "email": "example-email-02@kaky.us",
+      "app_metadata": {
+        "provider": "email",
+        "roles": [
+          "AcceptWork"
+        ]
+      },
+      "user_metadata": {
+        "name": "Kyle",
+        "monogram": "KY",
+        "avatarUrl": "https://storage.live.com/users/0x6A858728583AE06B/myprofile/expressionprofile/profilephoto:Win8Static,UserTileMedium,UserTileStatic/MeControlXXLUserTile?ck=1&ex=24",
+        "tagline": "I hate all chores and you really don't want to pick me."
+      },
+      "created_at": "2021-02-20T10:02:51Z",
+      "updated_at": "2021-02-20T10:02:51Z"
+    }
+  ]
+}
