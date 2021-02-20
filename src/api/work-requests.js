@@ -5,7 +5,7 @@ import awsServerlessExpressMiddleware from 'aws-serverless-express/middleware';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import { WorkRequest } from './models/work-requests';
-import { getRequestingUser, userRoles, validateUser } from './utils/authWrapper';
+import { getUserFromContext, userRoles, validateUser } from './utils/authWrapper';
 import { appErrorFormatter } from './utils/appErrorFormatter';
 
 // Cached database connection
@@ -96,7 +96,7 @@ app.get(`${basePath}/requester/:requesterId`, validateUser, async (req, res) => 
 app.post(`${basePath}/`, validateUser, async (req, res) => {
   try {
     const { body } = req;
-    const user = getRequestingUser(req);
+    const user = getUserFromContext(req);
 
     let item = new WorkRequest({
       workItemId: body.workItemId,
@@ -107,7 +107,7 @@ app.post(`${basePath}/`, validateUser, async (req, res) => {
       status: 'open' // The only valid status is 'open'
     });
 
-    // The user must have the 'AssignWork' role
+    // The requesting user must have the 'AssignWork' role
     if (userRoles(user).indexOf('AssignWork') === -1) {
       console.log(`Auth Failure: User tried to assign work, but was blocked.\n${JSON.stringify(user)}`);
       res.status(403).json( { message: `Nice try, but you do not have the entitlement to assign work.`, data: null } );
