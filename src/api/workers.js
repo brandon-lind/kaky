@@ -25,7 +25,6 @@ app.use(awsServerlessExpressMiddleware.eventContext());
 
 
 
-/*
 
 // Define the routes
 app.get(`${basePath}/`, validateUser, async (req, res) => {
@@ -174,7 +173,7 @@ app.patch(`${basePath}/:id`, validateUser, async (req, res) => {
     res.status(500).json({ message: `Hm, that broke something.`, data: null });
   }
 });
-*/
+
 
 
 
