@@ -2,6 +2,10 @@
   "name": "kaky",
   "version": "1.0.0",
   "description": "A super simple chore invoicing app for (Ka)yla and (Ky)le.",
+  "engines": {
+    "node": ">=14.15.5",
+    "npm": ">=6.14.11"
+  },
   "scripts": {
     "build": "npm-run-all --parallel build:**",
     "build:api": "netlify-lambda build ./src/api -c ./webpack.api.prod.js",

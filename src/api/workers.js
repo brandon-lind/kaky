@@ -95,7 +95,7 @@ app.get(`${basePath}/`, validateUser, async (req, res) => {
 
 app.patch(`${basePath}/:id`, validateUser, async (req, res) => {
   try {
-    const { body, params } = req;
+    const { postBody, params } = req;
     const user = getUserFromContext(req);
     const identity = getIdentityFromContext(req);
 
@@ -118,7 +118,7 @@ app.patch(`${basePath}/:id`, validateUser, async (req, res) => {
     }
 
     // Map the properties
-    worker.mapFromBody(body);
+    worker.mapFromBody(postBody);
 
 
 
