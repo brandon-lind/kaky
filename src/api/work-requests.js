@@ -5,7 +5,7 @@ import awsServerlessExpressMiddleware from 'aws-serverless-express/middleware';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import { WorkRequest } from './models/work-requests';
-import { getUserFromContext, userRoles, validateUser } from './utils/authWrapper';
+import { getUserFromContext, userHasRole, userRoles, validateUser } from './utils/authWrapper';
 import { appErrorFormatter } from './utils/appErrorFormatter';
 
 // Cached database connection
@@ -108,9 +108,9 @@ app.post(`${basePath}/`, validateUser, async (req, res) => {
     });
 
     // The requesting user must have the 'AssignWork' role
-    if (userRoles(user).indexOf('AssignWork') === -1) {
+    if (!userHasRole(user, 'AssignWork')) {
       console.log(`Auth Failure: User tried to assign work, but was blocked.\n${JSON.stringify(user)}`);
-      res.status(403).json( { message: `Nice try, but you do not have the entitlement to assign work.`, data: null } );
+      res.status(403).json( { message: `Nice try, but you do not have permission to assign work.`, data: null } );
       return;
     }
 
@@ -132,7 +132,7 @@ app.post(`${basePath}/`, validateUser, async (req, res) => {
 app.patch(`${basePath}/:id`, validateUser, async (req, res) => {
   try {
     const { body, params } = req;
-    const { user } = req.apiGateway.context.clientContext;
+    const user = getUserFromContext(req);
 
     // NoOp if they are trying to set a status not in this list
     if (/^cancelled|closed|paid|rejected|working|waiting_for_payment$/gi.test(body.status) === false) {
@@ -142,7 +142,7 @@ app.patch(`${basePath}/:id`, validateUser, async (req, res) => {
 
     // If the user has the AssignWork role...
     if (/^cancelled|paid$/gi.test(body.status)) {
-      if (userRoles(user).indexOf('AssignWork') === -1) {
+      if (!userHasRole(user, 'AssignWork')) {
         res.status(403).json({ message: `Your profile does not allow you to set that status on a work request.`, data: null });
         return;
       }
@@ -150,7 +150,7 @@ app.patch(`${basePath}/:id`, validateUser, async (req, res) => {
 
     // If the user has the AcceptWork role...
     if (/^closed|rejected|working|waiting_for_payment$/gi.test(body.status)) {
-      if (userRoles(user).indexOf('AcceptWork') === -1) {
+      if (!userHasRole(user, 'AcceptWork')) {
         res.status(403).json({ message: `Your profile does not allow you to set that status on a work request.`, data: null });
         return;
       }
