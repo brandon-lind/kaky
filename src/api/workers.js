@@ -74,7 +74,7 @@ app.get(`${basePath}/`, validateUser, async (req, res) => {
     }
 
     // Check if there are users
-    const items = users && users.json() ? users.json() : { users: [] };
+    const items = users ? users.json() : { users: [] };
 
     // Filter to just the workers
     const workerProfiles = items.users.filter(user => userHasRole(user, 'AcceptWork'));
@@ -133,7 +133,7 @@ app.patch(`${basePath}/:id`, validateUser, async (req, res) => {
             headers: { Authorization: adminAuthHeader }
           });
 
-          if (netlifyUser && netlifyUser.json()) {
+          if (netlifyUser) {
             workerUserProfile = netlifyUser.json();
           }
 
