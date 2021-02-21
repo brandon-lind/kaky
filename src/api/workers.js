@@ -71,7 +71,7 @@ app.get(`${basePath}/`, validateUser, async (req, res) => {
           usersCache = users;
         } catch (e) {
           console.log(`There was an error getting the list of users from Netlify at ${usersUrl}`, e);
-          res.status(500).json({ message: `Hm, that broke something.`, data: e });
+          res.status(500).json({ message: `Hm, that broke something when trying to get the users.`, data: { NetlifyUrl: usersUrl, Users: users, er: e.message} });
           return;
         }
       }
