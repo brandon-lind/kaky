@@ -45,11 +45,7 @@ app.get(`${basePath}/`, validateUser, async (req, res) => {
     if (identity.url === 'NETLIFY_LAMBDA_LOCALLY_EMULATED_IDENTITY_URL') {
       console.log('Getting the users from the local file system.');
 
-      users = {
-        json: () => {
-          return localUsers.default;
-        }
-      };
+      users = localUsers.default.users;
     } else {
       // Check the cache ... worry about cache busting later. This only lasts for as long as the function is warm anyway.
       if (usersCache) {
@@ -65,10 +61,10 @@ app.get(`${basePath}/`, validateUser, async (req, res) => {
             headers: { Authorization: adminAuthHeader }
           });
 
-          users = response.ok ? await response.json() : { users: [] }; // Can only call this one since it's a stream
+          const responseItem = response.ok ? await response.json() : { users: [] }; // Can only call this one since it's a stream
 
           // Cache the users object
-          usersCache = users;
+          usersCache = responseItem.users;
         } catch (e) {
           console.log(`There was an error getting the list of users from Netlify at ${usersUrl}`, e);
           res.status(500).json({ message: `Hm, that broke something when trying to get the worker users.`, data: null });
