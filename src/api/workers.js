@@ -48,10 +48,10 @@ app.get(`${basePath}/`, validateUser, async (req, res) => {
       users = localUsers.default.users;
     } else {
       // Check the cache ... worry about cache busting later. This only lasts for as long as the function is warm anyway.
-      if (usersCache) {
-        users = usersCache;
-        console.log('Got a users cache hit!');
-      } else {
+      // if (usersCache) {
+      //   users = usersCache;
+      //   console.log('Got a users cache hit!');
+      // } else {
         try {
           console.log('Getting the users from the Netlify url');
 
@@ -67,10 +67,10 @@ app.get(`${basePath}/`, validateUser, async (req, res) => {
           usersCache = responseItem.users;
         } catch (e) {
           console.log(`There was an error getting the list of users from Netlify at ${usersUrl}`, e);
-          res.status(500).json({ message: `Hm, that broke something when trying to get the worker users.`, data: null });
+          res.status(500).json({ message: `Hm, that broke something when trying to get the worker users.`, data: e.message });
           return;
         }
-      }
+      //}
     }
 
     // Filter to just the workers
@@ -85,7 +85,7 @@ app.get(`${basePath}/`, validateUser, async (req, res) => {
   } catch(e) {
     console.log(e);
 
-    res.status(500).json({ message: `Hm, that broke something.`, data: null });
+    res.status(500).json({ message: `Hm, that broke something.`, data: e.message });
   }
 });
 
