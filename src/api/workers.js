@@ -63,6 +63,8 @@ app.get(`${basePath}/`, validateUser, async (req, res) => {
 
           const responseItem = response.ok ? await response.json() : { users: [] }; // Can only call this one since it's a stream
 
+          users = Array.isArray(responseItem.users) ? responseItem.users : [];
+
           // Cache the users object
           usersCache = responseItem.users;
         } catch (e) {
