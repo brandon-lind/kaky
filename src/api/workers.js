@@ -71,7 +71,7 @@ app.get(`${basePath}/`, validateUser, async (req, res) => {
           usersCache = users;
         } catch (e) {
           console.log(`There was an error getting the list of users from Netlify at ${usersUrl}`, e);
-          res.status(500).json({ message: `Hm, that broke something.`, data: null });
+          res.status(500).json({ message: `Hm, that broke something.`, data: e });
           return;
         }
       }
@@ -89,7 +89,7 @@ app.get(`${basePath}/`, validateUser, async (req, res) => {
   } catch(e) {
     console.log(e);
 
-    res.status(500).json({ message: `Hm, that broke something.`, data: null });
+    res.status(500).json({ message: `Hm, that broke something.`, data: e });
   }
 });
 
