@@ -34,10 +34,10 @@ class Worker {
   mapToUserProfile(user) {
     if (!user) return;
 
-    Object.assign(user.user_metadata, this);
-
-    // Get rid of the id
-    delete user.user_metadata.id;
+    user.user_metadata.name = this.name;
+    user.user_metadata.monogram = this.monogram;
+    user.user_metadata.avatarUrl = this.avatarUrl;
+    user.user_metadata.tagline = this.tagline;
   }
 }
 
