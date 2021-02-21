@@ -138,13 +138,13 @@ app.patch(`${basePath}/:id`, validateUser, async (req, res) => {
 
         } catch (e) {
           console.log(`There was an error getting the user from Netlify at ${userUrl}`, e);
-          res.status(500).json({ message: `Hm, that broke something trying to get the worker.`, data: e.message });
+          res.status(500).json({ message: `Hm, that broke something trying to get the worker.`, data: null });
           return;
         }
     }
 
     // Map the worker information to the user profile
-    if (workerUserProfile && workerUserProfile.user_metadata) {
+    if (workerUserProfile) {
       worker.mapToUserProfile(workerUserProfile);
     }
 
@@ -157,11 +157,11 @@ app.patch(`${basePath}/:id`, validateUser, async (req, res) => {
         await fetch(userUrl, {
           method: 'PUT',
           headers: { Authorization: adminAuthHeader },
-          body: JSON.stringify({ user_metadata: workerUserProfile.user_metadata})
+          body: JSON.stringify(workerUserProfile)
         });
       } catch (e) {
         console.log(`There was an error updating the user metadata in Netlify at ${userUrl}`, e);
-        res.status(500).json({ message: `Hm, that broke something trying to update the worker.`, data: e.message });
+        res.status(500).json({ message: `Hm, that broke something trying to update the worker.`, data: null });
         return;
       }
     }
@@ -169,7 +169,7 @@ app.patch(`${basePath}/:id`, validateUser, async (req, res) => {
     res.json({ message: `The worker was updated.`, data: worker });
   } catch(e) {
     console.error(e);
-    res.status(500).json({ message: `Hm, that broke something.`, data: e.message });
+    res.status(500).json({ message: `Hm, that broke something.`, data: null });
   }
 });
 
