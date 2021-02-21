@@ -60,24 +60,25 @@ app.get(`${basePath}/`, validateUser, async (req, res) => {
           console.log('Getting the users from the Netlify url');
 
           // Get the list of users from Netlify
-          users = await fetch(usersUrl, {
+          const netlifyUsers = await fetch(usersUrl, {
             method: 'GET',
             headers: { Authorization: adminAuthHeader }
           });
+
+          users = netlifyUsers ? netlifyUsers.json() : { users: [] }; // Can only call this one since it's a stream
 
           // Cache the users object
           usersCache = users;
         } catch (e) {
           console.log(`There was an error getting the list of users from Netlify at ${usersUrl}`, e);
+          res.status(500).json({ message: `Hm, that broke something.`, data: null });
+          return;
         }
       }
     }
 
-    // Check if there are users
-    const items = users ? users.json() : { users: [] };
-
-    // Filter to just the workers
-    const workerProfiles = items.users.filter(user => userHasRole(user, 'AcceptWork'));
+        // Filter to just the workers
+    const workerProfiles = users.filter(user => userHasRole(user, 'AcceptWork'));
 
     // Convert to a worker object (don't send the full profile)
     const workers = workerProfiles.map(workerProfile => {
