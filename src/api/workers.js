@@ -94,7 +94,7 @@ app.get(`${basePath}/`, validateUser, async (req, res) => {
 
 app.patch(`${basePath}/:id`, validateUser, async (req, res) => {
   try {
-    const { postBody, params } = req;
+    const { body, params } = req;
     const user = getUserFromContext(req);
     const identity = getIdentityFromContext(req);
 
@@ -117,7 +117,7 @@ app.patch(`${basePath}/:id`, validateUser, async (req, res) => {
     }
 
     // Map the properties
-    worker.mapFromBody(postBody);
+    worker.mapFromBody(body);
 
 
 
@@ -146,6 +146,10 @@ app.patch(`${basePath}/:id`, validateUser, async (req, res) => {
     // Map the worker information to the user profile
     if (workerUserProfile) {
       worker.mapToUserProfile(workerUserProfile);
+    } else {
+      console.log(`There was no Netlify user profile`, e);
+      res.status(404).json({ message: `Hm, worker was not found.`, data: null });
+      return;
     }
 
 
