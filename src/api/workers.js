@@ -65,7 +65,7 @@ app.get(`${basePath}/`, validateUser, async (req, res) => {
             headers: { Authorization: adminAuthHeader }
           });
 
-          users = netlifyUsers ? netlifyUsers.json() : { users: [] }; // Can only call this one since it's a stream
+          users = netlifyUsers.ok ? await netlifyUsers.json() : { users: [] }; // Can only call this one since it's a stream
 
           // Cache the users object
           usersCache = users;
@@ -77,7 +77,7 @@ app.get(`${basePath}/`, validateUser, async (req, res) => {
       //}
     }
 
-        // Filter to just the workers
+    // Filter to just the workers
     const workerProfiles = users.filter(user => userHasRole(user, 'AcceptWork'));
 
     // Convert to a worker object (don't send the full profile)
@@ -134,8 +134,8 @@ app.patch(`${basePath}/:id`, validateUser, async (req, res) => {
             headers: { Authorization: adminAuthHeader }
           });
 
-          if (netlifyUser) {
-            workerUserProfile = netlifyUser.json();
+          if (netlifyUser.ok) {
+            workerUserProfile = await netlifyUser.json();
           }
 
         } catch (e) {
