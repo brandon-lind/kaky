@@ -48,10 +48,10 @@ app.get(`${basePath}/`, validateUser, async (req, res) => {
       users = localUsers.default.users;
     } else {
       // Check the cache ... worry about cache busting later. This only lasts for as long as the function is warm anyway.
-      // if (usersCache) {
-      //   users = usersCache;
-      //   console.log('Got a users cache hit!');
-      // } else {
+      if (usersCache) {
+        users = usersCache;
+        console.log('Got a users cache hit!');
+      } else {
         try {
           console.log('Getting the users from the Netlify url');
 
@@ -69,10 +69,10 @@ app.get(`${basePath}/`, validateUser, async (req, res) => {
           usersCache = responseItem.users;
         } catch (e) {
           console.log(`There was an error getting the list of users from Netlify at ${usersUrl}`, e);
-          res.status(500).json({ message: `Hm, that broke something when trying to get the worker users.`, data: e.message });
+          res.status(500).json({ message: `Hm, that broke something when trying to get the worker users.`, data: null });
           return;
         }
-      //}
+      }
     }
 
     // Filter to just the workers
@@ -87,7 +87,7 @@ app.get(`${basePath}/`, validateUser, async (req, res) => {
   } catch(e) {
     console.log(e);
 
-    res.status(500).json({ message: `Hm, that broke something.`, data: e.message });
+    res.status(500).json({ message: `Hm, that broke something.`, data: null });
   }
 });
 
@@ -138,7 +138,7 @@ app.patch(`${basePath}/:id`, validateUser, async (req, res) => {
 
         } catch (e) {
           console.log(`There was an error getting the user from Netlify at ${userUrl}`, e);
-          res.status(500).json({ message: `Hm, that broke something.`, data: null });
+          res.status(500).json({ message: `Hm, that broke something trying to get the worker.`, data: e.message });
           return;
         }
     }
@@ -154,14 +154,14 @@ app.patch(`${basePath}/:id`, validateUser, async (req, res) => {
     if (identity.url !== 'NETLIFY_LAMBDA_LOCALLY_EMULATED_IDENTITY_URL') {
       try {
         // Update the Netlify user metadata
-        netlifyUser = await fetch(userUrl, {
+        await fetch(userUrl, {
           method: 'PUT',
           headers: { Authorization: adminAuthHeader },
           body: JSON.stringify({ user_metadata: workerUserProfile.user_metadata})
         });
       } catch (e) {
         console.log(`There was an error updating the user metadata in Netlify at ${userUrl}`, e);
-        res.status(500).json({ message: `Hm, that broke something.`, data: null });
+        res.status(500).json({ message: `Hm, that broke something trying to update the worker.`, data: e.message });
         return;
       }
     }
@@ -169,7 +169,7 @@ app.patch(`${basePath}/:id`, validateUser, async (req, res) => {
     res.json({ message: `The worker was updated.`, data: worker });
   } catch(e) {
     console.error(e);
-    res.status(500).json({ message: `Hm, that broke something.`, data: null });
+    res.status(500).json({ message: `Hm, that broke something.`, data: e.message });
   }
 });
 
