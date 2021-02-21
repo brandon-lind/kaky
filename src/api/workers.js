@@ -52,32 +52,32 @@ app.get(`${basePath}/`, validateUser, async (req, res) => {
       };
     } else {
       // Check the cache ... worry about cache busting later. This only lasts for as long as the function is warm anyway.
-      // if (usersCache) {
-      //   users = usersCache;
-      //   console.log('Got a users cache hit!');
-      // } else {
+      if (usersCache) {
+        users = usersCache;
+        console.log('Got a users cache hit!');
+      } else {
         try {
           console.log('Getting the users from the Netlify url');
 
           // Get the list of users from Netlify
-          const netlifyUsers = await fetch(usersUrl, {
+          const response = await fetch(usersUrl, {
             method: 'GET',
             headers: { Authorization: adminAuthHeader }
           });
 
-          users = netlifyUsers ? netlifyUsers.json() : { users: [] }; // Can only call this one since it's a stream
+          users = response.ok ? await response.json() : { users: [] }; // Can only call this one since it's a stream
 
           // Cache the users object
           usersCache = users;
         } catch (e) {
           console.log(`There was an error getting the list of users from Netlify at ${usersUrl}`, e);
-          res.status(500).json({ message: `Hm, that broke something when trying to get the users.`, data: { NetlifyUrl: usersUrl, Users: users, er: e.message} });
+          res.status(500).json({ message: `Hm, that broke something when trying to get the worker users.`, data: null });
           return;
         }
-      //}
+      }
     }
 
-        // Filter to just the workers
+    // Filter to just the workers
     const workerProfiles = users.filter(user => userHasRole(user, 'AcceptWork'));
 
     // Convert to a worker object (don't send the full profile)
@@ -89,7 +89,7 @@ app.get(`${basePath}/`, validateUser, async (req, res) => {
   } catch(e) {
     console.log(e);
 
-    res.status(500).json({ message: `Hm, that broke something.`, data: e.message });
+    res.status(500).json({ message: `Hm, that broke something.`, data: null });
   }
 });
 
@@ -129,13 +129,13 @@ app.patch(`${basePath}/:id`, validateUser, async (req, res) => {
     } else {
         try {
           // Get the user from Netlify
-          netlifyUser = await fetch(userUrl, {
+          const response = await fetch(userUrl, {
             method: 'GET',
             headers: { Authorization: adminAuthHeader }
           });
 
-          if (netlifyUser) {
-            workerUserProfile = netlifyUser.json();
+          if (response.ok) {
+            workerUserProfile = await response.json();
           }
 
         } catch (e) {
