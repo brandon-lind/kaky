@@ -5,6 +5,9 @@ export async function profilePage() {
 
   const formTargetEl = document.querySelector('form');
   const errorMessagesTargetEl = document.querySelector('#error-messages');
+  const successMessagesTargetEl = document.querySelector('#success-messages');
+  const actionButtonsTargetEl = document.querySelector('#actions');
+
   const workerprofileTargetEl = document.querySelector('#workerprofile');
   const displaynameTargetEl = document.querySelector('#displayname');
   const monogramTargetEl = document.querySelector('#monogram');
@@ -12,7 +15,6 @@ export async function profilePage() {
   const taglineTargetEl = document.querySelector('#tagline');
   const phonenumberTargetEl = document.querySelector('#phonenumber');
   const emailTargetEl = document.querySelector('#email');
-  const actionButtonsTargetEl = document.querySelector('#actions');
 
   try {
     // Hide the worker fieldset if the user is not a worker
@@ -36,14 +38,15 @@ export async function profilePage() {
     actionButtonsTargetEl.remove();
   }
 
-  formTargetEl.addEventListener('submit', (e) => {
-    const errors = profile.handleSubmit(e);
-
-    if (errors && errors.length) {
-      errorMessagesTargetEl.innerHTML = 'There were errors';
-      errorMessagesTargetEl.classList.remove('d-none');
-    } else {
+  formTargetEl.addEventListener('submit', async (evt) => {
+    try {
+      await profile.handleSubmit(evt);
       errorMessagesTargetEl.classList.add('d-none');
+      successMessagesTargetEl.classList.remove('d-none');
+    } catch(e) {
+      successMessagesTargetEl.classList.add('d-none');
+      errorMessagesTargetEl.innerHTML = e.message;
+      errorMessagesTargetEl.classList.remove('d-none');
     }
   });
 };
