@@ -1,5 +1,6 @@
 import 'bootstrap/js/dist/collapse';
 import 'bootstrap/js/dist/dropdown';
+import 'bootstrap/js/dist/tab';
 import { library, dom } from '@fortawesome/fontawesome-svg-core';
 import { faBell, faDeaf, faHandHoldingUsd, faPray, faCheckCircle, faUserNinja } from '@fortawesome/free-solid-svg-icons';
 import { KakyHeader } from './components/header';
