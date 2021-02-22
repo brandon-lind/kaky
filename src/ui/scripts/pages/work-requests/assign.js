@@ -15,7 +15,8 @@ export async function workRequestAssignPage() {
   const priceEditorTargetEl = document.querySelector('#price-editor');
   const instructionsEditorTargetEl = document.querySelector('#instructions-editor');
   const formTargetEl = document.querySelector('form');
-  const errorMessagesTargetEl = document.querySelector('#error-messages');
+  const fieldsetEl = formTargetEl.querySelector('fieldset');
+  const errorMessageTargetEl = document.querySelector('#error-message');
 
   const workItem = await workItems.findWorkItemById(workItemId);
   const workRequest = new WorkRequest(workItem);
@@ -25,5 +26,15 @@ export async function workRequestAssignPage() {
   workRequests.renderPrice(priceEditorTargetEl, workRequest, true);
   workRequests.renderInstructions(instructionsEditorTargetEl, workRequest, true, false);
 
-  formTargetEl.addEventListener('submit', (e) => { workRequests.handleSubmit(e, errorMessagesTargetEl, workRequest); });
+  formTargetEl.addEventListener('submit', async (evt) => {
+    try {
+      const workRequestId = await workRequests.handleSubmit(evt, workRequest);
+      const redirectUrl = formTargetEl.action.replace('id=#', 'id='+ workRequestId);
+      window.location = redirectUrl;
+    } catch(e) {
+      fieldsetEl.disabled = false;
+      errorMessageTargetEl.classList.remove('d-none');
+      errorMessageTargetEl.innerHTML = e.message;
+    }
+  });
 };
