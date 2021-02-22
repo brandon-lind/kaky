@@ -149,57 +149,59 @@ class WorkRequests {
     }
   }
 
-  async handleSubmit(event, errorTargetEl, workRequest) {
+  async handleSubmit(event, workRequest) {
+    let errorMessage = '';
     const formEl = event.target;
     const fieldsetEl = formEl.querySelector('fieldset');
 
+    event.preventDefault();
+
+    if (!workRequest) {
+      throw new Error(`There is no work request, so nothing is going to happen.`);
+    }
+
+    if (formEl.checkValidity() === false) {
+      event.stopPropagation();
+      formEl.classList.add('was-validated');
+      return;
+    }
+
+    fieldsetEl.disabled = true;
+
+    // Get the user
+    const user = netlifyIdentity.currentUser();
+
+    if (!user) {
+      throw new Error(`This isn't going to work. You haven't logged in yet.`);
+    }
+
+    // Set the requester
+    workRequest.requesterId = user ? user.id : '';
+
+    // Set the status
+    workRequest.status = 'open';
+
+    // Check the work request
+    this.validateWorkRequest(user, workRequest);
+
     try {
-      fieldsetEl.disabled = true;
-      event.preventDefault();
+      const headers = await KakyApiHeaders.setPOSTHeaders();
+      const response = await fetch(this.url, {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify(workRequest)
+      });
 
-      if (!workRequest) {
-        throw new Error(`There is no work request.`);
+      const responseData = await response.json();
+
+      if (responseData.data._id) {
+        return responseData.data._id;
+      } else {
+        throw new Error(`The work request submission failed.`);
       }
-
-      if (formEl.checkValidity() === false) {
-        event.stopPropagation();
-        formEl.classList.add('was-validated');
-        return;
-      }
-
-      // Get the user
-      const user = netlifyIdentity.currentUser();
-
-      // Set the requester
-      workRequest.requesterId = user ? user.id : '';
-
-      // Set the status
-      workRequest.status = 'open';
-
-      // Check the work request
-      this.validateWorkRequest(errorTargetEl, user, workRequest);
-
-      try {
-        const headers = await KakyApiHeaders.setPOSTHeaders();
-        const response = await fetch(this.url, {
-          method: 'POST',
-          headers: headers,
-          body: JSON.stringify(workRequest)
-        });
-
-        const responseData = await response.json();
-
-        if (!responseData.data._id) {
-          throw new Error('The work request submission failed.');
-        }
-
-        const redirectUrl = formEl.action.replace('id=#', 'id='+ responseData.data._id);
-        window.location = redirectUrl;
-      } catch (e) {
-        console.error(`There was an error saving the work request. \n${e}`);
-      }
-    } finally {
-      fieldsetEl.disabled = false;
+    } catch (e) {
+      console.error(`There was an error saving the work request. \n${e}`);
+      throw new Error(`There was an error saving the work request.`);
     }
   }
 
@@ -394,33 +396,22 @@ class WorkRequests {
     targetEl.appendChild(el);
   }
 
-  validateWorkRequest(errorTargetEl, user, workRequest) {
-    if (!errorTargetEl || errorTargetEl.innerHTML === undefined) throw new Error('There is no target element to render submission error messages into.');
-
-    const showError = (errText) => {
-      errorTargetEl.innerHTML = errText;
-      errorTargetEl.style.display = 'block';
-    };
-
+  validateWorkRequest(user, workRequest) {
     if (!workRequest) {
-      showError(`There was a problem. You're going to have to talk to them yourself.`);
-      return;
+      throw new Error(`There was a problem. You're going to have to talk to them yourself.`);
     }
 
     if (!user) {
-      showError(`This isn't going to work. You haven't logged in yet.`);
-      return;
+      throw new Error(`This isn't going to work. You haven't logged in yet.`);
     } else {
       if (!user.app_metadata || !user.app_metadata.roles.find(r => r === 'AssignWork')) {
-        showError(`This isn't going to work. Your profile doesn't allow assigning work.`);
-        return;
+        throw new Error(`This isn't going to work. Your profile doesn't allow you to assign work.`);
       }
     }
 
     // Check the work request object
     if (!workRequest.isValid()) {
-      showError(`This isn't going to work. Things are missing from the work request.`);
-      return;
+      throw new Error(`This isn't going to work. Things are missing from the work request.`);
     }
   }
 }

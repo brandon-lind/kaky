@@ -10,11 +10,9 @@ class Profile {
   async handleSubmit(event) {
     const formEl = event.target;
     const fieldsetEl = formEl.querySelector('fieldset');
-    const errorMessages = [];
 
     event.preventDefault();
 
-    try {
       if (formEl.checkValidity() === false) {
         event.stopPropagation();
         formEl.classList.add('was-validated');
@@ -34,7 +32,7 @@ class Profile {
             }
           });
         } catch(e) {
-          errorMessages.push('Your worker profile could not be updated.');
+          throw new Error(`Your worker profile could not be updated.`);
         }
       }
 
@@ -46,14 +44,8 @@ class Profile {
           }
         });
       } catch(e) {
-        errorMessages.push('Your notification preferences could not be updated.');
+        throw new Error(`Your notification preferences could not be updated.`);
       }
-
-    } finally {
-      fieldsetEl.disabled;
-    }
-
-    return errorMessages;
   }
 
   isWorker() {

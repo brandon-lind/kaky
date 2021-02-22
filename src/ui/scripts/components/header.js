@@ -1,4 +1,5 @@
 import netlifyIdentity from 'netlify-identity-widget';
+
 class KakyHeader extends HTMLElement {
 
   constructor() {
