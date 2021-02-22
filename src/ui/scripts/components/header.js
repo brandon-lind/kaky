@@ -10,29 +10,37 @@ class KakyHeader extends HTMLElement {
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNavDropdown">
-        <ul class="navbar-nav">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item" id="login-container">
+            <a class="nav-link" href="#" id="login">Log In</a>
+          </li>
           <li class="nav-item">
             <a class="nav-link" href="/work-requests/index.html">New Work</a>
           </li>
-          <li class="nav-item workrequests d-none">
+          <li class="nav-item d-none" id="workrequests-container">
             <a class="nav-link" href="/work-requests/list.html">Work Requests</a>
           </li>
-          <li class="nav-item login">
-            <a class="nav-link" href="#">Log In</a>
-          </li>
-          <li class="nav-item loggedin d-none">
-            <a class="nav-link logout" href="#">Log Out <small></small></a>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item dropdown d-none" id="loggedin-container">
+            <a href="#" class="nav-link dropdown-toggle" id="profileDropdown" role="button" data-toggle="dropdown" aria-expanded="false">
+              <i class="fas fa-user-ninja fa-2x"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="profileDropdown">
+              <li><a class="dropdown-item" href="/profile.html" id="username"></li>
+              <li><a class="dropdown-item" href="#" id="logout">Log Out</a></li>
+            </ul>
           </li>
         </ul>
       </div>
     </nav>
     `;
 
-    this.loginContainerEl = this.querySelector('li.login');
-    this.loggedinContainerEl = this.querySelector('li.loggedin');
-    this.loginEl = this.querySelector('li.login a');
-    this.logoutEl = this.querySelector('a.logout');
-    this.workRequestsEl = this.querySelector('li.workrequests');
+    this.loginContainerEl = this.querySelector('#login-container');
+    this.loggedinContainerEl = this.querySelector('#loggedin-container');
+    this.loginEl = this.querySelector('#login');
+    this.logoutEl = this.querySelector('#logout');
+    this.workRequestsEl = this.querySelector('#workrequests-container');
 
     this.loginEl.addEventListener('click', this.handleLoginRequest);
     this.logoutEl.addEventListener('click', this.handleLogoutRequest);
@@ -64,7 +72,9 @@ class KakyHeader extends HTMLElement {
     this.workRequestsEl.classList.remove('d-none');
 
     if (user.user_metadata && user.user_metadata.full_name) {
-      this.loggedinContainerEl.querySelector('small').innerHTML = `(${user.user_metadata.full_name})`;
+      this.loggedinContainerEl.querySelector('#username').innerHTML = `${user.user_metadata.full_name}`;
+    } else {
+      this.loggedinContainerEl.querySelector('#username').innerHTML = `Secret Ninja`;
     }
   }
 }
