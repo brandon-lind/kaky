@@ -1,5 +1,7 @@
-import { KakyApiHeaders } from './api';
 import netlifyIdentity from 'netlify-identity-widget';
+
+import { KakyApiHeaders } from './api';
+import { Workers } from './workers';
 
 class WorkRequests {
   constructor() {
@@ -7,6 +9,7 @@ class WorkRequests {
     this.defaultPrice = 1;
     this.url = '/.netlify/functions/work-requests';
     this.workRequestDetailsUrl = '/work-requests/detail.html?id=#';
+    this.workers = new Workers();
     this.emptyInstructionsMessage = 'You got lucky ... no special instructions this time.';
     this.workRequestInstructionsTemplate = `
     <textarea class="form-control" aria-label="Special instructions" maxlength="200"></textarea>
@@ -26,43 +29,49 @@ class WorkRequests {
     </div>
     `;
     this.workRequestStatusTemplate = `<li class="workrequest-status list-group-item list-group-item-action flex-column align-items-start">
-    <div class="d-flex w-100 mb-3">
+    <div class="d-flex w-100 mb-1">
+      <div class="worker-logo position-absolute"></div>
       <div class="img-parent mr-3">
         <img class="img-fluid img-thumbnail" />
       </div>
       <div class="align-items-center">
-        <h5 class="mb-1"></h5>
+        <h5></h5>
         <strong class="text-muted"></strong>
         <br />
         <small class="text-muted"></small>
       </div>
     </div>
-    <p class="alert alert-info mb-1" role="alert"></p>
-    <a href="#" class="stretched-link">&nbsp;</a>
+    <a href="#" class="stretched-link"></a>
+    <p class="alert alert-info" role="alert"></p>
   </li>`;
   }
 
-  createStatusNode(workRequest, workItem) {
+  createStatusNode(workRequest, workItem, worker) {
     const template = document.createElement('template');
     template.innerHTML = this.workRequestStatusTemplate;
-    let statusNode = template.content.cloneNode(true);
-    let linkEl = statusNode.querySelector('a');
-    let imgEl = statusNode.querySelector('img');
-    let titleEl = statusNode.querySelector('h5');
-    let priceEl = statusNode.querySelector('strong');
-    let instructionsEl = statusNode.querySelector('p');
-    let timestampEl = statusNode.querySelector('small.text-muted');
+    const statusNode = template.content.cloneNode(true);
+
+    const imgEl = statusNode.querySelector('img');
+    const instructionsEl = statusNode.querySelector('.alert-info');
+    const linkEl = statusNode.querySelector('a');
+    const logoEl = statusNode.querySelector('.worker-logo');
+    const priceEl = statusNode.querySelector('strong.text-muted');
+    const timestampEl = statusNode.querySelector('small.text-muted');
+    const titleEl = statusNode.querySelector('h5');
 
     // Calculate how many days ago the request was submitted
-    let today = new Date();
-    let createdAt = new Date(workRequest.createdAt);
-    let msPerDay = (1000*60*60*24);
-    let daysAgo = Math.floor(Math.abs((today.getTime() - createdAt.getTime()) / msPerDay));
+    const today = new Date();
+    const createdAt = new Date(workRequest.createdAt);
+    const msPerDay = (1000*60*60*24);
+    const daysAgo = Math.floor(Math.abs((today.getTime() - createdAt.getTime()) / msPerDay));
 
+    // Create the logo
+    const logoNode = this.workers.createWorkerLogoNode(worker);
 
-    linkEl.href = this.workRequestDetailsUrl.replace('#', workRequest._id);
     imgEl.src = workItem.imageUrl;
+    logoEl.appendChild(logoNode);
     titleEl.innerHTML = workItem.name;
+    linkEl.href = this.workRequestDetailsUrl.replace('#', workRequest._id);
     priceEl.innerHTML = `$${isNaN(workRequest.price) ? workItem.price.toLocaleString() : workRequest.price.toLocaleString()}`;
     instructionsEl.innerHTML = workRequest.instructions ? workRequest.instructions : '<small class="text-muted"><i>No special instructions</i></small>';
     timestampEl.innerHTML = daysAgo === 1 ? '1 day ago' : `${daysAgo} days ago`;

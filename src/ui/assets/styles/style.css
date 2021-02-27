@@ -5,6 +5,16 @@
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  height: 64px;
+  width: 64px;
+}
+
+.bd-placeholder-img rect {
+  fill: #868e96;
+}
+
+.bd-placeholder-img text {
+  fill: #dee2e6;
 }
 
 .hero {
@@ -57,20 +67,41 @@
   text-shadow: 0 0 10px rgba(0,0,0,.6);
 }
 
-
 .img-parent {
   max-width: 300px;
-}
-
-.workrequest-status .img-parent {
-  max-width: 100px;
 }
 
 .kaky-success {
   color: green;
 }
 
+.workrequest-status .img-parent {
+  max-width: 100px;
+}
+
+.workrequest-status .worker-logo {
+  top: 8px;
+  left: 16px;
+}
+
+.workrequest-status .worker-logo .bd-placeholder-img {
+  font-size: 1rem;
+  height: 32px;
+  width: 32px;
+  -moz-box-shadow: 5px 5px 15px 5px #ffffff;
+  -webkit-box-shadow: 5px 5px 15px 5px #ffffff;
+  box-shadow: 5px 5px 15px 5px #ffffff;
+}
+
 @media (max-height: 940px) {
+  .bd-placeholder-img-lg {
+    font-size: 3.5rem;
+  }
+
+  .display-4 {
+    font-size: 2rem;
+  }
+
   .hero {
     min-height: 150px;
     max-height: 250px;
@@ -81,12 +112,16 @@
     line-height: 4.5rem;
   }
 
-  .bd-placeholder-img-lg {
-    font-size: 3.5rem;
+  .lead {
+    font-size: 1rem;
   }
 }
 
 @media (max-height: 640px), (max-width: 300px) {
+  .display-4 {
+    font-size: 1.8rem;
+  }
+
   .hero {
     min-height: 100px;
     max-height: 160px;
@@ -97,7 +132,16 @@
     line-height: 3.5rem;
   }
 
-  .img-parent {
-    display:none;
+  .kaky-success {
+    height: 0.8em!important;
+    width: 0.5em!important;
+  }
+
+  .lead {
+    font-size: 0.9rem;
+  }
+
+  .container > .pt-md-5, .py-md-5 {
+    padding-top: 1rem!important;
   }
 }

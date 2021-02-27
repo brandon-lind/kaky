@@ -7,7 +7,7 @@ class WorkItems {
     this.workItemsUrl = '/.netlify/functions/work-items';
     this.assignWorkUrl = '/work-requests/assign.html';
     this.workItemTemplate = `
-      <div class="row">
+      <div class="row work-item">
         <div class="col-sm-4">
           <div class="img-parent">
             <img class="img-fluid img-thumbnail" />
@@ -17,16 +17,17 @@ class WorkItems {
           <div class="flex-column align-items-start mb-1">
             <div class="d-flex w-100 justify-content-between">
               <h1 class="mb-1"></h5>
-              <h3><a href="#" class="stretched-link"></a></h3>
+              <h3></h3>
             </div>
           </div>
           <ul class="mb-1"></ul>
         </div>
+        <a href="#" class="stretched-link"></a>
       </div>
     `;
   }
 
-  createWorkItemNode(item, template, allowAssignment = true) {
+  createWorkItemNode(item, template, allowAssignment = false) {
     const listItem = template.content.cloneNode(true);
 
     const imgEl = listItem.querySelector('img');
@@ -35,16 +36,16 @@ class WorkItems {
     const titleEl = listItem.querySelector('h1');
     titleEl.innerHTML = item.name;
 
-    let priceEl;
+    const priceEl = listItem.querySelector('h3');
+    priceEl.innerHTML = `&#36;${item.price}`;
+
+    const linkEl = listItem.querySelector('a');
 
     if (allowAssignment) {
-      priceEl = listItem.querySelector('h3 a');
-      priceEl.href = `${this.assignWorkUrl}?id=${item.id}`;
+      linkEl.href = `${this.assignWorkUrl}?id=${item.id}`;
     } else {
-      priceEl = priceEl = listItem.querySelector('h3');
+      linkEl.remove();
     }
-
-    priceEl.innerHTML = `&#36;${item.price}`;
 
     const tasksEl = listItem.querySelector('ul');
 
@@ -90,13 +91,13 @@ class WorkItems {
     workItems.forEach(workItem => {
       let li = document.createElement('li');
       li.classList.add('list-group-item', 'list-group-item-action');
-      const workItemEl = this.createWorkItemNode(workItem, template);
+      const workItemEl = this.createWorkItemNode(workItem, template, true);
       li.appendChild(workItemEl);
       targetEl.appendChild(li);
     });
   }
 
-  async renderWorkItem(targetEl, workItem, allowAssignment = true) {
+  async renderWorkItem(targetEl, workItem, allowAssignment = false) {
     if (!targetEl || targetEl.innerHTML === undefined) throw new Error('There is no target element to render the work item into.');
     if (!workItem) throw new Error('The work item does not exist.');
 
@@ -108,7 +109,7 @@ class WorkItems {
     targetEl.appendChild(workItemNode);
   }
 
-  async renderWorkItemById(targetEl, id, allowAssignment = true) {
+  async renderWorkItemById(targetEl, id, allowAssignment = false) {
     if (!targetEl || targetEl.innerHTML === undefined) throw new Error('There is no target element to render the work item into.');
     if (!id) throw new Error('No work item ID.');
 

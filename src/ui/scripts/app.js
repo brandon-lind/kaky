@@ -2,7 +2,7 @@ import 'bootstrap/js/dist/collapse';
 import 'bootstrap/js/dist/dropdown';
 import 'bootstrap/js/dist/tab';
 import { library, dom } from '@fortawesome/fontawesome-svg-core';
-import { faBell, faDeaf, faHandHoldingUsd, faPray, faCheckCircle, faUserNinja } from '@fortawesome/free-solid-svg-icons';
+import { faBell, faDeaf, faDonate, faHandHoldingUsd, faPoop, faPray, faCheckCircle, faUserNinja } from '@fortawesome/free-solid-svg-icons';
 import { KakyHeader } from './components/header';
 import { KakyFooter } from './components/footer';
 import { indexPage } from './pages/index';
@@ -15,7 +15,7 @@ import { workRequestSubmittedPage } from './pages/work-requests/submitted';
 
 
 // We are only using these icons
-library.add(faBell, faDeaf, faHandHoldingUsd, faPray, faCheckCircle, faUserNinja);
+library.add(faBell, faDeaf, faDonate, faHandHoldingUsd, faPoop, faPray, faCheckCircle, faUserNinja);
 
 window.addEventListener('DOMContentLoaded', () => {
   window.customElements.define('kaky-footer', KakyFooter);

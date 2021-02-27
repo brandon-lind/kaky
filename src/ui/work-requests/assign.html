@@ -10,25 +10,13 @@
     <kaky-header></kaky-header>
 
     <div class="container">
-      <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto">
+      <div class="px-3 py-3 pt-md-5 pb-md-4 mx-auto">
         <h1 class="display-4">Choose a Worker &amp; Price</h1>
         <p class="lead">Select a poor unfortunate soul to do the work for a price.</p>
       </div>
 
       <form action="submitted.html?id=#" class="needs-validation" novalidate>
         <fieldset>
-          <div class="card mb-5">
-            <div class="card-header">
-              <h3>The Work</h3>
-            </div>
-            <div class="card-body">
-              <ul class="list-group mb-5">
-                <li class="list-group-item list-group-item-action" id="workitem">
-                  <!-- This is where work item will render -->
-                </li>
-              </ul>
-            </div>
-          </div>
 
           <div class="card mb-5">
             <div class="card-header">
@@ -41,6 +29,13 @@
                 <!-- this is where the workers will render -->
               </ul>
             </div>
+          </div>
+
+          <div class="card mb-5">
+            <div class="card-header">
+              <h3><i class="fas fa-poop"></i> The Work</h3>
+            </div>
+            <div class="card-body" id="workitem"></div>
           </div>
 
           <div class="card mb-5">
