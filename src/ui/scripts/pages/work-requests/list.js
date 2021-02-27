@@ -1,7 +1,9 @@
+import { Workers } from '../../components/workers';
 import { WorkItems } from '../../components/work-items';
 import { WorkRequests } from '../../components/work-requests';
 
 export async function workRequestListPage() {
+  const workers = new Workers();
   const workItems = new WorkItems();
   const workRequests = new WorkRequests();
 
@@ -33,11 +35,20 @@ export async function workRequestListPage() {
   let workingCount = 0;
 
   for (const workRequest of data) {
-    let workItem = await workItems.findWorkItemById(workRequest.workItemId);
+    const worker = await workers.findWorkerById(workRequest.workerId);
+    const workItem = await workItems.findWorkItemById(workRequest.workItemId);
 
-    if (!workItem) continue;
+    if (!worker) {
+      console.warn(`The worker ${workRequest.workerId} was not found for work request ${workRequest.__id}`);
+      continue;
+    }
 
-    let statusNode = workRequests.createStatusNode(workRequest, workItem);
+    if (!workItem) {
+      console.warn(`The work item ${workRequest.workItemId} was not found for work request ${workRequest.__id}`);
+      continue;
+    }
+
+    let statusNode = workRequests.createStatusNode(workRequest, workItem, worker);
     switch (workRequest.status) {
       case 'cancelled':
         cancelledListEl.append(statusNode);
