@@ -17,12 +17,13 @@ class WorkItems {
           <div class="flex-column align-items-start mb-1">
             <div class="d-flex w-100 justify-content-between">
               <h1 class="mb-1"></h5>
-              <h3></h3>
+              <a href="#" class="stretched-link">
+                <h3></h3>
+              </a>
             </div>
           </div>
           <ul class="mb-1"></ul>
         </div>
-        <a href="#" class="stretched-link"></a>
       </div>
     `;
   }
@@ -32,6 +33,8 @@ class WorkItems {
 
     const imgEl = listItem.querySelector('img');
     imgEl.src = item.imageUrl;
+    imgEl.alt = item.name;
+    imgEl.title = item.name;
 
     const titleEl = listItem.querySelector('h1');
     titleEl.innerHTML = item.name;

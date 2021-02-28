@@ -36,13 +36,14 @@ class WorkRequests {
         <img class="img-fluid img-thumbnail" />
       </div>
       <div class="align-items-center">
-        <h5 class="mb-0"></h5>
+        <a href="#" class="stretched-link">
+          <h5 class="mb-0"></h5>
+        </a>
         <strong class="text-muted"></strong>
         <br />
         <small class="text-muted"></small>
       </div>
     </div>
-    <a href="#" class="stretched-link"></a>
     <p class="alert alert-info" role="alert"></p>
   </li>`;
   }
@@ -116,6 +117,8 @@ class WorkRequests {
     const logoNode = this.workers.createWorkerLogoNode(worker);
 
     imgEl.src = workItem.imageUrl;
+    imgEl.alt = workItem.name;
+    imgEl.title = workItem.name;
     logoEl.appendChild(logoNode);
     titleEl.innerHTML = workItem.name;
     linkEl.href = this.workRequestDetailsUrl.replace('#', workRequest._id);
