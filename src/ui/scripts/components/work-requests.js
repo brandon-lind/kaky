@@ -142,7 +142,7 @@ class WorkRequests {
     // Create the worker logo
     const logoNode = this.workers.createWorkerLogoNode(worker);
 
-    idEl.innerHTML = workRequest._id.substring(workRequest._id.length - 5);
+    idEl.innerHTML = workRequest._id.substring(workRequest._id.length - 5).toUpperCase();
     imgEl.src = workItem.imageUrl;
     imgEl.alt = workItem.name;
     imgEl.title = workItem.name;
