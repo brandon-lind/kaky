@@ -1,3 +1,11 @@
+#accordion .card {
+  margin-top: -3px;
+}
+
+#accordion .card-header {
+  cursor: pointer;
+}
+
 .bd-placeholder-img {
   font-size: 1.125rem;
   text-anchor: middle;

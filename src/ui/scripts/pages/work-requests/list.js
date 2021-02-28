@@ -7,21 +7,23 @@ export async function workRequestListPage() {
   const workItems = new WorkItems();
   const workRequests = new WorkRequests();
 
-  const cancelledBadgeEl = document.querySelector('#list-cancelled-workrequests .badge');
-  const closedBadgeEl = document.querySelector('#list-closed-workrequests .badge');
-  const openBadgeEl = document.querySelector('#list-open-workrequests .badge');
-  const paidBadgeEl = document.querySelector('#list-paid-workrequests .badge');
-  const rejectedBadgeEl = document.querySelector('#list-rejected-workrequests .badge');
-  const waitingForPaymentBadgeEl = document.querySelector('#list-waiting-on-payment-workrequests .badge');
-  const workingBadgeEl = document.querySelector('#list-working-workrequests .badge');
+  const cancelledBadgeEl = document.querySelector('#workrequests-cancelled .badge');
+  const closedBadgeEl = document.querySelector('#workrequests-closed .badge');
+  const openBadgeEl = document.querySelector('#workrequests-open .badge');
+  const paidBadgeEl = document.querySelector('#workrequests-paid .badge');
+  const rejectedBadgeEl = document.querySelector('#workrequests-rejected .badge');
+  const waitingForPaymentBadgeEl = document.querySelector('#workrequests-waiting-on-payment .badge');
+  const workingBadgeEl = document.querySelector('#workrequests-working .badge');
 
-  const cancelledListEl = document.querySelector('#list-cancelled > ul');
-  const closedListEl = document.querySelector('#list-closed > ul');
-  const openListEl = document.querySelector('#list-open > ul');
-  const paidListEl = document.querySelector('#list-paid > ul');
-  const rejectedListEl = document.querySelector('#list-rejected > ul');
-  const waitingForPaymentListEl = document.querySelector('#list-waiting-on-payment > ul');
-  const workingListEl = document.querySelector('#list-working > ul');
+  const cancelledListEl = document.querySelector('#workrequests-collapse-cancelled .card-body');
+  const closedListEl = document.querySelector('#workrequests-collapse-closed .card-body');
+  const openListEl = document.querySelector('#workrequests-collapse-open .card-body');
+  const paidListEl = document.querySelector('#workrequests-collapse-paid .card-body');
+  const rejectedListEl = document.querySelector('#workrequests-collapse-rejected .card-body');
+  const waitingForPaymentListEl = document.querySelector('#workrequests-collapse-waiting-on-payment .card-body');
+  const workingListEl = document.querySelector('#workrequests-collapse-working .card-body');
+
+  const noWorkRequestsTxt = 'There are no work requests in this status.';
 
   const data = await workRequests.fetchWorkRequests();
 
@@ -91,4 +93,13 @@ export async function workRequestListPage() {
   rejectedBadgeEl.innerHTML = `${rejectedCount}`;
   waitingForPaymentBadgeEl.innerHTML = `${waitingForPaymentCount}`;
   workingBadgeEl.innerHTML = `${workingCount}`;
+
+  // Add indicator for statuses without work requests
+  if (cancelledCount === 0) { cancelledListEl.innerHTML = noWorkRequestsTxt; }
+  if (closedCount === 0) { closedListEl.innerHTML = noWorkRequestsTxt; }
+  if (openCount === 0) { openListEl.innerHTML = noWorkRequestsTxt; }
+  if (paidCount === 0) { paidListEl.innerHTML = noWorkRequestsTxt; }
+  if (rejectedCount === 0) { rejectedListEl.innerHTML = noWorkRequestsTxt; }
+  if (waitingForPaymentCount === 0) { waitingForPaymentListEl.innerHTML = noWorkRequestsTxt; }
+  if (workingCount === 0) { workingListEl.innerHTML = noWorkRequestsTxt; }
 };
