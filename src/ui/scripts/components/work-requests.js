@@ -1,6 +1,5 @@
-import netlifyIdentity from 'netlify-identity-widget';
 import { KakyApiHeaders } from './api';
-import { Profile } from '../../components/profile';
+import { Profile } from './profile';
 import { Workers } from './workers';
 import { WorkRequest } from '../models/work-request';
 
@@ -138,12 +137,12 @@ class WorkRequests {
     // Determine which "view" of work the user should see
     let url = this.url;
 
-    if (this.profile.user.app_metadata && this.profile.user.app_metadata.roles.find(r => r === 'AssignWork')) {
-      url = `${url}/requester/${user.id}`;
+    if (this.profile.isRequester) {
+      url = `${url}/requester/${this.profile.user.id}`;
     }
 
-    if (this.profile.user.app_metadata && this.profile.user.app_metadata.roles.find(r => r === 'AcceptWork')) {
-      url = `${url}/worker/${user.id}`;
+    if (this.profile.isWorker) {
+      url = `${url}/worker/${this.profile.user.id}`;
     }
 
     // Don't let them get anything if they don't have either of the roles
