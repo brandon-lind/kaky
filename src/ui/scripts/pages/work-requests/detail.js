@@ -15,7 +15,9 @@ export async function workRequestDetailPage() {
   const workerTargetEl = document.querySelector('#worker');
   const priceTargetEl = document.querySelector('#price');
   const instructionsTargetEl = document.querySelector('#instructions');
-  const actionsTargetEl = document.querySelector('#actions');
+  const actionsTargetEl = document.querySelector('.kaky-actions');
+  const errorMessageTargetEl = document.querySelector('.kaky-error-message');
+  const rapidReorderEl = document.querySelector('.kaky-rapid-reorder');
 
   workItems.renderWorkItemById(workItemTargetEl, workRequest.workItemId, false);
   workers.renderWorkerById(workerTargetEl, workRequest.workerId);

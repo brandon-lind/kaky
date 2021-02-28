@@ -39,12 +39,12 @@ export async function workRequestListPage() {
     const workItem = await workItems.findWorkItemById(workRequest.workItemId);
 
     if (!worker) {
-      console.warn(`The worker ${workRequest.workerId} was not found for work request ${workRequest.__id}`);
+      console.warn(`The worker ${workRequest.workerId} was not found for work request ${workRequest._id}`);
       continue;
     }
 
     if (!workItem) {
-      console.warn(`The work item ${workRequest.workItemId} was not found for work request ${workRequest.__id}`);
+      console.warn(`The work item ${workRequest.workItemId} was not found for work request ${workRequest._id}`);
       continue;
     }
 

@@ -21,10 +21,6 @@ window.addEventListener('DOMContentLoaded', () => {
   window.customElements.define('kaky-footer', KakyFooter);
   window.customElements.define('kaky-header', KakyHeader);
 
-  // Replaces any existing <i> tags with <svg> and sets up a MutationObserver to
-  // continue doing this as the DOM changes.
-  dom.i2svg();
-
   const currentUrl = new URL(window.location.href);
 
   switch (currentUrl.pathname.toLowerCase()) {
@@ -52,4 +48,8 @@ window.addEventListener('DOMContentLoaded', () => {
     default:
       indexPage();
   }
+
+  // Replaces any existing <i> tags with <svg> and sets up a MutationObserver to
+  // continue doing this as the DOM changes.
+  dom.i2svg();
 });

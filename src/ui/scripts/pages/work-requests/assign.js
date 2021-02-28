@@ -16,10 +16,10 @@ export async function workRequestAssignPage() {
   const instructionsEditorTargetEl = document.querySelector('#instructions-editor');
   const formTargetEl = document.querySelector('form');
   const fieldsetEl = formTargetEl.querySelector('fieldset');
-  const errorMessageTargetEl = document.querySelector('#error-message');
+  const errorMessageTargetEl = document.querySelector('.kaky-error-message');
 
   const workItem = await workItems.findWorkItemById(workItemId);
-  const workRequest = new WorkRequest(workItem);
+  const workRequest = new WorkRequest(null, workItem);
 
   workers.renderList(workersTargetEl, workRequest, true);
   workItems.renderWorkItem(workItemTargetEl, workItem);

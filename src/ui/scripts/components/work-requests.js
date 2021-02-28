@@ -1,7 +1,8 @@
 import netlifyIdentity from 'netlify-identity-widget';
-
 import { KakyApiHeaders } from './api';
+import { Profile } from '../../components/profile';
 import { Workers } from './workers';
+import { WorkRequest } from '../models/work-request';
 
 class WorkRequests {
   constructor() {
@@ -10,6 +11,7 @@ class WorkRequests {
     this.url = '/.netlify/functions/work-requests';
     this.workRequestDetailsUrl = '/work-requests/detail.html?id=#';
     this.workers = new Workers();
+    this.profile = new Profile();
     this.emptyInstructionsMessage = 'You got lucky ... no special instructions this time.';
     this.workRequestInstructionsTemplate = `
     <textarea class="form-control" aria-label="Special instructions" maxlength="200"></textarea>
@@ -35,7 +37,7 @@ class WorkRequests {
         <img class="img-fluid img-thumbnail" />
       </div>
       <div class="align-items-center">
-        <h5></h5>
+        <h5 class="mb-0"></h5>
         <strong class="text-muted"></strong>
         <br />
         <small class="text-muted"></small>
@@ -46,11 +48,57 @@ class WorkRequests {
   </li>`;
   }
 
+  async add(workRequest) {
+    if (!this.profile.user) {
+      throw new Error(`This isn't going to work. You haven't logged in yet.`);
+    }
+
+    // Set the requester
+    workRequest.requesterId = this.profile.user ? this.profile.user.id : '';
+
+    // Set the status
+    workRequest.status = 'open';
+
+    // Check the work request
+    this.validateWorkRequest(this.profile.user, workRequest);
+
+    try {
+      const headers = await KakyApiHeaders.setPOSTHeaders();
+      const response = await fetch(this.url, {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify(workRequest)
+      });
+
+      const responseData = await response.json();
+
+      if (responseData.data._id) {
+        return responseData.data._id;
+      } else {
+        throw new Error(`The work request submission failed.`);
+      }
+    } catch (e) {
+      console.error(`There was an error saving the work request. \n${e}`);
+      throw new Error(`There was an error saving the work request.`);
+    }
+  }
+
+  cloneWorkRequestForReorder(workRequest) {
+    let clone = new WorkRequest(workRequest);
+    delete clone._id;
+    delete clone.__v;
+    delete clone.createdAt;
+    delete clone.updatedAt;
+
+    return clone;
+  }
+
   createStatusNode(workRequest, workItem, worker) {
     const template = document.createElement('template');
     template.innerHTML = this.workRequestStatusTemplate;
     const statusNode = template.content.cloneNode(true);
 
+    const itemEl = statusNode.querySelector('li');
     const imgEl = statusNode.querySelector('img');
     const instructionsEl = statusNode.querySelector('.alert-info');
     const linkEl = statusNode.querySelector('a');
@@ -75,15 +123,14 @@ class WorkRequests {
     priceEl.innerHTML = `$${isNaN(workRequest.price) ? workItem.price.toLocaleString() : workRequest.price.toLocaleString()}`;
     instructionsEl.innerHTML = workRequest.instructions ? workRequest.instructions : '<small class="text-muted"><i>No special instructions</i></small>';
     timestampEl.innerHTML = daysAgo === 1 ? '1 day ago' : `${daysAgo} days ago`;
+    itemEl.title = `Created: ${new Date(workRequest.createdAt).toLocaleString()}\nUpdated: ${new Date(workRequest.updatedAt).toLocaleString()}`;
 
     return statusNode;
   }
 
   async fetchWorkRequests(overrideCache = false) {
-    const user = netlifyIdentity.currentUser();
-
     // Make sure there is a user
-    if (!user) return this.items;
+    if (!this.profile.user) return this.items;
 
     // Check for cache
     if (this.item && this.items.length && !overrideCache) return this.items;
@@ -91,11 +138,11 @@ class WorkRequests {
     // Determine which "view" of work the user should see
     let url = this.url;
 
-    if (user.app_metadata && user.app_metadata.roles.find(r => r === 'AssignWork')) {
+    if (this.profile.user.app_metadata && this.profile.user.app_metadata.roles.find(r => r === 'AssignWork')) {
       url = `${url}/requester/${user.id}`;
     }
 
-    if (user.app_metadata && user.app_metadata.roles.find(r => r === 'AcceptWork')) {
+    if (this.profile.user.app_metadata && this.profile.user.app_metadata.roles.find(r => r === 'AcceptWork')) {
       url = `${url}/worker/${user.id}`;
     }
 
@@ -112,8 +159,14 @@ class WorkRequests {
       this.items = [];
       throw new Error(`HTTP error fetching work requests! status: ${response.status}`);
     } else {
-      const items = await response.json();
-      this.items = items.data;
+      const responseItems = await response.json();
+
+      this.items = [];
+
+      for(let item of responseItems.data) {
+        this.items.push(new WorkRequest(item));
+      }
+
       return this.items;
     }
   }
@@ -159,7 +212,6 @@ class WorkRequests {
   }
 
   async handleSubmit(event, workRequest) {
-    let errorMessage = '';
     const formEl = event.target;
     const fieldsetEl = formEl.querySelector('fieldset');
 
@@ -177,62 +229,25 @@ class WorkRequests {
 
     fieldsetEl.disabled = true;
 
-    // Get the user
-    const user = netlifyIdentity.currentUser();
-
-    if (!user) {
-      throw new Error(`This isn't going to work. You haven't logged in yet.`);
-    }
-
-    // Set the requester
-    workRequest.requesterId = user ? user.id : '';
-
-    // Set the status
-    workRequest.status = 'open';
-
-    // Check the work request
-    this.validateWorkRequest(user, workRequest);
-
-    try {
-      const headers = await KakyApiHeaders.setPOSTHeaders();
-      const response = await fetch(this.url, {
-        method: 'POST',
-        headers: headers,
-        body: JSON.stringify(workRequest)
-      });
-
-      const responseData = await response.json();
-
-      if (responseData.data._id) {
-        return responseData.data._id;
-      } else {
-        throw new Error(`The work request submission failed.`);
-      }
-    } catch (e) {
-      console.error(`There was an error saving the work request. \n${e}`);
-      throw new Error(`There was an error saving the work request.`);
-    }
+    return await this.add(workRequest);
   }
 
   renderActions(targetEl, workRequest) {
-    const user = netlifyIdentity.currentUser();
-
     // If there are no roles, nothing for them to do
-    if (!user.app_metadata) {
-      return;
-    }
+    if (!this.profile.user) return;
 
     let primaryBtn = document.createElement('button');
-    let secondaryBtn = document.createElement('button');
-    let statusTxtEl = document.createElement('div');
-
     primaryBtn.classList.add('btn', 'btn-primary', 'btn-lg');
     primaryBtn.type = 'button';
-    secondaryBtn.classList.add('btn', 'btn-secondary', 'btn-lg', 'mr-3');
+
+    let secondaryBtn = document.createElement('button');
+    secondaryBtn.classList.add('btn', 'btn-light', 'btn-lg', 'mr-3');
     secondaryBtn.type = 'button';
+
+    let statusTxtEl = document.createElement('div');
     statusTxtEl.classList.add('text-muted');
 
-    if (user.app_metadata.roles.find(r => r === 'AssignWork')) {
+    if (this.profile.isRequester) {
       switch (workRequest.status) {
         case 'open':
           primaryBtn.innerHTML = 'Cancel Request';
@@ -240,6 +255,7 @@ class WorkRequests {
             workRequest.status = 'cancelled';
             this.handleStatusUpdate(e, workRequest);
           });
+
           targetEl.appendChild(primaryBtn);
           break;
 
@@ -284,7 +300,7 @@ class WorkRequests {
       return;
     }
 
-    if (user.app_metadata.roles.find(r => r === 'AcceptWork')) {
+    if (this.profile.isWorker) {
       switch (workRequest.status) {
         case 'open':
           primaryBtn.innerHTML = 'Take It';
