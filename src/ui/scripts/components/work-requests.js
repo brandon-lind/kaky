@@ -116,7 +116,7 @@ class WorkRequests {
     template.innerHTML = this.workRequestStatusTemplate;
     const statusNode = template.content.cloneNode(true);
 
-    const idEl = statusNode.querySelector('.workrequest-id');
+    const idEl = statusNode.querySelector('div.workrequest-id');
     const itemEl = statusNode.querySelector('div.workrequest-status');
     const imgEl = statusNode.querySelector('img');
     const instructionsEl = statusNode.querySelector('.alert-info');
