@@ -205,9 +205,10 @@ class WorkRequests {
         throw new Error('The work request status update attempt failed.');
       }
 
-      window.location.reload();
+      window.location.href = 'list.html';
     } catch (e) {
       console.error(`There was an error updating the work request status. \n${e}`);
+      throw new Error('There was an error updating the work request.');
     } finally {
       buttonEl.disabled = false;
     }
@@ -234,32 +235,65 @@ class WorkRequests {
     return await this.add(workRequest);
   }
 
-  renderActions(targetEl, workRequest) {
+  async renderActions(targetEl, errorMessageEl, workRequest) {
     // If there are no roles, nothing for them to do
     if (!this.profile.user) return;
 
     let primaryBtn = document.createElement('button');
-    primaryBtn.classList.add('btn', 'btn-primary', 'btn-lg');
+    primaryBtn.classList.add('btn', 'btn-primary', 'btn-block');
     primaryBtn.type = 'button';
 
     let secondaryBtn = document.createElement('button');
-    secondaryBtn.classList.add('btn', 'btn-light', 'btn-lg', 'mr-3');
+    secondaryBtn.classList.add('btn', 'btn-secondary', 'btn-block', 'mb-3');
     secondaryBtn.type = 'button';
 
     let statusTxtEl = document.createElement('div');
     statusTxtEl.classList.add('text-muted');
 
+    function showErrorMessage(err) {
+      errorMessageEl.classList.remove('d-none');
+      errorMessageEl.innerHTML = err.message;
+    }
+
     if (this.profile.isRequester) {
       switch (workRequest.status) {
         case 'open':
-          primaryBtn.innerHTML = 'Cancel Request';
-          primaryBtn.addEventListener('click', (e) => {
-            workRequest.status = 'cancelled';
-            this.handleStatusUpdate(e, workRequest);
+          primaryBtn.innerHTML = 'Take It';
+          primaryBtn.addEventListener('click', async (evt) => {
+            try {
+              workRequest.status = 'working';
+              await this.handleStatusUpdate(evt, workRequest);
+            } catch (err) {
+              showErrorMessage(err);
+            }
           });
 
+          secondaryBtn.innerHTML = 'Leave It';
+          secondaryBtn.addEventListener('click', async (evt) => {
+            try {
+              workRequest.status = 'rejected';
+              await this.handleStatusUpdate(evt, workRequest);
+            } catch (err) {
+              showErrorMessage(err);
+            }
+          });
+
+          targetEl.appendChild(secondaryBtn);
           targetEl.appendChild(primaryBtn);
           break;
+        // case 'open':
+        //   primaryBtn.innerHTML = 'Cancel Request';
+        //   primaryBtn.addEventListener('click', async (evt) => {
+        //     try {
+        //       workRequest.status = 'cancelled';
+        //       await this.handleStatusUpdate(evt, workRequest);
+        //     } catch (err) {
+        //       showErrorMessage(err);
+        //     }
+        //   });
+
+        //   targetEl.appendChild(primaryBtn);
+        //   break;
 
         case 'cancelled':
           statusTxtEl.innerHTML = 'This work request has been cancelled.';
@@ -283,10 +317,15 @@ class WorkRequests {
 
         case 'waiting_for_payment':
           primaryBtn.innerHTML = 'Paid';
-          primaryBtn.addEventListener('click', (e) => {
-            workRequest.status = 'paid';
-            this.handleStatusUpdate(e, workRequest);
+          primaryBtn.addEventListener('click', async (evt) => {
+            try {
+              workRequest.status = 'paid';
+              await this.handleStatusUpdate(evt, workRequest);
+            } catch (err) {
+              showErrorMessage(err);
+            }
           });
+
           targetEl.appendChild(primaryBtn);
           break;
 
@@ -304,22 +343,7 @@ class WorkRequests {
 
     if (this.profile.isWorker) {
       switch (workRequest.status) {
-        case 'open':
-          primaryBtn.innerHTML = 'Take It';
-          primaryBtn.addEventListener('click', (e) => {
-            workRequest.status = 'working';
-            this.handleStatusUpdate(e, workRequest);
-          });
 
-          secondaryBtn.innerHTML = 'Leave It';
-          secondaryBtn.addEventListener('click', (e) => {
-            workRequest.status = 'rejected';
-            this.handleStatusUpdate(e, workRequest);
-          });
-
-          targetEl.appendChild(secondaryBtn);
-          targetEl.appendChild(primaryBtn);
-          break;
 
         case 'cancelled':
           statusTxtEl.innerHTML = 'This work request has been cancelled.';
@@ -333,10 +357,15 @@ class WorkRequests {
 
         case 'paid':
           primaryBtn.innerHTML = 'All Done';
-          primaryBtn.addEventListener('click', (e) => {
-            workRequest.status = 'closed';
-            this.handleStatusUpdate(e, workRequest);
+          primaryBtn.addEventListener('click', async (evt) => {
+            try {
+              workRequest.status = 'closed';
+              await this.handleStatusUpdate(evt, workRequest);
+            } catch (err) {
+              showErrorMessage(err);
+            }
           });
+
           targetEl.appendChild(primaryBtn);
           break;
 
@@ -352,10 +381,15 @@ class WorkRequests {
 
         case 'working':
           primaryBtn.innerHTML = 'Get Paid';
-          primaryBtn.addEventListener('click', (e) => {
-            workRequest.status = 'waiting_for_payment';
-            this.handleStatusUpdate(e, workRequest);
+          primaryBtn.addEventListener('click', async (evt) => {
+            try {
+              workRequest.status = 'waiting_for_payment';
+              await this.handleStatusUpdate(evt, workRequest);
+            } catch (err) {
+              showErrorMessage(err);
+            }
           });
+
           targetEl.appendChild(primaryBtn);
           break;
 
