@@ -30,6 +30,7 @@ class WorkRequests {
     </div>
     `;
     this.workRequestStatusTemplate = `<div class="workrequest-status list-group-item list-group-item-action flex-column align-items-start">
+    <div class="workrequest-id text-right"></div>
     <div class="workrequest-preview">
       <div class="d-flex w-100 mb-1">
         <div class="worker-logo position-absolute"></div>
@@ -115,6 +116,7 @@ class WorkRequests {
     template.innerHTML = this.workRequestStatusTemplate;
     const statusNode = template.content.cloneNode(true);
 
+    const idEl = statusNode.querySelector('.workrequest-id');
     const itemEl = statusNode.querySelector('div.workrequest-status');
     const imgEl = statusNode.querySelector('img');
     const instructionsEl = statusNode.querySelector('.alert-info');
@@ -140,6 +142,7 @@ class WorkRequests {
     // Create the worker logo
     const logoNode = this.workers.createWorkerLogoNode(worker);
 
+    idEl.innerHTML = workRequest._id.substring(workRequest._id.length - 5);
     imgEl.src = workItem.imageUrl;
     imgEl.alt = workItem.name;
     imgEl.title = workItem.name;
