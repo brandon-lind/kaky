@@ -29,23 +29,40 @@ class WorkRequests {
       </div>
     </div>
     `;
-    this.workRequestStatusTemplate = `<li class="workrequest-status list-group-item list-group-item-action flex-column align-items-start">
-    <div class="d-flex w-100 mb-1">
-      <div class="worker-logo position-absolute"></div>
-      <div class="img-parent mr-3">
-        <img class="img-fluid img-thumbnail" />
+    this.workRequestStatusTemplate = `<div class="workrequest-status list-group-item list-group-item-action flex-column align-items-start">
+    <div class="workrequest-preview">
+      <div class="d-flex w-100 mb-1">
+        <div class="worker-logo position-absolute"></div>
+        <div class="img-parent mr-3">
+          <img class="img-fluid img-thumbnail" />
+        </div>
+        <div class="align-items-center">
+          <a href="#" class="stretched-link">
+            <h5 class="mb-0"></h5>
+          </a>
+          <strong class="text-muted"></strong>
+          <br />
+          <small class="text-muted"></small>
+        </div>
       </div>
-      <div class="align-items-center">
-        <a href="#" class="stretched-link">
-          <h5 class="mb-0"></h5>
-        </a>
-        <strong class="text-muted"></strong>
-        <br />
-        <small class="text-muted"></small>
+      <p class="alert alert-info" role="alert"></p>
+    </div>
+
+    <div class="workrequest-actions d-none">
+      <button type="button" class="close mb-3" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+          <div class="alert alert-danger mb-1 d-none"></div>
+          <div class="action-buttons">
+            <a href="#" class="btn btn-secondary btn-block mb-3">View Details</a>
+            <button type="button" class="workrequest-reorder btn btn-secondary btn-block mb-3 d-none">Reorder</button>
+          </div>
+        </div>
       </div>
     </div>
-    <p class="alert alert-info" role="alert"></p>
-  </li>`;
+  </div>`;
   }
 
   async add(workRequest) {
@@ -98,14 +115,21 @@ class WorkRequests {
     template.innerHTML = this.workRequestStatusTemplate;
     const statusNode = template.content.cloneNode(true);
 
-    const itemEl = statusNode.querySelector('li');
+    const itemEl = statusNode.querySelector('div.workrequest-status');
     const imgEl = statusNode.querySelector('img');
     const instructionsEl = statusNode.querySelector('.alert-info');
-    const linkEl = statusNode.querySelector('a');
+    const linkEl = statusNode.querySelector('a.stretched-link');
     const logoEl = statusNode.querySelector('.worker-logo');
     const priceEl = statusNode.querySelector('strong.text-muted');
     const timestampEl = statusNode.querySelector('small.text-muted');
     const titleEl = statusNode.querySelector('h5');
+    const previewEl = statusNode.querySelector('.workrequest-preview');
+    const actionsEl = statusNode.querySelector('.workrequest-actions');
+    const actionsErrorEl = statusNode.querySelector('.workrequest-actions .alert-danger');
+    const actionButtonsEl = statusNode.querySelector('.workrequest-actions .action-buttons');
+    const actionsCloseEl = statusNode.querySelector('.workrequest-actions .close');
+    const reorderBtnEl = statusNode.querySelector('.workrequest-actions button.workrequest-reorder');
+    const viewDetailsLinkEl = statusNode.querySelector('.workrequest-actions a');
 
     // Calculate how many days ago the request was submitted
     const today = new Date();
@@ -113,7 +137,7 @@ class WorkRequests {
     const msPerDay = (1000*60*60*24);
     const daysAgo = Math.floor(Math.abs((today.getTime() - createdAt.getTime()) / msPerDay));
 
-    // Create the logo
+    // Create the worker logo
     const logoNode = this.workers.createWorkerLogoNode(worker);
 
     imgEl.src = workItem.imageUrl;
@@ -126,6 +150,45 @@ class WorkRequests {
     instructionsEl.innerHTML = workRequest.instructions ? workRequest.instructions : '<small class="text-muted"><i>No special instructions</i></small>';
     timestampEl.innerHTML = daysAgo === 1 ? '1 day ago' : `${daysAgo} days ago`;
     itemEl.title = `Created: ${new Date(workRequest.createdAt).toLocaleString()}\nUpdated: ${new Date(workRequest.updatedAt).toLocaleString()}`;
+    viewDetailsLinkEl.href = this.workRequestDetailsUrl.replace('#', workRequest._id);
+
+    // Determine if the user can reorder
+    if (this.profile.isRequester) {
+      reorderBtnEl.classList.remove('d-none');
+      reorderBtnEl.addEventListener('click', async (evt) => {
+        evt.preventDefault();
+
+        try {
+          actionsEl.querySelectorAll('button').disabled = true;
+          actionsErrorEl.classList.add('d-none');
+          const clonedWorkRequest = this.cloneWorkRequestForReorder(workRequest);
+          await this.add(clonedWorkRequest);
+          window.location.reload();
+        } catch (err) {
+          console.error(err.message);
+          actionsErrorEl.innerHTML = 'The work request could not be reordered.';
+          actionsErrorEl.classList.remove('d-none');
+        } finally {
+          actionsEl.querySelectorAll('button').disabled = false;
+        }
+      });
+    }
+
+    // Create the rest of the action buttons
+    this.renderActions(actionButtonsEl, actionsErrorEl, workRequest);
+
+    // Create the work request menu
+    linkEl.addEventListener('click', (evt) => {
+      evt.preventDefault();
+      previewEl.classList.add('d-none');
+      actionsEl.classList.remove('d-none');
+    });
+
+    actionsCloseEl.addEventListener('click', (evt) => {
+      evt.preventDefault();
+      actionsEl.classList.add('d-none');
+      previewEl.classList.remove('d-none');
+    });
 
     return statusNode;
   }
@@ -252,7 +315,8 @@ class WorkRequests {
 
     function showErrorMessage(err) {
       errorMessageEl.classList.remove('d-none');
-      errorMessageEl.innerHTML = err.message;
+      console.error(err.message);
+      errorMessageEl.innerHTML = 'There was an error when trying to update the status.';
     }
 
     if (this.profile.isRequester) {
@@ -261,10 +325,13 @@ class WorkRequests {
           primaryBtn.innerHTML = 'Cancel Request';
           primaryBtn.addEventListener('click', async (evt) => {
             try {
+              evt.target.disabled = true;
               workRequest.status = 'cancelled';
               await this.handleStatusUpdate(evt, workRequest);
             } catch (err) {
               showErrorMessage(err);
+            } finally {
+              evt.target.disabled = false;
             }
           });
 
@@ -295,10 +362,13 @@ class WorkRequests {
           primaryBtn.innerHTML = 'Paid';
           primaryBtn.addEventListener('click', async (evt) => {
             try {
+              evt.target.disabled = true;
               workRequest.status = 'paid';
               await this.handleStatusUpdate(evt, workRequest);
             } catch (err) {
               showErrorMessage(err);
+            } finally {
+              evt.target.disabled = false;
             }
           });
 
@@ -323,20 +393,26 @@ class WorkRequests {
           primaryBtn.innerHTML = 'Take It';
           primaryBtn.addEventListener('click', async (evt) => {
             try {
+              evt.target.disabled = true;
               workRequest.status = 'working';
               await this.handleStatusUpdate(evt, workRequest);
             } catch (err) {
               showErrorMessage(err);
+            } finally {
+              evt.target.disabled = false;
             }
           });
 
           secondaryBtn.innerHTML = 'Leave It';
           secondaryBtn.addEventListener('click', async (evt) => {
             try {
+              evt.target.disabled = true;
               workRequest.status = 'rejected';
               await this.handleStatusUpdate(evt, workRequest);
             } catch (err) {
               showErrorMessage(err);
+            } finally {
+              evt.target.disabled = false;
             }
           });
 
@@ -358,10 +434,13 @@ class WorkRequests {
           primaryBtn.innerHTML = 'All Done';
           primaryBtn.addEventListener('click', async (evt) => {
             try {
+              evt.target.disabled = true;
               workRequest.status = 'closed';
               await this.handleStatusUpdate(evt, workRequest);
             } catch (err) {
               showErrorMessage(err);
+            } finally {
+              evt.target.disabled = false;
             }
           });
 
@@ -382,10 +461,13 @@ class WorkRequests {
           primaryBtn.innerHTML = 'Get Paid';
           primaryBtn.addEventListener('click', async (evt) => {
             try {
+              evt.target.disabled = true;
               workRequest.status = 'waiting_for_payment';
               await this.handleStatusUpdate(evt, workRequest);
             } catch (err) {
               showErrorMessage(err);
+            } finally {
+              evt.target.disabled = false;
             }
           });
 
