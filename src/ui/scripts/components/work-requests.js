@@ -258,6 +258,68 @@ class WorkRequests {
     if (this.profile.isRequester) {
       switch (workRequest.status) {
         case 'open':
+          primaryBtn.innerHTML = 'Cancel Request';
+          primaryBtn.addEventListener('click', async (evt) => {
+            try {
+              workRequest.status = 'cancelled';
+              await this.handleStatusUpdate(evt, workRequest);
+            } catch (err) {
+              showErrorMessage(err);
+            }
+          });
+
+          targetEl.appendChild(primaryBtn);
+          break;
+
+        case 'cancelled':
+          statusTxtEl.innerHTML = '<div class="alert alert-info" role="alert">This work request has been cancelled.</div>';
+          targetEl.appendChild(statusTxtEl);
+          break;
+
+        case 'closed':
+          statusTxtEl.innerHTML = '<div class="alert alert-info" role="alert">This work request has been closed.</div>';
+          targetEl.appendChild(statusTxtEl);
+          break;
+
+        case 'paid':
+          statusTxtEl.innerHTML = '<div class="alert alert-info" role="alert">This work request has been marked as paid. Check with them to close it.</div>';
+          targetEl.appendChild(statusTxtEl);
+          break;
+
+        case 'rejected':
+          statusTxtEl.innerHTML = '<div class="alert alert-info" role="alert">This work request has been rejected. Create a new work request if you want to try again.</div>';
+          targetEl.appendChild(statusTxtEl);
+          break;
+
+        case 'waiting_for_payment':
+          primaryBtn.innerHTML = 'Paid';
+          primaryBtn.addEventListener('click', async (evt) => {
+            try {
+              workRequest.status = 'paid';
+              await this.handleStatusUpdate(evt, workRequest);
+            } catch (err) {
+              showErrorMessage(err);
+            }
+          });
+
+          targetEl.appendChild(primaryBtn);
+          break;
+
+        case 'working':
+          statusTxtEl.innerHTML = '<div class="alert alert-info" role="alert">This work request is currently being worked on (so they say).</div>';
+          targetEl.appendChild(statusTxtEl);
+          break;
+
+        default:
+          break;
+      }
+
+      return;
+    }
+
+    if (this.profile.isWorker) {
+      switch (workRequest.status) {
+        case 'open':
           primaryBtn.innerHTML = 'Take It';
           primaryBtn.addEventListener('click', async (evt) => {
             try {
@@ -281,77 +343,14 @@ class WorkRequests {
           targetEl.appendChild(secondaryBtn);
           targetEl.appendChild(primaryBtn);
           break;
-        // case 'open':
-        //   primaryBtn.innerHTML = 'Cancel Request';
-        //   primaryBtn.addEventListener('click', async (evt) => {
-        //     try {
-        //       workRequest.status = 'cancelled';
-        //       await this.handleStatusUpdate(evt, workRequest);
-        //     } catch (err) {
-        //       showErrorMessage(err);
-        //     }
-        //   });
-
-        //   targetEl.appendChild(primaryBtn);
-        //   break;
 
         case 'cancelled':
-          statusTxtEl.innerHTML = 'This work request has been cancelled.';
+          statusTxtEl.innerHTML = '<div class="alert alert-info" role="alert">This work request has been cancelled.</div>';
           targetEl.appendChild(statusTxtEl);
           break;
 
         case 'closed':
-          statusTxtEl.innerHTML = 'This work request has been closed.';
-          targetEl.appendChild(statusTxtEl);
-          break;
-
-        case 'paid':
-          statusTxtEl.innerHTML = 'This work request has been marked as paid. Check with them to close it.';
-          targetEl.appendChild(statusTxtEl);
-          break;
-
-        case 'rejected':
-          statusTxtEl.innerHTML = 'This work request has been rejected. Create a new work request if you want to try again.';
-          targetEl.appendChild(statusTxtEl);
-          break;
-
-        case 'waiting_for_payment':
-          primaryBtn.innerHTML = 'Paid';
-          primaryBtn.addEventListener('click', async (evt) => {
-            try {
-              workRequest.status = 'paid';
-              await this.handleStatusUpdate(evt, workRequest);
-            } catch (err) {
-              showErrorMessage(err);
-            }
-          });
-
-          targetEl.appendChild(primaryBtn);
-          break;
-
-        case 'working':
-          statusTxtEl.innerHTML = 'This work request is currently being worked on (so they say).';
-          targetEl.appendChild(statusTxtEl);
-          break;
-
-        default:
-          break;
-      }
-
-      return;
-    }
-
-    if (this.profile.isWorker) {
-      switch (workRequest.status) {
-
-
-        case 'cancelled':
-          statusTxtEl.innerHTML = 'This work request has been cancelled.';
-          targetEl.appendChild(statusTxtEl);
-          break;
-
-        case 'closed':
-          statusTxtEl.innerHTML = 'This work request has been closed.';
+          statusTxtEl.innerHTML = '<div class="alert alert-info" role="alert">This work request has been closed.</div>';
           targetEl.appendChild(statusTxtEl);
           break;
 
@@ -370,12 +369,12 @@ class WorkRequests {
           break;
 
         case 'rejected':
-          statusTxtEl.innerHTML = 'This work request has been rejected.';
+          statusTxtEl.innerHTML = '<div class="alert alert-info" role="alert">This work request has been rejected.</div>';
           targetEl.appendChild(statusTxtEl);
           break;
 
         case 'waiting_for_payment':
-          statusTxtEl.innerHTML = 'This work request is still waiting for payment. Get them to pay you!';
+          statusTxtEl.innerHTML = '<div class="alert alert-info" role="alert">This work request is still waiting for payment. Get them to pay you!</div>';
           targetEl.appendChild(statusTxtEl);
           break;
 
