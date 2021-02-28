@@ -1,5 +1,7 @@
 import { KakyApiHeaders } from './api';
-import netlifyIdentity from 'netlify-identity-widget';
+import { Profile } from './profile';
+import { Workers } from './workers';
+import { WorkRequest } from '../models/work-request';
 
 class WorkRequests {
   constructor() {
@@ -7,6 +9,8 @@ class WorkRequests {
     this.defaultPrice = 1;
     this.url = '/.netlify/functions/work-requests';
     this.workRequestDetailsUrl = '/work-requests/detail.html?id=#';
+    this.workers = new Workers();
+    this.profile = new Profile();
     this.emptyInstructionsMessage = 'You got lucky ... no special instructions this time.';
     this.workRequestInstructionsTemplate = `
     <textarea class="form-control" aria-label="Special instructions" maxlength="200"></textarea>
@@ -26,55 +30,109 @@ class WorkRequests {
     </div>
     `;
     this.workRequestStatusTemplate = `<li class="workrequest-status list-group-item list-group-item-action flex-column align-items-start">
-    <div class="d-flex w-100 mb-3">
+    <div class="d-flex w-100 mb-1">
+      <div class="worker-logo position-absolute"></div>
       <div class="img-parent mr-3">
         <img class="img-fluid img-thumbnail" />
       </div>
       <div class="align-items-center">
-        <h5 class="mb-1"></h5>
+        <a href="#" class="stretched-link">
+          <h5 class="mb-0"></h5>
+        </a>
         <strong class="text-muted"></strong>
         <br />
         <small class="text-muted"></small>
       </div>
     </div>
-    <p class="alert alert-info mb-1" role="alert"></p>
-    <a href="#" class="stretched-link">&nbsp;</a>
+    <p class="alert alert-info" role="alert"></p>
   </li>`;
   }
 
-  createStatusNode(workRequest, workItem) {
+  async add(workRequest) {
+    if (!this.profile.user) {
+      throw new Error(`This isn't going to work. You haven't logged in yet.`);
+    }
+
+    // Set the requester
+    workRequest.requesterId = this.profile.user ? this.profile.user.id : '';
+
+    // Set the status
+    workRequest.status = 'open';
+
+    // Check the work request
+    this.validateWorkRequest(this.profile.user, workRequest);
+
+    try {
+      const headers = await KakyApiHeaders.setPOSTHeaders();
+      const response = await fetch(this.url, {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify(workRequest)
+      });
+
+      const responseData = await response.json();
+
+      if (responseData.data._id) {
+        return responseData.data._id;
+      } else {
+        throw new Error(`The work request submission failed.`);
+      }
+    } catch (e) {
+      console.error(`There was an error saving the work request. \n${e}`);
+      throw new Error(`There was an error saving the work request.`);
+    }
+  }
+
+  cloneWorkRequestForReorder(workRequest) {
+    let clone = new WorkRequest(workRequest);
+    delete clone._id;
+    delete clone.__v;
+    delete clone.createdAt;
+    delete clone.updatedAt;
+
+    return clone;
+  }
+
+  createStatusNode(workRequest, workItem, worker) {
     const template = document.createElement('template');
     template.innerHTML = this.workRequestStatusTemplate;
-    let statusNode = template.content.cloneNode(true);
-    let linkEl = statusNode.querySelector('a');
-    let imgEl = statusNode.querySelector('img');
-    let titleEl = statusNode.querySelector('h5');
-    let priceEl = statusNode.querySelector('strong');
-    let instructionsEl = statusNode.querySelector('p');
-    let timestampEl = statusNode.querySelector('small.text-muted');
+    const statusNode = template.content.cloneNode(true);
+
+    const itemEl = statusNode.querySelector('li');
+    const imgEl = statusNode.querySelector('img');
+    const instructionsEl = statusNode.querySelector('.alert-info');
+    const linkEl = statusNode.querySelector('a');
+    const logoEl = statusNode.querySelector('.worker-logo');
+    const priceEl = statusNode.querySelector('strong.text-muted');
+    const timestampEl = statusNode.querySelector('small.text-muted');
+    const titleEl = statusNode.querySelector('h5');
 
     // Calculate how many days ago the request was submitted
-    let today = new Date();
-    let createdAt = new Date(workRequest.createdAt);
-    let msPerDay = (1000*60*60*24);
-    let daysAgo = Math.floor(Math.abs((today.getTime() - createdAt.getTime()) / msPerDay));
+    const today = new Date();
+    const createdAt = new Date(workRequest.createdAt);
+    const msPerDay = (1000*60*60*24);
+    const daysAgo = Math.floor(Math.abs((today.getTime() - createdAt.getTime()) / msPerDay));
 
+    // Create the logo
+    const logoNode = this.workers.createWorkerLogoNode(worker);
 
-    linkEl.href = this.workRequestDetailsUrl.replace('#', workRequest._id);
     imgEl.src = workItem.imageUrl;
+    imgEl.alt = workItem.name;
+    imgEl.title = workItem.name;
+    logoEl.appendChild(logoNode);
     titleEl.innerHTML = workItem.name;
+    linkEl.href = this.workRequestDetailsUrl.replace('#', workRequest._id);
     priceEl.innerHTML = `$${isNaN(workRequest.price) ? workItem.price.toLocaleString() : workRequest.price.toLocaleString()}`;
     instructionsEl.innerHTML = workRequest.instructions ? workRequest.instructions : '<small class="text-muted"><i>No special instructions</i></small>';
     timestampEl.innerHTML = daysAgo === 1 ? '1 day ago' : `${daysAgo} days ago`;
+    itemEl.title = `Created: ${new Date(workRequest.createdAt).toLocaleString()}\nUpdated: ${new Date(workRequest.updatedAt).toLocaleString()}`;
 
     return statusNode;
   }
 
   async fetchWorkRequests(overrideCache = false) {
-    const user = netlifyIdentity.currentUser();
-
     // Make sure there is a user
-    if (!user) return this.items;
+    if (!this.profile.user) return this.items;
 
     // Check for cache
     if (this.item && this.items.length && !overrideCache) return this.items;
@@ -82,12 +140,12 @@ class WorkRequests {
     // Determine which "view" of work the user should see
     let url = this.url;
 
-    if (user.app_metadata && user.app_metadata.roles.find(r => r === 'AssignWork')) {
-      url = `${url}/requester/${user.id}`;
+    if (this.profile.isRequester) {
+      url = `${url}/requester/${this.profile.user.id}`;
     }
 
-    if (user.app_metadata && user.app_metadata.roles.find(r => r === 'AcceptWork')) {
-      url = `${url}/worker/${user.id}`;
+    if (this.profile.isWorker) {
+      url = `${url}/worker/${this.profile.user.id}`;
     }
 
     // Don't let them get anything if they don't have either of the roles
@@ -103,8 +161,14 @@ class WorkRequests {
       this.items = [];
       throw new Error(`HTTP error fetching work requests! status: ${response.status}`);
     } else {
-      const items = await response.json();
-      this.items = items.data;
+      const responseItems = await response.json();
+
+      this.items = [];
+
+      for(let item of responseItems.data) {
+        this.items.push(new WorkRequest(item));
+      }
+
       return this.items;
     }
   }
@@ -141,16 +205,16 @@ class WorkRequests {
         throw new Error('The work request status update attempt failed.');
       }
 
-      window.location.reload();
+      window.location.href = 'list.html';
     } catch (e) {
       console.error(`There was an error updating the work request status. \n${e}`);
+      throw new Error('There was an error updating the work request.');
     } finally {
       buttonEl.disabled = false;
     }
   }
 
   async handleSubmit(event, workRequest) {
-    let errorMessage = '';
     const formEl = event.target;
     const fieldsetEl = formEl.querySelector('fieldset');
 
@@ -168,103 +232,81 @@ class WorkRequests {
 
     fieldsetEl.disabled = true;
 
-    // Get the user
-    const user = netlifyIdentity.currentUser();
-
-    if (!user) {
-      throw new Error(`This isn't going to work. You haven't logged in yet.`);
-    }
-
-    // Set the requester
-    workRequest.requesterId = user ? user.id : '';
-
-    // Set the status
-    workRequest.status = 'open';
-
-    // Check the work request
-    this.validateWorkRequest(user, workRequest);
-
-    try {
-      const headers = await KakyApiHeaders.setPOSTHeaders();
-      const response = await fetch(this.url, {
-        method: 'POST',
-        headers: headers,
-        body: JSON.stringify(workRequest)
-      });
-
-      const responseData = await response.json();
-
-      if (responseData.data._id) {
-        return responseData.data._id;
-      } else {
-        throw new Error(`The work request submission failed.`);
-      }
-    } catch (e) {
-      console.error(`There was an error saving the work request. \n${e}`);
-      throw new Error(`There was an error saving the work request.`);
-    }
+    return await this.add(workRequest);
   }
 
-  renderActions(targetEl, workRequest) {
-    const user = netlifyIdentity.currentUser();
-
+  async renderActions(targetEl, errorMessageEl, workRequest) {
     // If there are no roles, nothing for them to do
-    if (!user.app_metadata) {
-      return;
-    }
+    if (!this.profile.user) return;
 
     let primaryBtn = document.createElement('button');
-    let secondaryBtn = document.createElement('button');
-    let statusTxtEl = document.createElement('div');
-
-    primaryBtn.classList.add('btn', 'btn-primary', 'btn-lg');
+    primaryBtn.classList.add('btn', 'btn-primary', 'btn-block');
     primaryBtn.type = 'button';
-    secondaryBtn.classList.add('btn', 'btn-secondary', 'btn-lg', 'mr-3');
+
+    let secondaryBtn = document.createElement('button');
+    secondaryBtn.classList.add('btn', 'btn-secondary', 'btn-block', 'mb-3');
     secondaryBtn.type = 'button';
+
+    let statusTxtEl = document.createElement('div');
     statusTxtEl.classList.add('text-muted');
 
-    if (user.app_metadata.roles.find(r => r === 'AssignWork')) {
+    function showErrorMessage(err) {
+      errorMessageEl.classList.remove('d-none');
+      errorMessageEl.innerHTML = err.message;
+    }
+
+    if (this.profile.isRequester) {
       switch (workRequest.status) {
         case 'open':
           primaryBtn.innerHTML = 'Cancel Request';
-          primaryBtn.addEventListener('click', (e) => {
-            workRequest.status = 'cancelled';
-            this.handleStatusUpdate(e, workRequest);
+          primaryBtn.addEventListener('click', async (evt) => {
+            try {
+              workRequest.status = 'cancelled';
+              await this.handleStatusUpdate(evt, workRequest);
+            } catch (err) {
+              showErrorMessage(err);
+            }
           });
+
           targetEl.appendChild(primaryBtn);
           break;
 
         case 'cancelled':
-          statusTxtEl.innerHTML = 'This work request has been cancelled.';
+          statusTxtEl.innerHTML = '<div class="alert alert-info" role="alert">This work request has been cancelled.</div>';
           targetEl.appendChild(statusTxtEl);
           break;
 
         case 'closed':
-          statusTxtEl.innerHTML = 'This work request has been closed.';
+          statusTxtEl.innerHTML = '<div class="alert alert-info" role="alert">This work request has been closed.</div>';
           targetEl.appendChild(statusTxtEl);
           break;
 
         case 'paid':
-          statusTxtEl.innerHTML = 'This work request has been marked as paid. Check with them to close it.';
+          statusTxtEl.innerHTML = '<div class="alert alert-info" role="alert">This work request has been marked as paid. Check with them to close it.</div>';
           targetEl.appendChild(statusTxtEl);
           break;
 
         case 'rejected':
-          statusTxtEl.innerHTML = 'This work request has been rejected. Create a new work request if you want to try again.';
+          statusTxtEl.innerHTML = '<div class="alert alert-info" role="alert">This work request has been rejected. Create a new work request if you want to try again.</div>';
           targetEl.appendChild(statusTxtEl);
           break;
 
         case 'waiting_for_payment':
           primaryBtn.innerHTML = 'Paid';
-          primaryBtn.addEventListener('click', (e) => {
-            workRequest.status = 'paid';
-            this.handleStatusUpdate(e, workRequest);
+          primaryBtn.addEventListener('click', async (evt) => {
+            try {
+              workRequest.status = 'paid';
+              await this.handleStatusUpdate(evt, workRequest);
+            } catch (err) {
+              showErrorMessage(err);
+            }
           });
+
           targetEl.appendChild(primaryBtn);
           break;
 
         case 'working':
-          statusTxtEl.innerHTML = 'This work request is currently being worked on (so they say).';
+          statusTxtEl.innerHTML = '<div class="alert alert-info" role="alert">This work request is currently being worked on (so they say).</div>';
           targetEl.appendChild(statusTxtEl);
           break;
 
@@ -275,19 +317,27 @@ class WorkRequests {
       return;
     }
 
-    if (user.app_metadata.roles.find(r => r === 'AcceptWork')) {
+    if (this.profile.isWorker) {
       switch (workRequest.status) {
         case 'open':
           primaryBtn.innerHTML = 'Take It';
-          primaryBtn.addEventListener('click', (e) => {
-            workRequest.status = 'working';
-            this.handleStatusUpdate(e, workRequest);
+          primaryBtn.addEventListener('click', async (evt) => {
+            try {
+              workRequest.status = 'working';
+              await this.handleStatusUpdate(evt, workRequest);
+            } catch (err) {
+              showErrorMessage(err);
+            }
           });
 
           secondaryBtn.innerHTML = 'Leave It';
-          secondaryBtn.addEventListener('click', (e) => {
-            workRequest.status = 'rejected';
-            this.handleStatusUpdate(e, workRequest);
+          secondaryBtn.addEventListener('click', async (evt) => {
+            try {
+              workRequest.status = 'rejected';
+              await this.handleStatusUpdate(evt, workRequest);
+            } catch (err) {
+              showErrorMessage(err);
+            }
           });
 
           targetEl.appendChild(secondaryBtn);
@@ -295,40 +345,50 @@ class WorkRequests {
           break;
 
         case 'cancelled':
-          statusTxtEl.innerHTML = 'This work request has been cancelled.';
+          statusTxtEl.innerHTML = '<div class="alert alert-info" role="alert">This work request has been cancelled.</div>';
           targetEl.appendChild(statusTxtEl);
           break;
 
         case 'closed':
-          statusTxtEl.innerHTML = 'This work request has been closed.';
+          statusTxtEl.innerHTML = '<div class="alert alert-info" role="alert">This work request has been closed.</div>';
           targetEl.appendChild(statusTxtEl);
           break;
 
         case 'paid':
           primaryBtn.innerHTML = 'All Done';
-          primaryBtn.addEventListener('click', (e) => {
-            workRequest.status = 'closed';
-            this.handleStatusUpdate(e, workRequest);
+          primaryBtn.addEventListener('click', async (evt) => {
+            try {
+              workRequest.status = 'closed';
+              await this.handleStatusUpdate(evt, workRequest);
+            } catch (err) {
+              showErrorMessage(err);
+            }
           });
+
           targetEl.appendChild(primaryBtn);
           break;
 
         case 'rejected':
-          statusTxtEl.innerHTML = 'This work request has been rejected.';
+          statusTxtEl.innerHTML = '<div class="alert alert-info" role="alert">This work request has been rejected.</div>';
           targetEl.appendChild(statusTxtEl);
           break;
 
         case 'waiting_for_payment':
-          statusTxtEl.innerHTML = 'This work request is still waiting for payment. Get them to pay you!';
+          statusTxtEl.innerHTML = '<div class="alert alert-info" role="alert">This work request is still waiting for payment. Get them to pay you!</div>';
           targetEl.appendChild(statusTxtEl);
           break;
 
         case 'working':
           primaryBtn.innerHTML = 'Get Paid';
-          primaryBtn.addEventListener('click', (e) => {
-            workRequest.status = 'waiting_for_payment';
-            this.handleStatusUpdate(e, workRequest);
+          primaryBtn.addEventListener('click', async (evt) => {
+            try {
+              workRequest.status = 'waiting_for_payment';
+              await this.handleStatusUpdate(evt, workRequest);
+            } catch (err) {
+              showErrorMessage(err);
+            }
           });
+
           targetEl.appendChild(primaryBtn);
           break;
 

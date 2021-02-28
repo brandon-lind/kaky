@@ -60,7 +60,10 @@ app.get(`${basePath}/:id`, validateUser, async (req, res) => {
 app.get(`${basePath}/worker/:workerId`, validateUser, async (req, res) => {
   try {
     const { params } = req;
-    const item = await WorkRequest.find({ workerId: params.workerId }).exec();
+    const item = await WorkRequest
+      .find({ workerId: params.workerId })
+      .sort({ updatedAt: 'desc' })
+      .exec();
 
     if (!item) {
       res.status(404).json({ message: `There aren't any work request associated with that worker.`, data: null });
@@ -78,7 +81,10 @@ app.get(`${basePath}/worker/:workerId`, validateUser, async (req, res) => {
 app.get(`${basePath}/requester/:requesterId`, validateUser, async (req, res) => {
   try {
     const { params } = req;
-    const item = await WorkRequest.find({ requesterId: params.requesterId }).exec();
+    const item = await WorkRequest
+      .find({ requesterId: params.requesterId })
+      .sort({ updatedAt: 'desc' })
+      .exec();
 
     if (!item) {
       res.status(404).json({ message: `There aren't any work request associated with that requester.`, data: null });
