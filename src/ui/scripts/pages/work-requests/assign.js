@@ -19,7 +19,7 @@ export async function workRequestAssignPage() {
   const errorMessageTargetEl = document.querySelector('#error-message');
 
   const workItem = await workItems.findWorkItemById(workItemId);
-  const workRequest = new WorkRequest(workItem);
+  const workRequest = new WorkRequest(null, workItem);
 
   workers.renderList(workersTargetEl, workRequest, true);
   workItems.renderWorkItem(workItemTargetEl, workItem);

@@ -2,9 +2,29 @@ import netlifyIdentity from 'netlify-identity-widget';
 import { ProfileNotification } from '../models/profile-notification';
 import { WorkerProfile } from '../models/profile-worker';
 class Profile {
+  get user() { return netlifyIdentity.currentUser(); }
+  get isRequester() { return this._isRequester(); }
+  get isWorker() { return this._isWorker(); }
+
   constructor() {
     this.workerProfile = new WorkerProfile();
     this.profileNotification = new ProfileNotification();
+  }
+
+  _isRequester() {
+    if (!this.user) return false;
+
+    return this.user.app_metadata &&
+            this.user.app_metadata.roles &&
+            this.user.app_metadata.roles.indexOf('AssignWork') !== -1;
+  }
+
+  _isWorker() {
+    if (!this.user) return false;
+
+    return this.user.app_metadata &&
+            this.user.app_metadata.roles &&
+            this.user.app_metadata.roles.indexOf('AcceptWork') !== -1;
   }
 
   async handleSubmit(event) {
@@ -48,15 +68,6 @@ class Profile {
       }
   }
 
-  isWorker() {
-    // Get the user
-    const user = netlifyIdentity.currentUser();
-
-    return user.app_metadata &&
-            user.app_metadata.roles &&
-            user.app_metadata.roles.indexOf('AcceptWork') !== -1;
-  }
-
   renderWorkerProfile(targetElements) {
     if (!targetElements)  throw new Error('There are no target elements to render the worker profile into.');
     if (!targetElements.displayname)  throw new Error('There is no target element to render the display name into.');
@@ -80,12 +91,11 @@ class Profile {
       this.workerProfile.tagline = e.target.value;
     });
 
-    // Get the user
-    const user = netlifyIdentity.currentUser();
+    if (!this.user) return;
 
-    if (!user.user_metadata) return;
+    if (!this.user.user_metadata) return;
 
-    this.workerProfile.mapMetadata(user.user_metadata);
+    this.workerProfile.mapMetadata(this.user.user_metadata);
 
     targetElements.displayname.value = this.workerProfile.name;
     targetElements.monogram.value = this.workerProfile.monogram;
@@ -106,17 +116,16 @@ class Profile {
       this.profileNotification.email = e.target.value;
     });
 
-    // Get the user
-    const user = netlifyIdentity.currentUser();
+    if (!this.user) return;
 
-    if (!user.user_metadata) return;
+    if (!this.user.user_metadata) return;
 
-    this.profileNotification.mapMetadata(user.user_metadata);
+    this.profileNotification.mapMetadata(this.user.user_metadata);
 
     targetElements.phonenumber.value = this.profileNotification.phonenumber;
     targetElements.email.value = this.profileNotification.email ?
                                   this.profileNotification.email :
-                                  user.email ? user.email : '';
+                                  this.user.email ? this.user.email : '';
   }
 }
 

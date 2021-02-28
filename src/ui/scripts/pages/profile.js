@@ -4,10 +4,9 @@ export async function profilePage() {
   const profile = new Profile();
 
   const formTargetEl = document.querySelector('form');
-  const errorMessagesTargetEl = document.querySelector('#error-messages');
-  const successMessagesTargetEl = document.querySelector('#success-messages');
-  const actionButtonsTargetEl = document.querySelector('#actions');
-
+  const errorMessagesTargetEl = document.querySelector('#error-message');
+  const successMessagesTargetEl = document.querySelector('#success-message');
+  const actionButtonsTargetEl = document.querySelector('.kaky-actions');
   const workerprofileTargetEl = document.querySelector('#workerprofile');
   const displaynameTargetEl = document.querySelector('#displayname');
   const monogramTargetEl = document.querySelector('#monogram');
@@ -18,7 +17,7 @@ export async function profilePage() {
 
   try {
     // Hide the worker fieldset if the user is not a worker
-    if(profile.isWorker()) {
+    if(profile.isWorker) {
       workerprofileTargetEl.classList.remove('d-none');
       profile.renderWorkerProfile({
         displayname: displaynameTargetEl,
@@ -45,8 +44,8 @@ export async function profilePage() {
       successMessagesTargetEl.classList.remove('d-none');
     } catch(e) {
       successMessagesTargetEl.classList.add('d-none');
-      errorMessagesTargetEl.innerHTML = e.message;
       errorMessagesTargetEl.classList.remove('d-none');
+      errorMessagesTargetEl.innerHTML = e.message;
     }
   });
 };

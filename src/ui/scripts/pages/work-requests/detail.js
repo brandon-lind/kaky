@@ -16,10 +16,11 @@ export async function workRequestDetailPage() {
   const priceTargetEl = document.querySelector('#price');
   const instructionsTargetEl = document.querySelector('#instructions');
   const actionsTargetEl = document.querySelector('#actions');
+  const errorMessageTargetEl = document.querySelector('#error-message');
 
   workItems.renderWorkItemById(workItemTargetEl, workRequest.workItemId, false);
   workers.renderWorkerById(workerTargetEl, workRequest.workerId);
   workRequests.renderPrice(priceTargetEl, workRequest);
   workRequests.renderInstructions(instructionsTargetEl, workRequest);
-  workRequests.renderActions(actionsTargetEl, workRequest);
+  workRequests.renderActions(actionsTargetEl, errorMessageTargetEl, workRequest);
 };

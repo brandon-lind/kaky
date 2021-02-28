@@ -25,10 +25,10 @@ class KakyHeader extends HTMLElement {
         <ul class="navbar-nav ml-auto">
           <li class="nav-item dropdown d-none" id="loggedin-container">
             <a href="#" class="nav-link dropdown-toggle" id="profileDropdown" role="button" data-toggle="dropdown" aria-expanded="false">
-              <i class="fas fa-user-ninja fa-2x"></i>
+              <span title="KAKY Ninja"><i class="fas fa-user-ninja fa-2x"></i></span>
             </a>
             <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="profileDropdown">
-              <li><a class="dropdown-item" href="/profile.html" id="username"></li>
+              <li><a class="dropdown-item" href="/profile.html" id="username"></a></li>
               <li><a class="dropdown-item" href="#" id="logout">Log Out</a></li>
             </ul>
           </li>

@@ -1,4 +1,4 @@
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -10,43 +10,95 @@
     <kaky-header></kaky-header>
 
     <div class="container">
-      <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto">
+      <div class="px-3 py-3 pt-md-5 pb-md-4 mx-auto">
         <h1 class="display-4">Your Work Requests</h1>
         <p class="lead">Select a work request from the list below to view the details.</p>
       </div>
 
-      <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-        <li class="nav-item align-items-center">
-          <a class="nav-link active" id="list-open-workrequests" data-toggle="pill" href="#list-open" role="tab" aria-controls="list-open">Open <span class="badge badge-light"></span></a>
-        </li>
-        <li class="nav-item align-items-center">
-          <a class="nav-link" id="list-working-workrequests" data-toggle="list" href="#list-working" role="tab" aria-controls="list-working">Working <span class="badge badge-light"></span></a>
-        </li>
-        <li class="nav-item align-items-center">
-          <a class="nav-link" id="list-waiting-on-payment-workrequests" data-toggle="list" href="#list-waiting-on-payment" role="tab" aria-controls="list-waiting-on-payment">Waiting on Payment <span class="badge badge-light"></span></a>
-        </li>
-        <li class="nav-item align-items-center">
-          <a class="nav-link" id="list-paid-workrequests" data-toggle="list" href="#list-paid" role="tab" aria-controls="list-paid">Paid <span class="badge badge-light"></span></a>
-        </li>
-        <li class="nav-item align-items-center">
-          <a class="nav-link" id="list-closed-workrequests" data-toggle="list" href="#list-closed" role="tab" aria-controls="list-closed">Closed <span class="badge badge-light"></span></a>
-        </li>
-        <li class="nav-item align-items-center">
-          <a class="nav-link" id="list-cancelled-workrequests" data-toggle="list" href="#list-cancelled" role="tab" aria-controls="list-cancelled">Cancelled <span class="badge badge-light"></span></a>
-        </li>
-        <li class="nav-item align-items-center">
-          <a class="nav-link" id="list-rejected-workrequests" data-toggle="list" href="#list-rejected" role="tab" aria-controls="list-rejected">Rejected <span class="badge badge-light"></span></a>
-        </li>
-      </ul>
+      <div id="accordion">
+        <div class="card">
+          <div class="card-header" id="workrequests-open">
+            <h5 class="mb-0" role="button" data-target="#workrequests-collapse-open" aria-controls="workrequests-collapse-open" aria-expanded="true" data-toggle="collapse">
+              Open <span class="badge badge-secondary"></span>
+            </h5>
+          </div>
 
-      <div class="tab-content" id="pills-tabContent">
-        <div class="tab-pane fade show active" id="list-open" role="tabpanel" aria-labelledby="list-open-workrequests"><ul class="list-group"></ul></div>
-        <div class="tab-pane fade" id="list-working" role="tabpanel" aria-labelledby="list-working-workrequests"><ul class="list-group"></ul></div>
-        <div class="tab-pane fade" id="list-waiting-on-payment" role="tabpanel" aria-labelledby="list-waiting-on-payment-workrequests"><ul class="list-group"></ul></div>
-        <div class="tab-pane fade" id="list-paid" role="tabpanel" aria-labelledby="list-paid-workrequests"><ul class="list-group"></ul></div>
-        <div class="tab-pane fade" id="list-closed" role="tabpanel" aria-labelledby="list-closed-workrequests"><ul class="list-group"></ul></div>
-        <div class="tab-pane fade" id="list-cancelled" role="tabpanel" aria-labelledby="list-cancelled-workrequests"><ul class="list-group"></ul></div>
-        <div class="tab-pane fade" id="list-rejected" role="tabpanel" aria-labelledby="list-rejected-workrequests"><ul class="list-group"></ul></div>
+          <div id="workrequests-collapse-open" class="collapse show" aria-labelledby="workrequests-open" data-parent="#accordion">
+            <div class="card-body"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header" id="workrequests-working">
+            <h5 class="mb-0 collapsed" role="button" data-target="#workrequests-collapse-working" aria-controls="workrequests-collapse-working" aria-expanded="false" data-toggle="collapse">
+              Working <span class="badge badge-secondary"></span>
+            </h5>
+          </div>
+
+          <div id="workrequests-collapse-working" class="collapse" aria-labelledby="workrequests-working" data-parent="#accordion">
+            <div class="card-body"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header" id="workrequests-waiting-on-payment">
+            <h5 class="mb-0 collapsed" role="button" data-target="#workrequests-collapse-waiting-on-payment" aria-controls="workrequests-collapse-waiting-on-payment" aria-expanded="false" data-toggle="collapse">
+              Waiting on Payment <span class="badge badge-secondary"></span>
+            </h5>
+          </div>
+
+          <div id="workrequests-collapse-waiting-on-payment" class="collapse" aria-labelledby="workrequests-waiting-on-payment" data-parent="#accordion">
+            <div class="card-body"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header" id="workrequests-paid">
+            <h5 class="mb-0 collapsed" role="button" data-target="#workrequests-collapse-paid" aria-controls="workrequests-collapse-paid" aria-expanded="false" data-toggle="collapse">
+              Paid <span class="badge badge-secondary"></span>
+            </h5>
+          </div>
+
+          <div id="workrequests-collapse-paid" class="collapse" aria-labelledby="workrequests-paid" data-parent="#accordion">
+            <div class="card-body"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header" id="workrequests-closed">
+            <h5 class="mb-0 collapsed" role="button" data-target="#workrequests-collapse-closed" aria-controls="workrequests-collapse-closed" aria-expanded="false" data-toggle="collapse">
+              Closed <span class="badge badge-secondary"></span>
+            </h5>
+          </div>
+
+          <div id="workrequests-collapse-closed" class="collapse" aria-labelledby="workrequests-closed" data-parent="#accordion">
+            <div class="card-body"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header" id="workrequests-cancelled">
+            <h5 class="mb-0 collapsed" role="button" data-target="#workrequests-collapse-cancelled" aria-controls="workrequests-collapse-cancelled" aria-expanded="false" data-toggle="collapse">
+              Cancelled <span class="badge badge-secondary"></span>
+            </h5>
+          </div>
+
+          <div id="workrequests-collapse-cancelled" class="collapse" aria-labelledby="workrequests-cancelled" data-parent="#accordion">
+            <div class="card-body"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header" id="workrequests-rejected">
+            <h5 class="mb-0 collapsed" role="button" data-target="#workrequests-collapse-rejected" aria-controls="workrequests-collapse-rejected" aria-expanded="false" data-toggle="collapse">
+              Rejected <span class="badge badge-secondary"></span>
+            </h5>
+          </div>
+
+          <div id="workrequests-collapse-rejected" class="collapse" aria-labelledby="workrequests-rejected" data-parent="#accordion">
+            <div class="card-body"></div>
+          </div>
+        </div>
       </div>
 
       <kaky-footer></kaky-footer>
