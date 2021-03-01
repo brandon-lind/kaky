@@ -30,7 +30,7 @@ class WorkRequests {
     </div>
     `;
     this.workRequestStatusTemplate = `<div class="workrequest-status list-group-item list-group-item-action flex-column align-items-start">
-    <div class="workrequest-id text-right"></div>
+    <div class="workrequest-id text-right"><small class="text-muted"></small></div>
     <div class="workrequest-preview">
       <div class="d-flex w-100 mb-1">
         <div class="worker-logo position-absolute"></div>
@@ -43,7 +43,7 @@ class WorkRequests {
           </a>
           <strong class="text-muted"></strong>
           <br />
-          <small class="text-muted"></small>
+          <small class="workrequest-days text-muted"></small>
         </div>
       </div>
       <p class="alert alert-info" role="alert"></p>
@@ -116,14 +116,14 @@ class WorkRequests {
     template.innerHTML = this.workRequestStatusTemplate;
     const statusNode = template.content.cloneNode(true);
 
-    const idEl = statusNode.querySelector('div.workrequest-id');
+    const idEl = statusNode.querySelector('div.workrequest-id>small');
     const itemEl = statusNode.querySelector('div.workrequest-status');
     const imgEl = statusNode.querySelector('img');
     const instructionsEl = statusNode.querySelector('.alert-info');
     const linkEl = statusNode.querySelector('a.stretched-link');
     const logoEl = statusNode.querySelector('.worker-logo');
     const priceEl = statusNode.querySelector('strong.text-muted');
-    const timestampEl = statusNode.querySelector('small.text-muted');
+    const timestampEl = statusNode.querySelector('small.workrequest-days');
     const titleEl = statusNode.querySelector('h5');
     const previewEl = statusNode.querySelector('.workrequest-preview');
     const actionsEl = statusNode.querySelector('.workrequest-actions');
