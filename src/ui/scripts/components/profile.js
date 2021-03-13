@@ -36,12 +36,12 @@ class Profile {
       if (formEl.checkValidity() === false) {
         event.stopPropagation();
         formEl.classList.add('was-validated');
-        return;
+        throw new Error(`You make me sad that you can't read directions. Go check for errors above.`);
       }
 
       fieldsetEl.disabled = true;
 
-      if (this.isWorker()) {
+      if (this._isWorker()) {
         try {
           await netlifyIdentity.gotrue.currentUser().update({
             data: {
@@ -66,6 +66,9 @@ class Profile {
       } catch(e) {
         throw new Error(`Your notification preferences could not be updated.`);
       }
+      
+      fieldsetEl.disabled = false;
+      
   }
 
   renderWorkerProfile(targetElements) {

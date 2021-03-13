@@ -293,7 +293,7 @@ class WorkRequests {
     if (formEl.checkValidity() === false) {
       event.stopPropagation();
       formEl.classList.add('was-validated');
-      return;
+      throw new Error(`You make me sad that you can't read directions. Go check for errors above.`);
     }
 
     fieldsetEl.disabled = true;
