@@ -33,42 +33,46 @@ class Profile {
 
     event.preventDefault();
 
-      if (formEl.checkValidity() === false) {
-        event.stopPropagation();
-        formEl.classList.add('was-validated');
-        throw new Error(`You make me sad that you can't read directions. Go check for errors above.`);
-      }
+    if (!this.user) {
+      throw new Error(`You need to log in first!`);
+    }
 
-      fieldsetEl.disabled = true;
+    if (formEl.checkValidity() === false) {
+      event.stopPropagation();
+      formEl.classList.add('was-validated');
+      throw new Error(`You make me sad that you can't read directions. Go check for errors above.`);
+    }
 
-      if (this._isWorker()) {
-        try {
-          await netlifyIdentity.gotrue.currentUser().update({
-            data: {
-                name: this.workerProfile.name,
-                monogram: this.workerProfile.monogram,
-                avatarUrl: this.workerProfile.avatarUrl,
-                tagline: this.workerProfile.tagline
-            }
-          });
-        } catch(e) {
-          throw new Error(`Your worker profile could not be updated.`);
-        }
-      }
+    fieldsetEl.disabled = true;
 
+    if (this.isWorker) {
       try {
         await netlifyIdentity.gotrue.currentUser().update({
           data: {
-              phonenumber: this.profileNotification.phonenumber,
-              email: this.profileNotification.email
+              name: this.workerProfile.name,
+              monogram: this.workerProfile.monogram,
+              avatarUrl: this.workerProfile.avatarUrl,
+              tagline: this.workerProfile.tagline
           }
         });
       } catch(e) {
-        throw new Error(`Your notification preferences could not be updated.`);
+        throw new Error(`Your worker profile could not be updated.`);
       }
-      
-      fieldsetEl.disabled = false;
-      
+    }
+
+    try {
+      await netlifyIdentity.gotrue.currentUser().update({
+        data: {
+            discordid: this.profileNotification.discordid,
+            phonenumber: this.profileNotification.phonenumber,
+            email: this.profileNotification.email
+        }
+      });
+    } catch(e) {
+      throw new Error(`Your notification preferences could not be updated.`);
+    }
+
+    fieldsetEl.disabled = false;
   }
 
   renderWorkerProfile(targetElements) {
@@ -108,8 +112,13 @@ class Profile {
 
   renderNotifications(targetElements) {
     if (!targetElements)  throw new Error('There are no target elements to render the notifications into.');
+    if (!targetElements.discordid)  throw new Error('There is no target element to render the Discord Id into.');
     if (!targetElements.phonenumber)  throw new Error('There is no target element to render the phone number into.');
     if (! targetElements.email)  throw new Error('There is no target element to render the email address into.');
+
+    targetElements.discordid.addEventListener('change', (e) => {
+      this.profileNotification.discordid = e.target.value;
+    });
 
     targetElements.phonenumber.addEventListener('change', (e) => {
       this.profileNotification.phonenumber = e.target.value;
@@ -125,7 +134,11 @@ class Profile {
 
     this.profileNotification.mapMetadata(this.user.user_metadata);
 
+    targetElements.discordid.value = this.profileNotification.discordid ?
+                                      this.profileNotification.discordid : '';
+
     targetElements.phonenumber.value = this.profileNotification.phonenumber;
+
     targetElements.email.value = this.profileNotification.email ?
                                   this.profileNotification.email :
                                   this.user.email ? this.user.email : '';

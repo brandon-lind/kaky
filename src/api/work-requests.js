@@ -3,10 +3,13 @@ import express from 'express';
 import awsServerlessExpress from 'aws-serverless-express';
 import awsServerlessExpressMiddleware from 'aws-serverless-express/middleware';
 import cors from 'cors';
+import fetch from 'node-fetch';
 import mongoose from 'mongoose';
 import { WorkRequest } from './models/work-requests';
-import { getUserFromContext, userHasRole, userRoles, validateUser } from './utils/authWrapper';
+import { getIdentityFromContext, getUserFromContext, userHasRole, userRoles, validateUser } from './utils/authWrapper';
 import { appErrorFormatter } from './utils/appErrorFormatter';
+import { getUser } from './repo/user';
+import { findWorkItemById } from './repo/work-items';
 
 // Cached database connection
 let dbConn = null;
@@ -102,6 +105,7 @@ app.get(`${basePath}/requester/:requesterId`, validateUser, async (req, res) => 
 app.post(`${basePath}/`, validateUser, async (req, res) => {
   try {
     const { body } = req;
+    const identity = getIdentityFromContext(req);
     const user = getUserFromContext(req);
 
     let item = new WorkRequest({
@@ -122,6 +126,29 @@ app.post(`${basePath}/`, validateUser, async (req, res) => {
 
     // Save the work request
     await item.save({ isNew: true });
+
+    // Get the worker user profile information
+    const workerUserProfile = await getUser(identity, item.workerId);
+
+    // If the worker has Discord, let them know they were just assigned a work item
+    if (workerUserProfile && workerUserProfile.user_metadata && workerUserProfile.user_metadata.discordid) {
+      const workItem = findWorkItemById(item.workItemId);
+      const message = `Hey <@${workerUserProfile.user_metadata.discordid}>, stop MineTubing ... You have work to do!`;
+      const embeds = [{
+        title: `**${workItem.name}** for **$${item.price}**`,
+        url: `${process.env.BASEURL}/work-requests/detail.html?id=${item._id}`
+      }];
+      console.log(`Posting Discord message...`);
+
+      await fetch(process.env.DISCORD_WEBHOOK, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ content: message, embeds: embeds })
+      });
+    }
 
     res.status(201).json({ message: `The work request was created.`, data: item });
   } catch(e) {
