@@ -6,12 +6,13 @@ export async function profilePage() {
   const formTargetEl = document.querySelector('form');
   const errorMessagesTargetEl = document.querySelector('#error-message');
   const successMessagesTargetEl = document.querySelector('#success-message');
-  const actionButtonsTargetEl = document.querySelector('.kaky-actions');
+  const actionButtonsTargetEl = document.querySelector('#actions');
   const workerprofileTargetEl = document.querySelector('#workerprofile');
   const displaynameTargetEl = document.querySelector('#displayname');
   const monogramTargetEl = document.querySelector('#monogram');
   const avatarurlTargetEl = document.querySelector('#avatarurl');
   const taglineTargetEl = document.querySelector('#tagline');
+  const discordidTargetEl = document.querySelector('#discordid');
   const phonenumberTargetEl = document.querySelector('#phonenumber');
   const emailTargetEl = document.querySelector('#email');
 
@@ -30,10 +31,12 @@ export async function profilePage() {
     }
 
     profile.renderNotifications({
+      discordid: discordidTargetEl,
       email: emailTargetEl,
       phonenumber: phonenumberTargetEl
     });
   } catch(e) {
+    console.error(e);
     actionButtonsTargetEl.remove();
   }
 
