@@ -38,7 +38,7 @@ class WorkRequest {
   }
 
   isValid() {
-    if (isNaN(this.price) || this.price < 1) return false;
+    if (isNaN(this.price) || this.price < 1 || this.price > 100) return false;
     if (!this.requesterId) return false;
     if (isNaN(this.workItemId) || this.workItemId < 1) return false;
     if (!this.workerId) return false;
