@@ -136,7 +136,7 @@ app.post(`${basePath}/`, validateUser, async (req, res) => {
       const message = `Hey <@${workerUserProfile.user_metadata.discordid}>, stop MineTubing ... You have work to do!`;
       const embeds = [{
         title: `**${workItem.name}** for **$${item.price}**`,
-        url: `${process.env.BASEURL}/work-requests/detail.html?id=${item._id}`
+        url: `${process.env.BASE_URL}/work-requests/detail.html?id=${item._id}`
       }];
       console.log(`Posting Discord message...`);
 
