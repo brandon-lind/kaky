@@ -5,11 +5,8 @@ import cors from 'cors';
 import fetch from 'node-fetch';
 import { getIdentityFromContext, getUserFromContext, userHasRole, validateUser } from './utils/authWrapper';
 import { appErrorFormatter } from './utils/appErrorFormatter';
+import { Users } from './repo/users';
 import { Worker } from './models/worker';
-import * as localUsers from './data/users.json';
-
-// Cached users list
-let usersCache = null;
 
 // Create the app
 const app = express();
@@ -31,66 +28,23 @@ app.get(`${basePath}/`, validateUser, async (req, res) => {
   try {
     const identity = getIdentityFromContext(req);
 
-    if (!identity || !identity.url || !identity.token) {
-      console.log(`Auth Failure: Could not get the identity from the request context.`);
-      res.status(401).json( { message: `Nice try, but you need to be logged in.`, data: null } );
-      return;
-    }
-
-    const usersUrl = `${identity.url}/admin/users`;
-    const adminAuthHeader = `Bearer ${identity.token}`;
-    let users = {};
-
-    // Check if this is the development environment
-    if (identity.url === 'NETLIFY_LAMBDA_LOCALLY_EMULATED_IDENTITY_URL') {
-      console.log('Getting the users from the local file system.');
-
-      users = localUsers.default.users;
-    } else {
-      // Check the cache ... worry about cache busting later. This only lasts for as long as the function is warm anyway.
-      if (usersCache) {
-        users = usersCache;
-        console.log('Got a users cache hit!');
-      } else {
-        try {
-          console.log('Getting the users from the Netlify url');
-
-          // Get the list of users from Netlify
-          const response = await fetch(usersUrl, {
-            method: 'GET',
-            headers: { Authorization: adminAuthHeader }
-          });
-
-          const responseItem = response.ok ? await response.json() : { users: [] }; // Can only call this one since it's a stream
-
-          users = Array.isArray(responseItem.users) ? responseItem.users : [];
-
-          // Cache the users object
-          usersCache = responseItem.users;
-        } catch (e) {
-          console.log(`There was an error getting the list of users from Netlify at ${usersUrl}`, e);
-          res.status(500).json({ message: `Hm, that broke something when trying to get the worker users.`, data: null });
-          return;
-        }
-      }
-    }
+    const users = new Users();
+    const userProfiles = await users.list(identity);
 
     // Filter to just the workers
-    const workerProfiles = users.filter(user => userHasRole(user, 'AcceptWork'));
+    const workerUserProfiles = userProfiles.filter(user => userHasRole(user, 'AcceptWork'));
 
-    // Convert to a worker object (don't send the full profile)
-    const workers = workerProfiles.map(workerProfile => {
+    // Convert the user profile to a worker (don't send the full profile)
+    const workers = workerUserProfiles.map(workerProfile => {
       return new Worker(workerProfile);
     });
 
     res.json({ message: ``, data: workers });
   } catch(e) {
-    console.log(e);
-
+    console.error(e);
     res.status(500).json({ message: `Hm, that broke something.`, data: null });
   }
 });
-
 
 app.patch(`${basePath}/:id`, validateUser, async (req, res) => {
   try {
@@ -98,77 +52,32 @@ app.patch(`${basePath}/:id`, validateUser, async (req, res) => {
     const user = getUserFromContext(req);
     const identity = getIdentityFromContext(req);
 
-    if (!identity || !identity.url || !identity.token) {
-      console.log(`Auth Failure: Could not get the identity from the request context.`);
-      res.status(401).json( { message: `Nice try, but you need to be logged in.`, data: null } );
-      return;
-    }
-
-    const userUrl = `${identity.url}/admin/users/${params.id}`;
-    const adminAuthHeader = `Bearer ${identity.token}`;
-    let worker = new Worker();
-    let workerUserProfile = null;
-
     // Check if the user has the ManageUsers role...
     if (!userHasRole(user, 'ManageUsers')) {
-      console.log(`Current User: \n${JSON.stringify(user)} \n`);
+      console.log(`User tried to update a worker, but didn't have the permissions: \n${JSON.stringify(user)} \n`);
       res.status(403).json({ message: `You do not have the permissions to edit the worker.`, data: null });
       return;
     }
 
-    // Map the properties
+    const worker = new Worker();
+    const users = new Users();
+
+    // Get the Worker user profile
+    const workerUserProfile = await users.findById(params.id);
+
+    // Map the submitted attributes to a Worker object
     worker.mapFromBody(body);
-
-
-
-    // Check if this is the development environment
-    if (identity.url === 'NETLIFY_LAMBDA_LOCALLY_EMULATED_IDENTITY_URL') {
-      workerUserProfile = localUsers.default.users.find(x => x.id === params.id);
-    } else {
-        try {
-          // Get the user from Netlify
-          const response = await fetch(userUrl, {
-            method: 'GET',
-            headers: { Authorization: adminAuthHeader }
-          });
-
-          if (response.ok) {
-            workerUserProfile = await response.json();
-          }
-
-        } catch (e) {
-          console.log(`There was an error getting the user from Netlify at ${userUrl}`, e);
-          res.status(500).json({ message: `Hm, that broke something trying to get the worker.`, data: null });
-          return;
-        }
-    }
 
     // Map the worker information to the user profile
     if (workerUserProfile) {
       worker.mapToUserProfile(workerUserProfile);
     } else {
-      console.log(`There was no Netlify user profile`, e);
-      res.status(404).json({ message: `Hm, worker was not found.`, data: null });
+      console.log(`There was no Netlify user profile found, so it can't be updated.`, e);
+      res.status(404).json({ message: `Hm, that worker was not found.`, data: null });
       return;
     }
 
-
-
-    // Check if this is the development environment
-    if (identity.url !== 'NETLIFY_LAMBDA_LOCALLY_EMULATED_IDENTITY_URL') {
-      try {
-        // Update the Netlify user metadata
-        await fetch(userUrl, {
-          method: 'PUT',
-          headers: { Authorization: adminAuthHeader },
-          body: JSON.stringify(workerUserProfile)
-        });
-      } catch (e) {
-        console.log(`There was an error updating the user metadata in Netlify at ${userUrl}`, e);
-        res.status(500).json({ message: `Hm, that broke something trying to update the worker.`, data: null });
-        return;
-      }
-    }
+    await users.save(workerUserProfile, identity);
 
     res.json({ message: `The worker was updated.`, data: worker });
   } catch(e) {

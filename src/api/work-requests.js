@@ -3,13 +3,12 @@ import express from 'express';
 import awsServerlessExpress from 'aws-serverless-express';
 import awsServerlessExpressMiddleware from 'aws-serverless-express/middleware';
 import cors from 'cors';
-import fetch from 'node-fetch';
 import mongoose from 'mongoose';
+import { Notifier } from './utils/notifier';
+import { Users } from './repo/users';
 import { WorkRequest } from './models/work-requests';
-import { getIdentityFromContext, getUserFromContext, userHasRole, userRoles, validateUser } from './utils/authWrapper';
+import { getIdentityFromContext, getUserFromContext, userHasRole, validateUser } from './utils/authWrapper';
 import { appErrorFormatter } from './utils/appErrorFormatter';
-import { getUser } from './repo/user';
-import { findWorkItemById } from './repo/work-items';
 
 // Cached database connection
 let dbConn = null;
@@ -127,27 +126,19 @@ app.post(`${basePath}/`, validateUser, async (req, res) => {
     // Save the work request
     await item.save({ isNew: true });
 
-    // Get the worker user profile information
-    const workerUserProfile = await getUser(identity, item.workerId);
+    // Send a message alerting the Worker of the open work request
+    try {
+      // Get the worker user profile
+      const users = new Users();
+      const userProfile = await users.findById(item.workerId, identity);
 
-    // If the worker has Discord, let them know they were just assigned a work item
-    if (workerUserProfile && workerUserProfile.user_metadata && workerUserProfile.user_metadata.discordid) {
-      const workItem = findWorkItemById(item.workItemId);
-      const message = `Hey <@${workerUserProfile.user_metadata.discordid}>, stop MineTubing ... You have work to do!`;
-      const embeds = [{
-        title: `**${workItem.name}** for **$${item.price}**`,
-        url: `${process.env.BASE_URL}/work-requests/detail.html?id=${item._id}`
-      }];
-      console.log(`Posting Discord message...`);
-
-      await fetch(process.env.DISCORD_WEBHOOK, {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ content: message, embeds: embeds })
-      });
+      // Create a notifier
+      const notifier = new Notifier();
+      console.log(`Notifying Worker ${item.workerId} about the open work request...`);
+      await notifier.notifyWorkRequestStatusChanged(userProfile, item);
+    } catch (notifyErr) {
+      console.log(`Notification to the Worker about the open work request failed.`);
+      console.error(notifyErr);
     }
 
     res.status(201).json({ message: `The work request was created.`, data: item });
@@ -165,6 +156,7 @@ app.post(`${basePath}/`, validateUser, async (req, res) => {
 app.patch(`${basePath}/:id`, validateUser, async (req, res) => {
   try {
     const { body, params } = req;
+    const identity = getIdentityFromContext(req);
     const user = getUserFromContext(req);
 
     // NoOp if they are trying to set a status not in this list
@@ -199,14 +191,38 @@ app.patch(`${basePath}/:id`, validateUser, async (req, res) => {
 
     // NoOp if the status is already cancelled or closed
     if (/^cancelled|closed$/gi.test(item.status)) {
-      res.status(400).json({ message: `You cannot update a work request which is already cancelled or closed.`, data: null });
+      res.status(400).json({ message: `You cannot update a work request which has already been cancelled or closed.`, data: null });
       return;
     }
 
     // Update the status
     item.status = body.status;
 
+    // Save the change
     await item.save();
+
+    // Send a message alerting of the work request status change
+    try {
+      const users = new Users();
+      const notifier = new Notifier();
+
+      // Notify the Worker
+      if (/^cancelled|paid$/gi.test(item.status)) {
+        const userProfile = await users.findById(item.workerId, identity);
+        console.log(`Notifying Requester ${item.workerId} about the work request ${item._id} status change to ${item.status}`);
+        await notifier.notifyWorkRequestStatusChanged(userProfile, item);
+      }
+
+      // Notify the Requester
+      if (/^rejected|working|waiting_for_payment$/gi.test(item.status)) {
+        const userProfile = users.findById(item.requesterId, identity);
+        console.log(`Notifying Requester ${item.requesterId} about the work request ${item._id} status change to ${item.status}`);
+        await notifier.notifyWorkRequestStatusChanged(userProfile, item);
+      }
+    } catch (notifyErr) {
+      console.log(`Failed to notify about the work request status change.`);
+      console.error(notifyErr);
+    }
 
     res.json({ message: `The work request was updated.`, data: item });
   } catch(e) {
