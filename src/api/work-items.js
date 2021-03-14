@@ -3,7 +3,7 @@ import awsServerlessExpress from 'aws-serverless-express';
 import awsServerlessExpressMiddleware from 'aws-serverless-express/middleware';
 import cors from 'cors';
 import { appErrorFormatter } from './utils/appErrorFormatter';
-import * as rawItems from './data/work-items.json';
+import { getWorkItems } from './repo/work-items';
 
 // Create the app
 const app = express();
@@ -24,7 +24,7 @@ app.use(awsServerlessExpressMiddleware.eventContext());
 // Define the routes
 app.get(`${basePath}/`, async (req, res) => {
   try {
-    const items = rawItems.default;
+    const items = getWorkItems();
 
     res.json({ message: ``, data: items });
   } catch(e) {
