@@ -209,13 +209,13 @@ app.patch(`${basePath}/:id`, validateUser, async (req, res) => {
       // Notify the Worker
       if (/^cancelled|paid$/gi.test(item.status)) {
         const userProfile = await users.findById(item.workerId, identity);
-        console.log(`Notifying Requester ${item.workerId} about the work request ${item._id} status change to ${item.status}`);
+        console.log(`Notifying Worker ${item.workerId} about the work request ${item._id} status change to ${item.status}`);
         await notifier.notifyWorkRequestStatusChanged(userProfile, item);
       }
 
       // Notify the Requester
       if (/^rejected|working|waiting_for_payment$/gi.test(item.status)) {
-        const userProfile = users.findById(item.requesterId, identity);
+        const userProfile = await users.findById(item.requesterId, identity);
         console.log(`Notifying Requester ${item.requesterId} about the work request ${item._id} status change to ${item.status}`);
         await notifier.notifyWorkRequestStatusChanged(userProfile, item);
       }
