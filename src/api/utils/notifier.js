@@ -16,7 +16,7 @@ class Notifier {
 
     // No reason to go any further if there is no metadata
     if (!userProfile.user_metadata) {
-      console.info(`There was no metadata on the user profile ${JSON.stringify(userProfile)}`);
+      console.log(`There was no metadata on the user profile ${JSON.stringify(userProfile)}`);
       return;
     }
 
@@ -36,9 +36,9 @@ class Notifier {
       if (workRequest.status === 'open') {
         message = `Hey <@${userProfile.user_metadata.discordid}>, stop MineTubing ... You have work to do!`;
         embeds.push({
-          title: `${workItem.name} for $${workRequest.price} - ${id}`,
+          title: `${workItem.name} for $${workRequest.price}`,
           url: `${process.env.BASE_URL}/work-requests/detail.html?id=${workRequest._id}`,
-          description: `${workRequest.instructions}`,
+          description: `${workRequest.instructions}\n#${id}`,
           thumbnail: { url: `${process.env.BASE_URL + workItem.imageUrl}`}
         });
       } else {
@@ -47,9 +47,10 @@ class Notifier {
 
         message = `<@${userProfile.user_metadata.discordid}>, a work request just got updated.`;
         embeds.push({
-          title: `${workItem.name} for $${workRequest.price} - ${id}`,
+          title: `${workItem.name} for $${workRequest.price}`,
           url: `${process.env.BASE_URL}/work-requests/detail.html?id=${workRequest._id}`,
-          description: `^^ is now **${status}**`
+          description: `#${id} is now **${status}**`,
+          thumbnail: { url: `${process.env.BASE_URL + workItem.imageUrl}`}
         });
       }
 
