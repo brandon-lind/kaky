@@ -16,7 +16,7 @@ class Notifier {
 
     // No reason to go any further if there is no metadata
     if (!userProfile.user_metadata) {
-      console.info(`There was no metadata on the user profile ${JSON.stringify(userProfile)}`);
+      console.log(`There was no metadata on the user profile ${JSON.stringify(userProfile)}`);
       return;
     }
 
