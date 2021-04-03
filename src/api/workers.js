@@ -41,7 +41,7 @@ app.get(`${basePath}/`, validateUser, async (req, res) => {
 
     res.json({ message: ``, data: workers });
   } catch(e) {
-    console.error(e);
+    console.log(e);
     res.status(500).json({ message: `Hm, that broke something.`, data: null });
   }
 });
@@ -81,7 +81,7 @@ app.patch(`${basePath}/:id`, validateUser, async (req, res) => {
 
     res.json({ message: `The worker was updated.`, data: worker });
   } catch(e) {
-    console.error(e);
+    console.log(e);
     res.status(500).json({ message: `Hm, that broke something.`, data: null });
   }
 });

@@ -35,7 +35,7 @@ app.get(`${basePath}/`, validateUser, async (req, res) => {
 
     res.json({ message: ``, data: items });
   } catch(e) {
-    console.error(e);
+    console.log(e);
 
     res.status(500).json({ message: `Hm, that broke something.`, data: null });
   }
@@ -53,7 +53,7 @@ app.get(`${basePath}/:id`, validateUser, async (req, res) => {
 
     res.json({message: ``, data: item });
   } catch(e) {
-    console.error(e);
+    console.log(e);
 
     res.status(500).json({ message: `Hm, that broke something.`, data: null });
   }
@@ -74,7 +74,7 @@ app.get(`${basePath}/worker/:workerId`, validateUser, async (req, res) => {
 
     res.json({message: ``, data: item });
   } catch(e) {
-    console.error(e);
+    console.log(e);
 
     res.status(500).json({ message: `Hm, that broke something.`, data: null });
   }
@@ -95,7 +95,7 @@ app.get(`${basePath}/requester/:requesterId`, validateUser, async (req, res) => 
 
     res.json({message: ``, data: item });
   } catch(e) {
-    console.error(e);
+    console.log(e);
 
     res.status(500).json({ message: `Hm, that broke something.`, data: null });
   }
@@ -138,12 +138,12 @@ app.post(`${basePath}/`, validateUser, async (req, res) => {
       await notifier.notifyWorkRequestStatusChanged(userProfile, item);
     } catch (notifyErr) {
       console.log(`Notification to the Worker about the open work request failed.`);
-      console.error(notifyErr);
+      console.log(notifyErr);
     }
 
     res.status(201).json({ message: `The work request was created.`, data: item });
   } catch(e) {
-    console.error(e);
+    console.log(e);
 
     if (e.message.indexOf('WorkRequest validation failed:') !== -1) {
       res.status(400).json({ message: e.message, data: null });
@@ -221,12 +221,12 @@ app.patch(`${basePath}/:id`, validateUser, async (req, res) => {
       }
     } catch (notifyErr) {
       console.log(`Failed to notify about the work request status change.`);
-      console.error(notifyErr);
+      console.log(notifyErr);
     }
 
     res.json({ message: `The work request was updated.`, data: item });
   } catch(e) {
-    console.error(e);
+    console.log(e);
 
     if (e.message.indexOf('WorkRequest validation failed:') !== -1) {
       res.status(400).json({ message: e.message, data: null });
@@ -265,7 +265,7 @@ exports.handler = async (event, context) => {
       });
     }
   } catch(e) {
-    console.error(e);
+    console.log(e);
   }
 
   return awsServerlessExpress.proxy(server, event, context, 'PROMISE').promise;

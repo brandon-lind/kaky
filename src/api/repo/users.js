@@ -26,19 +26,19 @@ class Users {
     const cachedUser = this.usersCache ? this.usersCache.find(x => x.id === userId) : null;
 
     if (cachedUser) {
-      console.info(`Found ${userId} in the cache, so using that.`);
+      console.log(`Found ${userId} in the cache, so using that.`);
       return cachedUser;
     }
 
     // Check if this is the development environment
     if (identity.url === 'NETLIFY_LAMBDA_LOCALLY_EMULATED_IDENTITY_URL') {
-      console.info(`Returning user profile ${userId} from the local file.`);
+      console.log(`Returning user profile ${userId} from the local file.`);
       const user = localUsers.default.users.find(x => x.id === userId);
       return user;
     }
 
     // Set up the Netlify endpoint info
-    console.info(`Getting user ${userId} profile info from Netlify`);
+    console.log(`Getting user ${userId} profile info from Netlify`);
     const url = `${identity.url}/admin/users/${userId}`;
     const token = `Bearer ${identity.token}`;
 
@@ -72,18 +72,18 @@ class Users {
 
     // Check if this is the development environment
     if (identity.url === 'NETLIFY_LAMBDA_LOCALLY_EMULATED_IDENTITY_URL') {
-      console.info(`Getting the users from the local file system.`);
+      console.log(`Getting the users from the local file system.`);
       return localUsers.default.users;
     }
 
     // Check the cache ... worry about cache busting later.
     if (this.usersCache) {
-      console.info('Got a users cache hit!');
+      console.log('Got a users cache hit!');
       return this.usersCache;
     }
 
     // Set up the Netlify endpoint info
-    console.info(`Getting the users from Netlify`);
+    console.log(`Getting the users from Netlify`);
     const url = `${identity.url}/admin/users`;
     const token = `Bearer ${identity.token}`;
 
@@ -119,13 +119,13 @@ class Users {
     }
 
     // Set up the Netlify endpoint info
-    console.info(`Saving the user profile to Netlify`);
+    console.log(`Saving the user profile to Netlify`);
     const url = `${identity.url}/admin/users/${userId}`;
     const token = `Bearer ${identity.token}`;
 
     // Check if this is the development environment
     if (url === 'NETLIFY_LAMBDA_LOCALLY_EMULATED_IDENTITY_URL') {
-      console.info(`This is the development URL, so not actually saving the user profile.`);
+      console.log(`This is the development URL, so not actually saving the user profile.`);
       return;
     }
 
