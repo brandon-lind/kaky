@@ -21,11 +21,25 @@
   </header>
 
   <div class="container mt-3">
-    <p class="lead">The <i>premier</i> chore tracking app for <strong>Ka</strong>yla and <strong>Ky</strong>le.
+    <p class="lead text-center">The <i>premier</i> chore tracking app for <strong>Ka</strong>yla and <strong>Ky</strong>le.
       You need to login to get started.</p>
 
-    <div>
-      <button type="button" class="btn btn-primary btn-lg">Login</button>
+    <div class="card form-login">
+      <div class="card-header">
+        Login
+      </div>
+      <div class="card-body">
+        <div class="alert alert-danger mb-1 d-none" id="error-message"></div>
+        <form action="work-requests/index.html">
+          <label for="email" class="sr-only">Email address</label>
+          <input type="email" id="email" class="form-control" placeholder="Email address" required>
+          <label for="password" class="sr-only">Password</label>
+          <input type="password" id="password" class="form-control" placeholder="Password" required>
+          <button type="submit" class="btn btn-primary btn-lg btn-block">Login</button>
+          <hr>
+          <button id="googleAuth" class="btn btn-outline-primary btn-lg btn-block">Continue with Google</button>
+        </form>
+      </div>
     </div>
 
     <kaky-footer></kaky-footer>

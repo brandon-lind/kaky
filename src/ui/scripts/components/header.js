@@ -1,9 +1,11 @@
-import netlifyIdentity from 'netlify-identity-widget';
+import { Profile } from './profile';
 
 class KakyHeader extends HTMLElement {
 
   constructor() {
     super();
+    this.profile = new Profile();
+
     this.innerHTML = `
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <a class="navbar-brand" href="/">KAKY</a>
@@ -12,9 +14,6 @@ class KakyHeader extends HTMLElement {
       </button>
       <div class="collapse navbar-collapse" id="navbarNavDropdown">
         <ul class="navbar-nav mr-auto">
-          <li class="nav-item" id="login-container">
-            <a class="nav-link" href="#" id="login">Log In</a>
-          </li>
           <li class="nav-item">
             <a class="nav-link" href="/work-requests/index.html">New Work</a>
           </li>
@@ -37,38 +36,25 @@ class KakyHeader extends HTMLElement {
     </nav>
     `;
 
-    this.loginContainerEl = this.querySelector('#login-container');
     this.loggedinContainerEl = this.querySelector('#loggedin-container');
-    this.loginEl = this.querySelector('#login');
-    this.logoutEl = this.querySelector('#logout');
     this.workRequestsEl = this.querySelector('#workrequests-container');
+    this.logoutEl = this.querySelector('#logout');
 
-    this.loginEl.addEventListener('click', this.handleLoginRequest);
-    this.logoutEl.addEventListener('click', this.handleLogoutRequest);
-
-    netlifyIdentity.on('login', (user) => this.displayLoggedIn(user));
-    netlifyIdentity.on('logout', () => { window.location.href = '/index.html'; });
-    netlifyIdentity.on('init', user => {
-      if (user) {
-        this.displayLoggedIn(user);
+    this.logoutEl.addEventListener('click', async (e) => {
+      e.preventDefault();
+      try {
+        await this.profile.logout();
+      } finally {
+        window.location = '/index.html';
       }
     });
 
-    netlifyIdentity.init();
-  }
-
-  handleLoginRequest(e) {
-    e.preventDefault();
-    netlifyIdentity.open();
-  }
-
-  handleLogoutRequest(e) {
-    e.preventDefault();
-    netlifyIdentity.logout();
+    if (this.profile.user) {
+      this.displayLoggedIn(this.profile.user);
+    }
   }
 
   displayLoggedIn(user) {
-    this.loginContainerEl.classList.add('d-none');
     this.loggedinContainerEl.classList.remove('d-none');
     this.workRequestsEl.classList.remove('d-none');
 
