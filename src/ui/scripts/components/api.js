@@ -1,11 +1,12 @@
-import netlifyIdentity from 'netlify-identity-widget';
+import { Profile } from './profile';
 
 class KakyApiHeaders {
   static async setAuthorizationHeader (httpHeaders) {
+    const profile = new Profile();
     const headers = (httpHeaders instanceof Headers) ? httpHeaders : new Headers();
 
-    if (netlifyIdentity.currentUser()) {
-      const token = await netlifyIdentity.currentUser().jwt();
+    if (profile.user) {
+      const token = await profile.user.jwt();
 
       if (headers.has('Authorization')) {
         headers.set('Authorization', `Bearer ${token}`);

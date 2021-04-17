@@ -1,9 +1,11 @@
-import netlifyIdentity from 'netlify-identity-widget';
+import { Profile } from './profile';
 
 class KakyHeader extends HTMLElement {
 
   constructor() {
     super();
+    this.profile = new Profile();
+
     this.innerHTML = `
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <a class="navbar-brand" href="/">KAKY</a>
@@ -35,24 +37,21 @@ class KakyHeader extends HTMLElement {
     `;
 
     this.loggedinContainerEl = this.querySelector('#loggedin-container');
-    this.logoutEl = this.querySelector('#logout');
-    this.logoutEl.addEventListener('click', this.handleLogoutRequest);
     this.workRequestsEl = this.querySelector('#workrequests-container');
+    this.logoutEl = this.querySelector('#logout');
 
-    netlifyIdentity.on('login', (user) => this.displayLoggedIn(user));
-    netlifyIdentity.on('logout', () => { window.location.href = '/index.html'; });
-    netlifyIdentity.on('init', user => {
-      if (user) {
-        this.displayLoggedIn(user);
+    this.logoutEl.addEventListener('click', async (e) => {
+      e.preventDefault();
+      try {
+        await this.profile.logout();
+      } finally {
+        window.location = '/index.html';
       }
     });
 
-    netlifyIdentity.init();
-  }
-
-  handleLogoutRequest(e) {
-    e.preventDefault();
-    netlifyIdentity.logout();
+    if (this.profile.user) {
+      this.displayLoggedIn(this.profile.user);
+    }
   }
 
   displayLoggedIn(user) {
