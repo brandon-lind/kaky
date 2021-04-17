@@ -1,15 +1,39 @@
-import netlifyIdentity from 'netlify-identity-widget';
+import GoTrue from 'gotrue-js';
 
 export async function indexPage() {
-  const startButtonEl = document.querySelector('button');
-  netlifyIdentity.on('login', () => {
-    window.location.href = '/work-requests/list.html';
-  });
+  const auth = new GoTrue();
+  const user = auth.currentUser();
 
-  startButtonEl.addEventListener('click', (e) => {
+  const formTargetEl = document.querySelector('form');
+  const googleButtonEl = document.querySelector('#googleAuth');
+  const errorMessageTargetEl = document.querySelector('#error-message');
+  const emailEl = document.querySelector('#email');
+  const passwordEl = document.querySelector('#password');
+
+  if (user) {
+    window.location = formTargetEl.action;
+    return;
+  }
+
+  formTargetEl.addEventListener('submit', (e) => {
     e.preventDefault();
-    netlifyIdentity.open();
+    errorMessageTargetEl.classList.add('d-none');
+
+    auth
+      .login(emailEl.value, passwordEl.value, true)
+      .then(() => {
+        window.location = formTargetEl.action;
+      })
+      .catch((err) => {
+        errorMessageTargetEl.classList.remove('d-none');
+        errorMessageTargetEl.innerHTML = `${err.json.error_description}`;
+      });
   });
 
-  netlifyIdentity.init();
+  googleButtonEl.addEventListener('click', (e) => {
+    e.preventDefault();
+    errorMessageTargetEl.classList.add('d-none');
+
+    window.location = auth.loginExternalUrl('Google');
+  });
 };
