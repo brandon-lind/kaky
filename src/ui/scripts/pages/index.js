@@ -26,7 +26,12 @@ export async function indexPage() {
 
     // If a user already exists, this will return the existing user and not create a new one
     auth
-      .createUser(parsedHash, true)
+      .createUser({
+        access_token: parsedHash.get('access_token'),
+        expires_in: parsedHash.get('expires_in'),
+        refresh_token: parsedHash.get('refresh_token'),
+        token_type: parsedHash.get('token_type')
+      }, true)
       .then(() => {
         window.location = formEl.action;
       })
