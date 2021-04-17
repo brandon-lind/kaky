@@ -1,10 +1,9 @@
-import GoTrue from 'gotrue-js';
+import { Profile } from '../components/profile';
 
 export async function indexPage() {
-  const auth = new GoTrue();
-  const user = auth.currentUser();
+  const profile = new Profile();
   const parsedUrl = new URL(window.location.href);
-  const accessToken = parsedUrl.hash;
+  const hasAccessToken = parsedUrl.hash.indexOf('#access_token');
 
   const formEl = document.querySelector('form');
   const googleButtonEl = document.querySelector('#googleAuth');
@@ -13,36 +12,34 @@ export async function indexPage() {
   const passwordEl = document.querySelector('#password');
 
   // If they are already logged in, get them into the app
-  if (user) {
+  if (profile.user) {
     window.location = formEl.action;
     return;
   }
 
   // Check for an access token from the provider
-  if (accessToken) {
+  if (hasAccessToken) {
     const parsedHash = new URLSearchParams(
       window.location.hash.substr(1) // skip the first char (#)
     );
 
-    // If a user already exists, this will return the existing user and not create a new one
-    auth
-      .createUser({
+    try {
+      const params = {
         access_token: parsedHash.get('access_token'),
         expires_in: parsedHash.get('expires_in'),
         refresh_token: parsedHash.get('refresh_token'),
         token_type: parsedHash.get('token_type')
-      }, true)
-      .then(() => {
-        window.location = formEl.action;
-      })
-      .catch((err) => {
-        errorMessageTargetEl.classList.remove('d-none');
-        errorMessageTargetEl.innerHTML = `${err.json.error_description}`;
-      });
+      };
+
+      await this.profile.handleLoginProvider(params);
+    } catch(err) {
+      errorMessageTargetEl.classList.remove('d-none');
+      errorMessageTargetEl.innerHTML = `${err}`;
+    }
   }
 
 
-  formEl.addEventListener('submit', (e) => {
+  formEl.addEventListener('submit', async (e) => {
     e.preventDefault();
     errorMessageTargetEl.classList.add('d-none');
 
@@ -51,21 +48,19 @@ export async function indexPage() {
       formEl.classList.add('was-validated');
     }
 
-    auth
-      .login(emailEl.value, passwordEl.value, true)
-      .then(() => {
-        window.location = formEl.action;
-      })
-      .catch((err) => {
-        errorMessageTargetEl.classList.remove('d-none');
-        errorMessageTargetEl.innerHTML = `${err.json.error_description}`;
-      });
+    try {
+      await this.profile.loginEmail(emailEl.value, passwordEl.value);
+    } catch(err) {
+      errorMessageTargetEl.classList.remove('d-none');
+      errorMessageTargetEl.innerHTML = `${err}`;
+    }
+
   });
 
   googleButtonEl.addEventListener('click', (e) => {
     e.preventDefault();
     errorMessageTargetEl.classList.add('d-none');
 
-    window.location = auth.loginExternalUrl('Google');
+    this.profile.loginProvider('Google');
   });
 };
