@@ -56,7 +56,6 @@ class KakyHeader extends HTMLElement {
   }
 
   displayLoggedIn(user) {
-    this.loginContainerEl.classList.add('d-none');
     this.loggedinContainerEl.classList.remove('d-none');
     this.workRequestsEl.classList.remove('d-none');
 
