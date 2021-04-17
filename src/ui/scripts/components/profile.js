@@ -31,7 +31,6 @@ class Profile {
   async loginEmail(email, password) {
     try {
       await this.auth.login(email, password, true);
-      return true;
     } catch(err) {
       console.log(err);
       throw new Error(err.json.error_description);
@@ -39,7 +38,7 @@ class Profile {
   }
 
   async loginProvider(providerName) {
-    window.location = auth.loginExternalUrl(providerName);
+    window.location = this.auth.loginExternalUrl(providerName);
   }
 
   async logout() {
@@ -52,7 +51,6 @@ class Profile {
     // If a user already exists, this will return the existing user and not create a new one
     try {
       await this.auth.createUser(params, true);
-      return true;
     } catch(err) {
       console.log(err);
       throw new Error(err.json.error_description);
