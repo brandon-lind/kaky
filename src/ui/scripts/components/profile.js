@@ -42,6 +42,12 @@ class Profile {
     window.location = auth.loginExternalUrl(providerName);
   }
 
+  async logout() {
+    if (this.user) {
+      await this.user.logout();
+    }
+  }
+
   async handleLoginProvider(params) {
     // If a user already exists, this will return the existing user and not create a new one
     try {
