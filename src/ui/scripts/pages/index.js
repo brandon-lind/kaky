@@ -20,15 +20,17 @@ export async function indexPage() {
 
   // Check for an access token from the provider
   if (accessToken) {
-    const accessTokenParts = accessToken.split('&');
+    const parsedHash = new URLSearchParams(
+      window.location.hash.substr(1) // skip the first char (#)
+    );
 
     // If a user already exists, this will return the existing user and not create a new one
     auth
       .createUser({
-        access_token: accessTokenParts[0],
-        expires_in: accessTokenParts[1],
-        refresh_token: accessTokenParts[2],
-        token_type: accessTokenParts[3]
+        access_token: parsedHash.access_token,
+        expires_in: parsedHash.expires_in,
+        refresh_token: parsedHash.refresh_token,
+        token_type: parsedHash.token_type
       })
       .then(() => {
         window.location = formEl.action;
