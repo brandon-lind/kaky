@@ -14,6 +14,9 @@ class KakyHeader extends HTMLElement {
       </button>
       <div class="collapse navbar-collapse" id="navbarNavDropdown">
         <ul class="navbar-nav mr-auto">
+          <li class="nav-item" id="login-container">
+            <a class="nav-link" href="/index.html" id="login">Log In</a>
+          </li>
           <li class="nav-item">
             <a class="nav-link" href="/work-requests/index.html">New Work</a>
           </li>
@@ -36,6 +39,7 @@ class KakyHeader extends HTMLElement {
     </nav>
     `;
 
+    this.loginContainerEl = this.querySelector('#login-container');
     this.loggedinContainerEl = this.querySelector('#loggedin-container');
     this.workRequestsEl = this.querySelector('#workrequests-container');
     this.logoutEl = this.querySelector('#logout');
@@ -55,6 +59,7 @@ class KakyHeader extends HTMLElement {
   }
 
   displayLoggedIn(user) {
+    this.loginContainerEl.classList.add('d-none');
     this.loggedinContainerEl.classList.remove('d-none');
     this.workRequestsEl.classList.remove('d-none');
 
