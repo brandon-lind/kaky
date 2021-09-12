@@ -13,7 +13,7 @@
   {
     "id": 2,
     "name": "Garbage + Recycling",
-    "price": 4,
+    "price": 5,
     "imageUrl": "/assets/img/trash-recycle.jpeg",
     "tasks": [
       "All tasks in the Garbage Work Item",
