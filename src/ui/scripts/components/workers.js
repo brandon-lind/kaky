@@ -12,8 +12,9 @@ class Workers {
     </svg>
     `;
     this.workerItemTemplate = `
-    <div class="media">
-      <div class="media-body">
+    <div class="d-flex">
+      <div class="flex-shrink-0"></div>
+      <div class="flex-grow-1 ms-3">
         <h5 class="mt-0"></h5>
         <p></p>
       </div>
@@ -30,14 +31,13 @@ class Workers {
     const node = template.content.cloneNode(true);
     const logoNode = this.createWorkerLogoNode(worker);
 
-    const media = node.querySelector('.media');
-    media.prepend(logoNode);
-    media.querySelector('svg').classList.add('mr-3');
+    const logoContainer = node.querySelector('.flex-shrink-0');
+    logoContainer.prepend(logoNode);
 
-    const name = node.querySelector('h5');
+    const name = node.querySelector('div.flex-grow-1 h5');
     name.innerHTML = worker.name;
 
-    const tagline = node.querySelector('div.media-body p');
+    const tagline = node.querySelector('div.flex-grow-1 p');
     tagline.innerHTML = worker.tagline;
 
     return node;
