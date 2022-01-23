@@ -31,7 +31,7 @@ class Users {
     }
 
     // Check if this is the development environment
-    if (identity.url === 'NETLIFY_LAMBDA_LOCALLY_EMULATED_IDENTITY_URL') {
+    if (identity.url.indexOf('netlify-dev-locally-emulated-identity') !== -1) {
       console.log(`Returning user profile ${userId} from the local file.`);
       const user = localUsers.default.users.find(x => x.id === userId);
       return user;
@@ -71,7 +71,7 @@ class Users {
     }
 
     // Check if this is the development environment
-    if (identity.url === 'NETLIFY_LAMBDA_LOCALLY_EMULATED_IDENTITY_URL') {
+    if (identity.url.indexOf('netlify-dev-locally-emulated-identity') !== -1) {
       console.log(`Getting the users from the local file system.`);
       return localUsers.default.users;
     }
@@ -124,7 +124,7 @@ class Users {
     const token = `Bearer ${identity.token}`;
 
     // Check if this is the development environment
-    if (url === 'NETLIFY_LAMBDA_LOCALLY_EMULATED_IDENTITY_URL') {
+    if (url.indexOf('netlify-dev-locally-emulated-identity') !== -1) {
       console.log(`This is the development URL, so not actually saving the user profile.`);
       return;
     }
