@@ -1,3 +1,4 @@
+const path = require('path');
 const { merge } = require('webpack-merge');
 const common = require('./webpack.common.js');
 
@@ -8,17 +9,11 @@ module.exports = merge(common, {
     allowedHosts: [
       '.amazonaws.com'
     ],
-    contentBase: './dist-ui',
-    host: '0.0.0.0',
-    writeToDisk: true,
-    proxy: {
-      '/.netlify/identity': {
-        target: 'https://staging.kaky.us',
-        changeOrigin: true
-      },
-      '/.netlify/functions': {
-        target: 'http://localhost:9000'
-      }
+    devMiddleware: {
+      writeToDisk: true,
+    },
+    static: {
+      directory: path.resolve(__dirname, 'dist-ui')
     }
   },
 });

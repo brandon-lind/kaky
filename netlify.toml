@@ -1,10 +1,13 @@
 [build]
-  command = "npm run build"
-  functions = "dist-api"
   publish = "dist-ui"
+  command = "npm run build"
 
 [dev]
-  port = 9000
+  targetPort = "8080"
+
+[functions]
+  directory = "./src/api/"
+  node_bundler = "esbuild"
 
 [[plugins]]
 package = "netlify-plugin-contextual-env"

@@ -2,7 +2,6 @@ import express from 'express';
 import awsServerlessExpress from 'aws-serverless-express';
 import awsServerlessExpressMiddleware from 'aws-serverless-express/middleware';
 import cors from 'cors';
-import fetch from 'node-fetch';
 import { getIdentityFromContext, getUserFromContext, userHasRole, validateUser } from './utils/authWrapper';
 import { appErrorFormatter } from './utils/appErrorFormatter';
 import { Users } from './repo/users';
