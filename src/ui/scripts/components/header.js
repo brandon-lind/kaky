@@ -7,13 +7,13 @@ class KakyHeader extends HTMLElement {
     this.profile = new Profile();
 
     this.innerHTML = `
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light ps-3 pe-3">
       <a class="navbar-brand" href="/">KAKY</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNavDropdown">
-        <ul class="navbar-nav mr-auto">
+        <ul class="navbar-nav me-auto">
           <li class="nav-item" id="login-container">
             <a class="nav-link" href="/index.html" id="login">Log In</a>
           </li>
@@ -24,12 +24,12 @@ class KakyHeader extends HTMLElement {
             <a class="nav-link" href="/work-requests/list.html">Work Requests</a>
           </li>
         </ul>
-        <ul class="navbar-nav ml-auto">
+        <ul class="navbar-nav ms-auto">
           <li class="nav-item dropdown d-none" id="loggedin-container">
-            <a href="#" class="nav-link dropdown-toggle" id="profileDropdown" role="button" data-toggle="dropdown" aria-expanded="false">
+            <a href="#" class="nav-link dropdown-toggle" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               <span title="KAKY Ninja"><i class="fas fa-user-ninja fa-2x"></i></span>
             </a>
-            <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="profileDropdown">
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
               <li><a class="dropdown-item" href="/profile.html" id="username"></a></li>
               <li><a class="dropdown-item" href="#" id="logout">Log Out</a></li>
             </ul>

@@ -29,12 +29,11 @@ class WorkRequests {
       </div>
     </div>
     `;
-    this.workRequestStatusTemplate = `<div class="workrequest-status list-group-item list-group-item-action flex-column align-items-start">
-    <div class="workrequest-id text-right"><small class="text-muted"></small></div>
+    this.workRequestStatusTemplate = `<div class="workrequest-status list-group-item list-group-item-action flex-column align-items-start p-3">
     <div class="workrequest-preview">
+      <div class="worker-logo position-absolute top-5 start-0 ms-1"></div>
       <div class="d-flex w-100 mb-1">
-        <div class="worker-logo position-absolute"></div>
-        <div class="img-parent mr-3">
+        <div class="img-parent me-3">
           <img class="img-fluid img-thumbnail" />
         </div>
         <div class="align-items-center">
@@ -50,19 +49,22 @@ class WorkRequests {
     </div>
 
     <div class="workrequest-actions d-none">
-      <button type="button" class="close mb-3" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>
-      <div class="row justify-content-center">
+      <div class="mb-3 text-end">
+        <button type="button" class="btn-close" aria-label="Close"></button>
+      </div>
+      <div class="row justify-content-center mb-3">
         <div class="col-md-8 col-lg-6">
           <div class="alert alert-danger mb-1 d-none"></div>
-          <div class="action-buttons">
-            <a href="#" class="btn btn-secondary btn-block mb-3">View Details</a>
-            <button type="button" class="workrequest-reorder btn btn-secondary btn-block mb-3 d-none">Reorder</button>
+          <div class="action-buttons d-grid gap-2">
+            <a href="#" class="btn btn-secondary">View Details</a>
+            <button type="button" class="workrequest-reorder btn btn-secondary d-none">Reorder</button>
           </div>
         </div>
       </div>
     </div>
+
+    <div class="workrequest-id text-right"><small class="text-muted"></small></div>
+    <div class="workrequest-timestamps"><small class="text-muted"></small></div>
   </div>`;
   }
 
@@ -123,13 +125,14 @@ class WorkRequests {
     const linkEl = statusNode.querySelector('a.stretched-link');
     const logoEl = statusNode.querySelector('.worker-logo');
     const priceEl = statusNode.querySelector('strong.text-muted');
-    const timestampEl = statusNode.querySelector('small.workrequest-days');
+    const daysCounterEl = statusNode.querySelector('small.workrequest-days');
+    const timestampsEl = statusNode.querySelector('div.workrequest-timestamps>small')
     const titleEl = statusNode.querySelector('h5');
     const previewEl = statusNode.querySelector('.workrequest-preview');
     const actionsEl = statusNode.querySelector('.workrequest-actions');
     const actionsErrorEl = statusNode.querySelector('.workrequest-actions .alert-danger');
     const actionButtonsEl = statusNode.querySelector('.workrequest-actions .action-buttons');
-    const actionsCloseEl = statusNode.querySelector('.workrequest-actions .close');
+    const actionsCloseEl = statusNode.querySelector('.workrequest-actions .btn-close');
     const reorderBtnEl = statusNode.querySelector('.workrequest-actions button.workrequest-reorder');
     const viewDetailsLinkEl = statusNode.querySelector('.workrequest-actions a');
 
@@ -142,7 +145,7 @@ class WorkRequests {
     // Create the worker logo
     const logoNode = this.workers.createWorkerLogoNode(worker);
 
-    idEl.innerHTML = workRequest._id.substring(workRequest._id.length - 5).toUpperCase();
+    idEl.innerHTML = `ID: ${workRequest._id.substring(workRequest._id.length - 5).toUpperCase()}`;
     imgEl.src = workItem.imageUrl;
     imgEl.alt = workItem.name;
     imgEl.title = workItem.name;
@@ -151,9 +154,9 @@ class WorkRequests {
     linkEl.href = this.workRequestDetailsUrl.replace('#', workRequest._id);
     priceEl.innerHTML = `$${isNaN(workRequest.price) ? workItem.price.toLocaleString() : workRequest.price.toLocaleString()}`;
     instructionsEl.innerHTML = workRequest.instructions ? workRequest.instructions : '<small class="text-muted"><i>No special instructions</i></small>';
-    timestampEl.innerHTML = daysAgo === 1 ? '1 day ago' : `${daysAgo} days ago`;
-    itemEl.title = `Created: ${new Date(workRequest.createdAt).toLocaleString()}\nUpdated: ${new Date(workRequest.updatedAt).toLocaleString()}`;
+    daysCounterEl.innerHTML = daysAgo === 1 ? '1 day ago' : `${daysAgo} days ago`;
     viewDetailsLinkEl.href = this.workRequestDetailsUrl.replace('#', workRequest._id);
+    timestampsEl.innerHTML = `Created: ${new Date(workRequest.createdAt).toLocaleString()}<br />Updated: ${new Date(workRequest.updatedAt).toLocaleString()}`;
 
     // Determine if the user can reorder
     if (this.profile.isRequester) {
@@ -306,11 +309,11 @@ class WorkRequests {
     if (!this.profile.user) return;
 
     let primaryBtn = document.createElement('button');
-    primaryBtn.classList.add('btn', 'btn-primary', 'btn-block');
+    primaryBtn.classList.add('btn', 'btn-primary');
     primaryBtn.type = 'button';
 
     let secondaryBtn = document.createElement('button');
-    secondaryBtn.classList.add('btn', 'btn-secondary', 'btn-block', 'mb-3');
+    secondaryBtn.classList.add('btn', 'btn-secondary');
     secondaryBtn.type = 'button';
 
     let statusTxtEl = document.createElement('div');
