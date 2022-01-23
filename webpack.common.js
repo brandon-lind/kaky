@@ -11,11 +11,6 @@ module.exports = {
     filename: '[name]-bundle.js',
     path: path.resolve(__dirname, 'dist-ui'),
   },
-  resolve: {
-    alias: {
-        jquery: 'jquery-slim/dist/jquery.slim.js'
-    }
-  },
   plugins: [
     new CleanWebpackPlugin(),
     new CopyPlugin({

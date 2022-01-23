@@ -9,10 +9,6 @@
 </head>
 
 <body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="/">KAKY</a>
-  </nav>
-
   <header class="hero">
     <div class="hero-background"></div>
     <section class="hero-content">
@@ -21,7 +17,7 @@
   </header>
 
   <div class="container mt-3">
-    <p class="lead text-center">The <i>premier</i> chore tracking app for <strong>Ka</strong>yla and <strong>Ky</strong>le.
+    <p class="lead text-center">KAKY is the <i>premier</i> chore tracking app for <strong>Ka</strong>yla and <strong>Ky</strong>le.
       You need to login to get started.</p>
 
     <div class="card form-login">
@@ -30,14 +26,16 @@
       </div>
       <div class="card-body">
         <div class="alert alert-danger mb-1 d-none" id="error-message"></div>
-        <form action="work-requests/list.html">
+        <div class="text-center">
+          <img src="assets/img/btn_google_signin_dark_normal_web.png" class="pe-auto" id="googleAuth" />
+        </div>
+        <hr class="m-3">
+        <form action="work-requests/list.html" class="d-grid gap-2">
           <label for="email" class="sr-only">Email address</label>
           <input type="email" id="email" class="form-control" placeholder="Email address" required>
           <label for="password" class="sr-only">Password</label>
           <input type="password" id="password" class="form-control" placeholder="Password" required>
-          <button type="submit" class="btn btn-primary btn-lg btn-block">Login</button>
-          <hr>
-          <button id="googleAuth" class="btn btn-outline-primary btn-lg btn-block">Continue with Google</button>
+          <button type="submit" class="btn btn-primary">Login</button>
         </form>
       </div>
     </div>

@@ -3,6 +3,7 @@ import 'bootstrap/js/dist/dropdown';
 import 'bootstrap/js/dist/tab';
 import { library, dom } from '@fortawesome/fontawesome-svg-core';
 import { faBell, faDeaf, faDonate, faHandHoldingUsd, faPoop, faPray, faCheckCircle, faUserNinja } from '@fortawesome/free-solid-svg-icons';
+
 import { KakyHeader } from './components/header';
 import { KakyFooter } from './components/footer';
 import { indexPage } from './pages/index';
