@@ -258,7 +258,6 @@ exports.handler = async (event, context) => {
         // disconnected from MongoDB and send them when it reconnects.
         // With serverless, better to fail fast if not connected.
         bufferCommands: false, // Disable mongoose buffering
-        bufferMaxEntries: 0, // and MongoDB driver buffering
         dbName: process.env.MONGODB_DBNAME,
         useNewUrlParser: true,
         useUnifiedTopology: true
