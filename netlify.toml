@@ -1,9 +1,9 @@
 [build]
+  publish = "dist-ui"
   command = "npm run build"
-  publish = "./dist-ui"
 
 [dev]
-  publish = "./dist-ui"
+  targetPort = "8080"
 
 [functions]
   directory = "./src/api/"
