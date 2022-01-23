@@ -6,10 +6,9 @@ A super simple chore invoicing app for (Ka)yla &amp; (Ky)le. This app is a way t
 
 Make sure you have the following installed before starting:
 
-- nodejs v14.8.x
-- npm v6.14.x
+- nodejs v16.13.x
+- npm v8.1.x
 - docker desktop
-- aws-cli
 
 ## Install
 
@@ -21,14 +20,13 @@ npm install
 
 ## Running the App
 
-Just tell it to start. It'll build, spool up the UI (webpack), the API (serverless lambda), and the infrastructure (docker based MongoDB).
+Just tell it to start. It'll build, spool up the UI (webpack), the API (netlify lambda w/ esbuild), and the infrastructure (docker based MongoDB).
 
 ```
 npm start
 ```
->NOTE: The UI might come up before the infrastructure and API ... just wait for things to settle, then refresh the page.
 
-When you're done, ctrl-c
+When you're done, use the normal `ctrl-c` keys
 
 ---
 
