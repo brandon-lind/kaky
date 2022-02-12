@@ -4,10 +4,17 @@ import { Workers } from '../../components/workers';
 
 export async function workRequestDetailPage() {
   const parsedUrl = new URL(window.location.href);
-  const workRequestId = parsedUrl.searchParams.get('id') || '';
+  let workRequestId = parsedUrl.searchParams.get('id') || '';
   const workRequests = new WorkRequests();
   const workItems = new WorkItems();
   const workers = new Workers();
+
+  // Sanitize
+  try {
+    workRequestId = workRequestId.replace(/[^0-9a-z]+/gi,'');
+  } catch (e) {
+    workRequestId = '';
+  }
 
   const workRequest = await workRequests.findWorkRequestById(workRequestId);
 

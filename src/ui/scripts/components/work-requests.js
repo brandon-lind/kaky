@@ -145,16 +145,16 @@ class WorkRequests {
     // Create the worker logo
     const logoNode = this.workers.createWorkerLogoNode(worker);
 
-    idEl.innerHTML = `ID: ${workRequest._id.substring(workRequest._id.length - 5).toUpperCase()}`;
+    idEl.textContent = `ID: ${workRequest._id.substring(workRequest._id.length - 5).toUpperCase()}`;
     imgEl.src = workItem.imageUrl;
     imgEl.alt = workItem.name;
     imgEl.title = workItem.name;
     logoEl.appendChild(logoNode);
-    titleEl.innerHTML = workItem.name;
+    titleEl.textContent = workItem.name;
     linkEl.href = this.workRequestDetailsUrl.replace('#', workRequest._id);
-    priceEl.innerHTML = `$${isNaN(workRequest.price) ? workItem.price.toLocaleString() : workRequest.price.toLocaleString()}`;
-    instructionsEl.innerHTML = workRequest.instructions ? workRequest.instructions : '<small class="text-muted"><i>No special instructions</i></small>';
-    daysCounterEl.innerHTML = daysAgo === 1 ? '1 day ago' : `${daysAgo} days ago`;
+    priceEl.textContent = `$${isNaN(workRequest.price) ? workItem.price.toLocaleString() : workRequest.price.toLocaleString()}`;
+    instructionsEl.textContent = workRequest.instructions ? workRequest.instructions : '<small class="text-muted"><i>No special instructions</i></small>';
+    daysCounterEl.textContent = daysAgo === 1 ? '1 day ago' : `${daysAgo} days ago`;
     viewDetailsLinkEl.href = this.workRequestDetailsUrl.replace('#', workRequest._id);
     timestampsEl.innerHTML = `Created: ${new Date(workRequest.createdAt).toLocaleString()}<br />Updated: ${new Date(workRequest.updatedAt).toLocaleString()}`;
 
@@ -172,7 +172,7 @@ class WorkRequests {
           window.location.reload();
         } catch (err) {
           console.error(err.message);
-          actionsErrorEl.innerHTML = 'The work request could not be reordered.';
+          actionsErrorEl.textContent = 'The work request could not be reordered.';
           actionsErrorEl.classList.remove('d-none');
         } finally {
           actionsEl.querySelectorAll('button').disabled = false;
@@ -322,13 +322,13 @@ class WorkRequests {
     function showErrorMessage(err) {
       errorMessageEl.classList.remove('d-none');
       console.error(err.message);
-      errorMessageEl.innerHTML = 'There was an error when trying to update the status.';
+      errorMessageEl.textContent = 'There was an error when trying to update the status.';
     }
 
     if (this.profile.isRequester) {
       switch (workRequest.status) {
         case 'open':
-          primaryBtn.innerHTML = 'Cancel Request';
+          primaryBtn.textContent = 'Cancel Request';
           primaryBtn.addEventListener('click', async (evt) => {
             try {
               evt.target.disabled = true;
@@ -365,7 +365,7 @@ class WorkRequests {
           break;
 
         case 'waiting_for_payment':
-          primaryBtn.innerHTML = 'Paid';
+          primaryBtn.textContent = 'Paid';
           primaryBtn.addEventListener('click', async (evt) => {
             try {
               evt.target.disabled = true;
@@ -396,7 +396,7 @@ class WorkRequests {
     if (this.profile.isWorker) {
       switch (workRequest.status) {
         case 'open':
-          primaryBtn.innerHTML = 'Take It';
+          primaryBtn.textContent = 'Take It';
           primaryBtn.addEventListener('click', async (evt) => {
             try {
               evt.target.disabled = true;
@@ -409,7 +409,7 @@ class WorkRequests {
             }
           });
 
-          secondaryBtn.innerHTML = 'Leave It';
+          secondaryBtn.textContent = 'Leave It';
           secondaryBtn.addEventListener('click', async (evt) => {
             try {
               evt.target.disabled = true;
@@ -437,7 +437,7 @@ class WorkRequests {
           break;
 
         case 'paid':
-          primaryBtn.innerHTML = 'All Done';
+          primaryBtn.textContent = 'All Done';
           primaryBtn.addEventListener('click', async (evt) => {
             try {
               evt.target.disabled = true;
@@ -464,7 +464,7 @@ class WorkRequests {
           break;
 
         case 'working':
-          primaryBtn.innerHTML = 'Get Paid';
+          primaryBtn.textContent = 'Get Paid';
           primaryBtn.addEventListener('click', async (evt) => {
             try {
               evt.target.disabled = true;

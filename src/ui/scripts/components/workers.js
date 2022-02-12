@@ -25,7 +25,7 @@ class Workers {
   createWorkerNode(worker, template) {
     if (!template) {
       template = document.createElement('template');
-      template.innerHTML = this.workerItemTemplate;
+      template.textContent = this.workerItemTemplate;
     }
 
     const node = template.content.cloneNode(true);
@@ -35,10 +35,10 @@ class Workers {
     logoContainer.prepend(logoNode);
 
     const name = node.querySelector('div.flex-grow-1 h5');
-    name.innerHTML = worker.name;
+    name.textContent = worker.name;
 
     const tagline = node.querySelector('div.flex-grow-1 p');
-    tagline.innerHTML = worker.tagline;
+    tagline.textContent = worker.tagline;
 
     return node;
   }
@@ -52,10 +52,10 @@ class Workers {
     const node = template.content.cloneNode(true);
 
     const iconTitle = node.querySelector('svg title');
-    iconTitle.innerHTML = worker.name;
+    iconTitle.textContent = worker.name;
 
     const monogram = node.querySelector('svg text');
-    monogram.innerHTML = worker.monogram;
+    monogram.textContent = worker.monogram;
 
     return node;
   }
