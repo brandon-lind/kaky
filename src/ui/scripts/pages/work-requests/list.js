@@ -86,20 +86,20 @@ export async function workRequestListPage() {
   }
 
   // Update the status labels
-  cancelledBadgeEl.innerHTML = `${cancelledCount}`;
-  closedBadgeEl.innerHTML = `${closedCount}`;
-  openBadgeEl.innerHTML = `${openCount}`;
-  paidBadgeEl.innerHTML = `${paidCount}`;
-  rejectedBadgeEl.innerHTML = `${rejectedCount}`;
-  waitingForPaymentBadgeEl.innerHTML = `${waitingForPaymentCount}`;
-  workingBadgeEl.innerHTML = `${workingCount}`;
+  cancelledBadgeEl.textContent = `${cancelledCount}`;
+  closedBadgeEl.textContent = `${closedCount}`;
+  openBadgeEl.textContent = `${openCount}`;
+  paidBadgeEl.textContent = `${paidCount}`;
+  rejectedBadgeEl.textContent = `${rejectedCount}`;
+  waitingForPaymentBadgeEl.textContent = `${waitingForPaymentCount}`;
+  workingBadgeEl.textContent = `${workingCount}`;
 
   // Add indicator for statuses without work requests
-  if (cancelledCount === 0) { cancelledListEl.innerHTML = noWorkRequestsTxt; }
-  if (closedCount === 0) { closedListEl.innerHTML = noWorkRequestsTxt; }
-  if (openCount === 0) { openListEl.innerHTML = noWorkRequestsTxt; }
-  if (paidCount === 0) { paidListEl.innerHTML = noWorkRequestsTxt; }
-  if (rejectedCount === 0) { rejectedListEl.innerHTML = noWorkRequestsTxt; }
-  if (waitingForPaymentCount === 0) { waitingForPaymentListEl.innerHTML = noWorkRequestsTxt; }
-  if (workingCount === 0) { workingListEl.innerHTML = noWorkRequestsTxt; }
+  if (cancelledCount === 0) { cancelledListEl.textContent = noWorkRequestsTxt; }
+  if (closedCount === 0) { closedListEl.textContent = noWorkRequestsTxt; }
+  if (openCount === 0) { openListEl.textContent = noWorkRequestsTxt; }
+  if (paidCount === 0) { paidListEl.textContent = noWorkRequestsTxt; }
+  if (rejectedCount === 0) { rejectedListEl.textContent = noWorkRequestsTxt; }
+  if (waitingForPaymentCount === 0) { waitingForPaymentListEl.textContent = noWorkRequestsTxt; }
+  if (workingCount === 0) { workingListEl.textContent = noWorkRequestsTxt; }
 };

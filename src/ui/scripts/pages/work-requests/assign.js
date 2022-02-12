@@ -5,7 +5,7 @@ import { Workers } from '../../components/workers';
 
 export async function workRequestAssignPage() {
   const parsedUrl = new URL(window.location.href);
-  const workItemId = parsedUrl.searchParams.get('id') || 0;
+  let workItemId = parsedUrl.searchParams.get('id') || 0;
   const workItems = new WorkItems();
   const workers = new Workers();
   const workRequests = new WorkRequests();
@@ -17,6 +17,13 @@ export async function workRequestAssignPage() {
   const formTargetEl = document.querySelector('form');
   const fieldsetEl = formTargetEl.querySelector('fieldset');
   const errorMessageTargetEl = document.querySelector('#error-message');
+
+  // Sanitize
+  try {
+    workItemId = workItemId.replace(/[^0-9]+/gi, 0);
+  } catch (e) {
+    workItemId = 0;
+  }
 
   const workItem = await workItems.findWorkItemById(workItemId);
   const workRequest = new WorkRequest(null, workItem);
@@ -34,7 +41,7 @@ export async function workRequestAssignPage() {
     } catch(e) {
       fieldsetEl.disabled = false;
       errorMessageTargetEl.classList.remove('d-none');
-      errorMessageTargetEl.innerHTML = e.message;
+      errorMessageTargetEl.textContent = e.message;
     }
   });
 };

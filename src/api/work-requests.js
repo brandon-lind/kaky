@@ -4,6 +4,7 @@ import awsServerlessExpress from 'aws-serverless-express';
 import awsServerlessExpressMiddleware from 'aws-serverless-express/middleware';
 import cors from 'cors';
 import mongoose from 'mongoose';
+import rateLimit from 'express-rate-limit';
 import { Notifier } from './utils/notifier';
 import { Users } from './repo/users';
 import { WorkRequest } from './models/work-requests';
@@ -15,6 +16,15 @@ let dbConn = null;
 
 // Create the app
 const app = express();
+
+// set up rate limiter: maximum of five requests per minute
+const limiter = rateLimit({
+  windowMs: 1*60*1000, // 1 minute
+  max: 5
+});
+
+// apply rate limiter to all requests
+app.use(limiter);
 
 // We need to set our base path for express to match on our function route
 const functionName = 'work-requests';

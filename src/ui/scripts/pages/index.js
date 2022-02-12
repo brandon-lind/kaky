@@ -35,7 +35,7 @@ export async function indexPage() {
       window.location = formEl.action;
     } catch(err) {
       errorMessageTargetEl.classList.remove('d-none');
-      errorMessageTargetEl.innerHTML = `${err}`;
+      errorMessageTargetEl.textContent = `${err}`;
     }
   }
 
@@ -54,7 +54,7 @@ export async function indexPage() {
       window.location = formEl.action;
     } catch(err) {
       errorMessageTargetEl.classList.remove('d-none');
-      errorMessageTargetEl.innerHTML = `${err}`;
+      errorMessageTargetEl.textContent = `${err}`;
     }
 
   });
