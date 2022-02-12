@@ -48,7 +48,7 @@ export async function profilePage() {
     } catch(e) {
       successMessagesTargetEl.classList.add('d-none');
       errorMessagesTargetEl.classList.remove('d-none');
-      errorMessagesTargetEl.innerHTML = e.message;
+      errorMessagesTargetEl.textContent = e.message;
     }
   });
 };

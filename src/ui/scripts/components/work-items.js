@@ -37,10 +37,10 @@ class WorkItems {
     imgEl.title = item.name;
 
     const titleEl = listItem.querySelector('h1');
-    titleEl.innerHTML = item.name;
+    titleEl.textContent = item.name;
 
     const priceEl = listItem.querySelector('h3');
-    priceEl.innerHTML = `&#36;${item.price}`;
+    priceEl.textContent = `$${item.price}`;
 
     const linkEl = listItem.querySelector('a');
 
@@ -54,7 +54,7 @@ class WorkItems {
 
     item.tasks.forEach(task => {
       const li = document.createElement('li');
-      li.innerHTML = `${task}`;
+      li.textContent = `${task}`;
       tasksEl.appendChild(li);
     });
 

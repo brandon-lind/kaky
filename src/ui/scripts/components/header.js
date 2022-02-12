@@ -64,9 +64,9 @@ class KakyHeader extends HTMLElement {
     this.workRequestsEl.classList.remove('d-none');
 
     if (user.user_metadata && user.user_metadata.full_name) {
-      this.loggedinContainerEl.querySelector('#username').innerHTML = `${user.user_metadata.full_name}`;
+      this.loggedinContainerEl.querySelector('#username').textContent = `${user.user_metadata.full_name}`;
     } else {
-      this.loggedinContainerEl.querySelector('#username').innerHTML = `Secret Ninja`;
+      this.loggedinContainerEl.querySelector('#username').textContent = `Secret Ninja`;
     }
   }
 }
