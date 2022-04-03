@@ -153,7 +153,11 @@ class WorkRequests {
     titleEl.textContent = workItem.name;
     linkEl.href = this.workRequestDetailsUrl.replace('#', workRequest._id);
     priceEl.textContent = `$${isNaN(workRequest.price) ? workItem.price.toLocaleString() : workRequest.price.toLocaleString()}`;
-    instructionsEl.textContent = workRequest.instructions ? workRequest.instructions : '<small class="text-muted"><i>No special instructions</i></small>';
+    if (workRequest.instructions) {
+      instructionsEl.textContent = workRequest.instructions;
+    } else {
+      instructionsEl.innerHTML = '<small class="text-muted"><i>No special instructions</i></small>';
+    }
     daysCounterEl.textContent = daysAgo === 1 ? '1 day ago' : `${daysAgo} days ago`;
     viewDetailsLinkEl.href = this.workRequestDetailsUrl.replace('#', workRequest._id);
     timestampsEl.innerHTML = `Created: ${new Date(workRequest.createdAt).toLocaleString()}<br />Updated: ${new Date(workRequest.updatedAt).toLocaleString()}`;
