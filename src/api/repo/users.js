@@ -22,6 +22,9 @@ class Users {
       throw new Error(`Auth Failure: No identity supplied.`);
     }
 
+    // Simple userId sanitization
+    userId = this.sanitizeUserId(userId);
+
     // Check the cache
     const cachedUser = this.usersCache ? this.usersCache.find(x => x.id === userId) : null;
 
@@ -107,6 +110,15 @@ class Users {
   }
 
   /**
+   * Removes any characters that aren't expected in a user identifier.
+   * @param {*} userId - The user identifier to sanitize.
+   * @returns A sanitized version of the user Id.
+   */
+  sanitizeUserId(userId) {
+    return userId.replace(/[^a-zA-Z0-9\-]+/g, '');
+  }
+
+  /**
    * Saves the user profile back to Netlify.
    * @param {*} userProfile - The Netlify user object to save.
    * @param {*} identity - The Identity object from the HTTP request context for the current caller.
@@ -117,6 +129,8 @@ class Users {
     if (!identity || !identity.url || !identity.token) {
       throw new Error(`Auth Failure: No identity supplied.`);
     }
+
+
 
     // Set up the Netlify endpoint info
     console.log(`Saving the user profile to Netlify`);
