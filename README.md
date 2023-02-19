@@ -18,6 +18,19 @@ Install the application dependencies using the normal npm install routine
 npm install
 ```
 
+Install the docker MongoDB image (only need to do this once)
+
+```
+docker pull mongo:<check the infrastructure/docker-compose.yml for which version>
+```
+
+Install the Netlify CLI (see https://docs.netlify.com/cli/get-started/#app)
+
+```
+npm install netlify-cli -g
+netlify login
+```
+
 ## Running the App
 
 Just tell it to start. It'll build, spool up the UI (webpack), the API (netlify lambda w/ esbuild), and the infrastructure (docker based MongoDB).
