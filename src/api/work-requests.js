@@ -264,6 +264,7 @@ exports.handler = async (event, context) => {
     context.callbackWaitsForEmptyEventLoop = false;
 
     if (!dbConn) {
+      mongoose.set('strictQuery', true);
       dbConn = await mongoose.connect(process.env.MONGODB_URI, {
         // Buffering means mongoose will queue up operations if it gets
         // disconnected from MongoDB and send them when it reconnects.
