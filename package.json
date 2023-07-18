@@ -53,7 +53,7 @@
   },
   "dependencies": {
     "esbuild": "^0.18.10",
-    "mongoose": "^7.3.1",
+    "mongoose": "^7.3.3",
     "netlify-cli": "^15.7.0"
   }
 }
