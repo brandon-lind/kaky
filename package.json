@@ -52,8 +52,8 @@
     "webpack-merge": "^5.7.3"
   },
   "dependencies": {
-    "esbuild": "^0.18.10",
+    "esbuild": "^0.19.2",
     "mongoose": "^7.3.1",
-    "netlify-cli": "^15.7.0"
+    "netlify-cli": "^16.2.0"
   }
 }
