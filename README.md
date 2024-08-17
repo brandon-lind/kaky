@@ -6,8 +6,8 @@ A super simple chore invoicing app for (Ka)yla &amp; (Ky)le. This app is a way t
 
 Make sure you have the following installed before starting:
 
-- nodejs v16.13.x
-- npm v8.1.x
+- nodejs v18.18.x
+- npm v9.8.x
 - docker desktop
 
 ## Install
