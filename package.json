@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "A super simple chore invoicing app for (Ka)yla and (Ky)le.",
   "engines": {
-    "node": ">=18.18.0",
-    "npm": ">=9.8.1"
+    "node": ">=20.18.1",
+    "npm": ">=10.8.2"
   },
   "scripts": {
     "build": "webpack --config webpack.prod.js",
