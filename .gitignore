@@ -110,6 +110,7 @@ dist
 
 # Local Netlify folder
 .netlify
+deno.lock
 
 # Localstack temp folder
 infrastructure/tmp/
