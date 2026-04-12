@@ -2,6 +2,9 @@
   publish = "dist-ui"
   command = "npm run build"
 
+  [build.environment]
+    NODE_VERSION = "24.14.1"
+
 [dev]
   targetPort = "8080"
 

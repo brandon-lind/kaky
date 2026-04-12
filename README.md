@@ -64,3 +64,23 @@ Yeah, about that ...
 Submit a PR to the master branch. Netlify will build and deploy a preview. The Netlify site uses netlify-plugin-contextual-env (see netlify.toml) to grab the correct environment variables. The site can be acceptance tested at the auto-generated URL Netlify will create.
 
 When everything looks good, submit a PR to merge into master and Netlify will do its thing and deploy to production.
+
+## Netlify Prerender Extension (GA)
+
+Netlify has deprecated the legacy built-in prerendering feature and replaced it with the Prerender extension.
+
+This repository is already configured for the extension runtime requirement:
+
+- Node.js is pinned in [netlify.toml](netlify.toml) using NODE_VERSION and satisfies the extension requirement of Node.js 20+.
+
+Project setup steps in Netlify:
+
+1. In Netlify project settings, disable legacy prerendering at Project configuration > Build and deploy > Post processing > Prerendering.
+2. Install the Netlify Prerender extension from [Netlify Extensions](https://app.netlify.com/extensions/prerender).
+3. Open your project in Netlify, go to Extensions, select Prerender, and enable prerendering.
+4. Save and re-deploy.
+
+Notes:
+
+- This feature is managed as a Netlify extension in the Netlify UI, not as an npm dependency in this repository.
+- Prerender behavior and advanced options are configured from the extension settings page.
