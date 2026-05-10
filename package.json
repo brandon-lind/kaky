@@ -11,7 +11,7 @@
     "infrastructure": "(cd ./infrastructure && docker-compose up --detach --remove-orphans) && webpack-dev-server --config webpack.dev.js",
     "start": "npm-run-all --parallel start:**",
     "start:infrastructure": "npm run infrastructure",
-    "start:ui": "netlify dev"
+    "start:ui": "npx netlify-cli@24.11.3 dev"
   },
   "repository": {
     "type": "git",
@@ -45,7 +45,6 @@
     "html-webpack-plugin": "^5.5.0",
     "mongodb": "^6.1.0",
     "mongoose": "^8.2.4",
-    "netlify-cli": "^24.11.1",
     "node-fetch": "^3.2.3",
     "npm-run-all": "^4.1.5",
     "style-loader": "^3.3.4",
@@ -53,17 +52,5 @@
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^5.0.4",
     "webpack-merge": "^5.10.0"
-  },
-  "overrides": {
-    "netlify-cli": {
-      "defu": "6.1.7",
-      "lodash": "4.18.1"
-    },
-    "anymatch": {
-      "picomatch": "2.3.2"
-    },
-    "micromatch": {
-      "picomatch": "2.3.2"
-    }
   }
 }
