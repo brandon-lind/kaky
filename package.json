@@ -57,13 +57,13 @@
   "overrides": {
     "netlify-cli": {
       "defu": "6.1.7",
-      "lodash": "4.18.1"
-    },
-    "anymatch": {
-      "picomatch": "2.3.2"
-    },
-    "micromatch": {
-      "picomatch": "2.3.2"
+      "lodash": "4.18.1",
+      "anymatch": {
+        "picomatch": "2.3.2"
+      },
+      "micromatch": {
+        "picomatch": "2.3.2"
+      }
     }
   }
 }
