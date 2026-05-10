@@ -11,7 +11,7 @@
     "infrastructure": "(cd ./infrastructure && docker-compose up --detach --remove-orphans) && webpack-dev-server --config webpack.dev.js",
     "start": "npm-run-all --parallel start:**",
     "start:infrastructure": "npm run infrastructure",
-    "start:ui": "npx netlify-cli@24.11.3 dev"
+    "start:ui": "npx --yes --package netlify-cli@24.11.3 netlify dev"
   },
   "repository": {
     "type": "git",
