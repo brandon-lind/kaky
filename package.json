@@ -9,9 +9,9 @@
   "scripts": {
     "build": "webpack --config webpack.prod.js",
     "infrastructure": "(cd ./infrastructure && docker-compose up --detach --remove-orphans) && webpack-dev-server --config webpack.dev.js",
-    "start": "npm-run-all --parallel start:**",
+    "start": "npm run start:ui",
     "start:infrastructure": "npm run infrastructure",
-    "start:ui": "npx --yes --package netlify-cli@24.11.3 netlify dev"
+    "start:ui": "npx --yes --package netlify-cli@24.11.3 netlify dev --target-port 8080 --command \"npm run infrastructure\""
   },
   "repository": {
     "type": "git",
