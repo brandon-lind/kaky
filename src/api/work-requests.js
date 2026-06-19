@@ -328,9 +328,7 @@ exports.handler = async (event, context) => {
         // disconnected from MongoDB and send them when it reconnects.
         // With serverless, better to fail fast if not connected.
         bufferCommands: false, // Disable mongoose buffering
-        dbName,
-        useNewUrlParser: true,
-        useUnifiedTopology: true
+        dbName
       });
     }
   } catch(e) {
