@@ -61,7 +61,12 @@ const normalizeMongoUri = (uri) => {
 const getMongoConnectionConfig = () => {
   const dbName = getFirstEnvValue(MONGO_DBNAME_CANDIDATES) || 'Kaky';
   const configuredUri = getFirstEnvValue(MONGO_URI_CANDIDATES);
-  const uri = normalizeMongoUri(configuredUri) || 'mongodb://kaky_admin:localHOST_99@localhost:27017/Kaky?authSource=admin';
+
+  if (!configuredUri) {
+    throw new Error('MongoDB connection URI is not configured. Set MONGODB_URI (or equivalent) in your environment.');
+  }
+
+  const uri = normalizeMongoUri(configuredUri);
 
   if (!(uri.startsWith('mongodb://') || uri.startsWith('mongodb+srv://'))) {
     throw new Error('Invalid MongoDB connection string. Expected mongodb:// or mongodb+srv://');
@@ -336,9 +341,12 @@ exports.handler = async (event, context) => {
 
     return {
       statusCode: 500,
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      },
       body: JSON.stringify({
-        message: 'Database connection is not configured correctly for local development.',
+        message: 'Database connection is not configured correctly.',
         data: null
       })
     };
