@@ -6,6 +6,21 @@ class Profile {
   get isRequester() { return this._isRequester(); }
   get isWorker() { return this._isWorker(); }
 
+  _formatAuthError(err) {
+    const status = err && (err.status || err.statusCode || (err.response && err.response.status));
+    const description = err && err.json && err.json.error_description
+      ? err.json.error_description
+      : err && err.message
+        ? err.message
+        : null;
+
+    if (status === 404 || status === 405) {
+      return 'Login service is unavailable in this local session. Ensure Netlify dev is running with identity endpoints.';
+    }
+
+    return description || 'Login failed. Please try again.';
+  }
+
   constructor() {
     this.auth = new GoTrue();
     this.workerProfile = new WorkerProfile();
@@ -33,7 +48,7 @@ class Profile {
       await this.auth.login(email, password, true);
     } catch(err) {
       console.log(err);
-      throw new Error(err.json.error_description);
+      throw new Error(this._formatAuthError(err));
     }
   }
 
@@ -53,7 +68,7 @@ class Profile {
       await this.auth.createUser(params, true);
     } catch(err) {
       console.log(err);
-      throw new Error(err.json.error_description);
+      throw new Error(this._formatAuthError(err));
     }
   }
 
