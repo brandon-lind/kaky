@@ -61,9 +61,15 @@ Yeah, about that ...
 
 ## Deployment
 
-Submit a PR to the master branch. Netlify will build and deploy a preview. The Netlify site uses netlify-plugin-contextual-env (see netlify.toml) to grab the correct environment variables. The site can be acceptance tested at the auto-generated URL Netlify will create.
+Submit a PR to the master branch. Netlify will build and deploy a preview. The site can be acceptance tested at the auto-generated URL Netlify will create.
 
 When everything looks good, submit a PR to merge into master and Netlify will do its thing and deploy to production.
+
+Environment variable setup for database access:
+
+- Use a single key: MONGODB_URI
+- In Netlify UI, set different values per deploy context (Production, Deploy Previews, and Local development)
+- The functions read MONGODB_URI directly, so legacy prefixed keys such as PRODUCTION_MONGODB_URI and DEPLOY_PREVIEW_MONGODB_URI are no longer required
 
 ## Netlify Prerender Extension (GA)
 

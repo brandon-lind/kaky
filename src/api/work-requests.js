@@ -14,6 +14,62 @@ import { appErrorFormatter } from './utils/appErrorFormatter';
 // Cached database connection
 let dbConn = null;
 
+const MONGO_DBNAME_CANDIDATES = [
+  'MONGODB_DBNAME',
+  'DEV_MONGODB_DBNAME',
+  'MONGO_DBNAME',
+  'MONGO_INITDB_DATABASE'
+];
+
+const MONGO_URI_CANDIDATES = [
+  'MONGODB_URI',
+  'DEV_MONGODB_URI',
+  'MONGO_URI',
+  'DEV_MONGO_URI',
+  'MONGO_URL',
+  'DEV_MONGO_URL'
+];
+
+const getFirstEnvValue = (keys) => {
+  for (const key of keys) {
+    const value = process.env[key];
+    if (value && value.trim()) {
+      return value.trim();
+    }
+  }
+
+  return null;
+};
+
+const normalizeMongoUri = (uri) => {
+  if (!uri) return null;
+
+  const stripped = uri.replace(/^['\"]|['\"]$/g, '');
+
+  if (stripped.startsWith('mongodb://') || stripped.startsWith('mongodb+srv://')) {
+    return stripped;
+  }
+
+  // Support host-only strings like localhost:27017 or user:pass@host:27017/db.
+  if (!stripped.includes('://')) {
+    return `mongodb://${stripped}`;
+  }
+
+  return stripped;
+};
+
+const getMongoConnectionConfig = () => {
+  const dbName = getFirstEnvValue(MONGO_DBNAME_CANDIDATES) || 'Kaky';
+  const configuredUri = getFirstEnvValue(MONGO_URI_CANDIDATES);
+  const uri = normalizeMongoUri(configuredUri) || 'mongodb://kaky_admin:localHOST_99@localhost:27017/Kaky?authSource=admin';
+
+  if (!(uri.startsWith('mongodb://') || uri.startsWith('mongodb+srv://'))) {
+    throw new Error('Invalid MongoDB connection string. Expected mongodb:// or mongodb+srv://');
+  }
+
+  return { uri, dbName };
+};
+
 // Create the app
 const app = express();
 
@@ -264,19 +320,30 @@ exports.handler = async (event, context) => {
     context.callbackWaitsForEmptyEventLoop = false;
 
     if (!dbConn) {
+      const { uri, dbName } = getMongoConnectionConfig();
+
       mongoose.set('strictQuery', true);
-      dbConn = await mongoose.connect(process.env.MONGODB_URI, {
+      dbConn = await mongoose.connect(uri, {
         // Buffering means mongoose will queue up operations if it gets
         // disconnected from MongoDB and send them when it reconnects.
         // With serverless, better to fail fast if not connected.
         bufferCommands: false, // Disable mongoose buffering
-        dbName: process.env.MONGODB_DBNAME,
+        dbName,
         useNewUrlParser: true,
         useUnifiedTopology: true
       });
     }
   } catch(e) {
-    console.log(e);
+    console.log('MongoDB connection failed for work-requests function.', e);
+
+    return {
+      statusCode: 500,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: 'Database connection is not configured correctly for local development.',
+        data: null
+      })
+    };
   }
 
   return awsServerlessExpress.proxy(server, event, context, 'PROMISE').promise;

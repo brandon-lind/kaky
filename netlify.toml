@@ -13,10 +13,6 @@
   node_bundler = "esbuild"
 
 [[plugins]]
-package = "netlify-plugin-contextual-env"
-  [plugins.inputs]
-  mode = "prefix"
-[[plugins]]
 package = "netlify-plugin-inline-functions-env"
   [plugins.inputs]
   buildEvent = "onBuild"
